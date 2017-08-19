@@ -30,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/DivanteLtd/vue-storefront-api.git"
   },
-  "author": "Jason Miller <jason@developit.ca>",
+  "author": "Piotr Karwatka <pkarwatka@divante.pl>",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.13.3",

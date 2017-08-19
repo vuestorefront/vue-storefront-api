@@ -1,7 +1,9 @@
 {
 	"port": 8080,
 	"esUrl": "http://localhost:9200/",
-	"esIndexName": "magento2_default_catalog_product",
+	"esIndexes": ["magento2_default_catalog_product", "vue_storefront_catalog"],
+	"esUser": "",
+	"esPassword": "",
 	"bodyLimit": "100kb",
 	"corsHeaders": ["Link"]
 }

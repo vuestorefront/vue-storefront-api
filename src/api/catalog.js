@@ -5,25 +5,29 @@ export default ({ config, db }) => function(req, res, body) {
   // Request method handling: exit if not GET or POST
   // Other metods - like PUT, DELETE etc. should be available only for authorized users or not available at all)
   if ( ! (req.method == 'GET' || req.method == 'POST') ) {
-    const errMethod = { error: req.method + " request method is not supported. Use GET or POST." };
-    console.log("ERROR: " + req.method + " request method is not supported.");
-    res.write(JSON.stringify(errMethod));
-    res.end();
-    return;
+    throw new Error('ERROR: ' + req.method + ' request method is not supported.')
+    
   }
 
-  if (!config.esIndexName){
-    res.end(res.write(JSON.stringify({ error: "ElasticSearch index name or ElasticSearch URL not configured (esIndexName, esUrl)" })));
-    return;
+  const urlSegments = req.url.split('/');
+  
+  if(urlSegments.length < 2)
+    throw new Error('No index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
+  else {
+    const indexName = urlSegments[1];
 
+    if (config.esIndexes.indexOf(indexName) < 0){
+      throw new Error('Invalid / inaccessible index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
+    }
   }
+  
   // pass the request to elasticsearch
-  var url = config.esUrl + '/' + config.esIndexName + req.url;
+  var url = config.esUrl + '/' + req.url;
     req.pipe(request({
       uri  : url,
       auth : {
-        user : 'username',
-        pass : 'password'
+        user : config.esUser,
+        pass : config.esPassword
       },
       headers: {
       'accept-encoding': 'none'
