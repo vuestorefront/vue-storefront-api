@@ -1,0 +1,7 @@
+{
+	"port": 8080,
+	"esUrl": "http://localhost:9200/",
+	"esIndexName": "magento2_default_catalog_product",
+	"bodyLimit": "100kb",
+	"corsHeaders": ["Link"]
+}
