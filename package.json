@@ -7,6 +7,8 @@
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
+    "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog",
+    "dump": "node node_modules/elasticdump/bin/elasticdump --output=var/catalog.json --input=http://localhost:9200/vue_storefront_catalog",
     "prestart": "npm run -s build",
     "test": "eslint src"
   },
@@ -34,6 +36,7 @@
     "body-parser": "^1.13.3",
     "compression": "^1.5.2",
     "cors": "^2.7.1",
+    "elasticdump": "^3.3.1",
     "express": "^4.13.3",
     "morgan": "^1.8.0",
     "request": "^2.81.0",
