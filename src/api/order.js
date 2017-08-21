@@ -1,27 +1,32 @@
 import resource from 'resource-router-middleware';
+import apiStatus from '../lib/util';
+const Ajv = require('ajv'); // json validator
+
+const kue = require('kue');
 
 export default ({ config, db }) => resource({
 
 	/** Property name to store preloaded entity on `request`. */
 	id : 'order',
 
-	/** For requests with an `id`, you can auto-load the entity.
-	 *  Errors terminate the request, success sets `req[id] = data`.
+	/** 
+	 * POST create an order with JSON payload compliant with models/order.md
 	 */
-	load(req, id, callback) {
-	
-	},
+	create(req, res) {
 
-	/** GET / - Search products */
-	index({ params }, res) {
-		res.json({});
-	},
+		const ajv = new Ajv();
+		const validate = ajv.compile(require('../models/order.schema.json'));
 
 
+		if (!validate(req.body)) {
+			apiStatus(res, validate.errors, 403);
+			return;
+		}				
 
-	/** GET /:id - Return a given entity */
-	read({ facet }, res) {
-		res.json({});
+		// TODO: order must be validated - we can use https://www.npmjs.com/package/json-validation
+		let queue = kue.createQueue();
+		queue.createJob('order', req.body /*using bodyParser.json*/).save();
+		apiStatus(res, "Order acknowledged!", 200);
 	},
 
 	

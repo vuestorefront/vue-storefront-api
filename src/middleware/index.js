@@ -1,9 +1,9 @@
 import { Router } from 'express';
+import { json } from 'body-parser';
+
 
 export default ({ config, db }) => {
 	let routes = Router();
-
-	// add middleware here
-
-	return routes;
+	let bp = json();
+	return [ bp, routes ];
 }

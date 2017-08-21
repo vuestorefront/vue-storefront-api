@@ -9,6 +9,7 @@
     "start": "node dist",
     "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog",
     "dump": "node node_modules/elasticdump/bin/elasticdump --output=var/catalog.json --input=http://localhost:9200/vue_storefront_catalog",
+    "kue-dashboard": "node node_modules/kue/bin/kue-dashboard -p 3050 -r redis://127.0.0.1:6379 -q prefix",
     "prestart": "npm run -s build",
     "test": "eslint src"
   },
@@ -33,11 +34,13 @@
   "author": "Piotr Karwatka <pkarwatka@divante.pl>",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.13.3",
+    "ajv": "^5.2.2",
+    "body-parser": "^1.17.2",
     "compression": "^1.5.2",
     "cors": "^2.8.4",
     "elasticdump": "^3.3.1",
     "express": "^4.13.3",
+    "kue": "^0.11.6",
     "morgan": "^1.8.0",
     "request": "^2.81.0",
     "resource-router-middleware": "^0.6.0"

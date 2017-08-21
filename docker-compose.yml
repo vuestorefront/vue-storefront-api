@@ -34,6 +34,13 @@ services:
       - esdat2:/usr/share/elasticsearch/data
     networks:
       - esnet
+  
+  redis:
+    image: redis
+
+    ports:
+      - "6379:6379"      
+
 
 volumes:
   esdat1:
@@ -43,3 +50,5 @@ volumes:
 
 networks:
   esnet:
+
+
