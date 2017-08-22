@@ -10,7 +10,6 @@
                {
                     "required": [ "sku", "price", "qty" ],
                     "properties": {
-                        "item_id": { "type": "number" },
                         "sku": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },
                         "qty": { "type" : "number", "minimum": 1 },
                         "name": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },

@@ -1,7 +1,7 @@
 {
   "name": "vue-storefront-api",
   "version": "0.1.0",
-  "description": "Starter project for an ES6 RESTful Express API",
+  "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
@@ -10,6 +10,8 @@
     "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog",
     "dump": "node node_modules/elasticdump/bin/elasticdump --output=var/catalog.json --input=http://localhost:9200/vue_storefront_catalog",
     "kue-dashboard": "node node_modules/kue/bin/kue-dashboard -p 3050 -r redis://127.0.0.1:6379",
+    "o2m": "babel src -s -D -d dist --presets es2015,stage-0; node dist/worker/order_to_magento2.js start",
+    "o2m-dev": "nodemon -w src/worker/order_to_magento2.js --exec \"babel-node --presets es2015,stage-0 src/worker/order_to_magento2.js\"",
     "prestart": "npm run -s build",
     "test": "eslint src"
   },
@@ -36,19 +38,23 @@
   "dependencies": {
     "ajv": "^5.2.2",
     "body-parser": "^1.17.2",
+    "command-router": "^1.0.1",
     "compression": "^1.5.2",
     "cors": "^2.8.4",
     "elasticdump": "^3.3.1",
     "express": "^4.13.3",
     "kue": "^0.11.6",
+    "lodash": "^4.17.4",
     "morgan": "^1.8.0",
     "request": "^2.81.0",
-    "resource-router-middleware": "^0.6.0"
+    "resource-router-middleware": "^0.6.0",
+    "unirest": "^0.5.1",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.9.0",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.5.0",
     "eslint": "^3.1.1",
     "nodemon": "^1.9.2"
