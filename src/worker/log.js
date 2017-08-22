@@ -10,7 +10,8 @@ if(!global.logger) {
               handleExceptions: false,
               json: false,
               prettyPrint: true,
-              colorize: true
+              colorize: true,
+              timestamp: true 
           })
       ],
       exitOnError: false

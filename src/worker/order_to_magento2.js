@@ -42,7 +42,6 @@ cli.option({
     const httpPass = process.env.MAGE_HTTP_PASS || config.magento2.httpPassword;
     
     const url = baseUrl + 'V1/' + endpoint;
-    logger.debug('Preparing REST CLIENT for ' + url);
     return unirest[method](url).auth({
         user: httpUser,
         pass: httpPass,
@@ -55,17 +54,18 @@ cli.option({
  * 
  * The Magento2 API: https://magento.stackexchange.com/questions/136028/magento-2-create-order-using-rest-api
  * 
- * @param {json} orderData order data with format as described in '../models/order.md'
+ * @param {json} orderData order data in format as described in '../models/order.md'
  * @param {Object} config global CLI configuration
  * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
  */
 function processSingleOrder(orderData, config, job, done){
 
     const TOTAL_STEPS = 4;
+    const THREAD_ID = 'ORD:' + job.id; // job id 
     let currentStep = 1;
 
     if (!validate(orderData)) { // schema validation of upcoming order
-        logger.error("Order validation error!", validate.errors);
+        logger.error(THREAD_ID +" Order validation error!", validate.errors);
         done(new Error('Error while validating order object',  validate.errors));
 
         if(job) job.progress(currentStep++, TOTAL_STEPS);
@@ -79,8 +79,8 @@ function processSingleOrder(orderData, config, job, done){
         })
     ).then((cartKey) => {
 
-        logger.debug('CART KEY = ' + cartKey);
-        logger.debug(' + Adding products...');
+        logger.info(THREAD_ID + ' CART KEY = ' + cartKey);
+        logger.debug(THREAD_ID + '+ Adding products...');
 
         const productPromises = new Array();
         for(const orderItem of orderData.products){
@@ -96,7 +96,7 @@ function processSingleOrder(orderData, config, job, done){
                     }).end((response) => {
                         if(response.code >=200 && response.code <= 299) // OK
                         {
-                            logger.debug('Product ' + orderItem.sku +' added.', response.body, response.code);
+                            logger.debug(THREAD_ID +' Product ' + orderItem.sku +' added.');
                             resolve( response.body);
                         }
                         else{ 
@@ -192,7 +192,7 @@ function processSingleOrder(orderData, config, job, done){
                     
                     Promise.all(addPromises).then( (result) => {
                                 // addressses already added
-                            logger.debug(" + Addresses already added, placing order!")
+                            logger.debug(THREAD_ID +"  + Addresses already added, placing order!")
                             if(job) job.progress(currentStep++, TOTAL_STEPS);
 
                             client('put', 'guest-carts/' + cartKey + '/order').send( { // sum up totals
@@ -203,20 +203,20 @@ function processSingleOrder(orderData, config, job, done){
                                                         }
                                                     
                                                 }).end((response) => {
-                                                    logger.debug("ORDER PLACED ", response.body);
+                                                    logger.info(THREAD_ID +" Order placed with ORDER ID", response.body);
                                                     if(job) job.progress(currentStep++, TOTAL_STEPS);
                                                     return done(null, { magentoOrderId: response.body, transferedAt: new Date() });
                                                 })
 
                     }).catch((errors) => {
-                        logger.error('Error while adding addresses!', errors);
+                        logger.error(THREAD_ID + ' Error while adding addresses!', errors);
                         return done(new Error('Error while adding addresses', errors));
                     });
 
 
         }).catch((results) => {
         
-            logger.error(' Erorr while adding products ', results);
+            logger.error(THREAD_ID + ' Error while adding products ', results);
             return done(new Error('Error while adding products', results));
         });
         
@@ -237,9 +237,8 @@ cli.command('start', ()=>{  // default command is to run the service worker
     logger.info('Starting KUE worker for "order" message ...');
     queue.process('order', partition_count, (job,done) => {
 
-        const order = job.data.order;
         logger.info('Processing order: ' + job.data.title);
-        return processSingleOrder(order, config, job, done);
+        return processSingleOrder(job.data.order, config, job, done);
         
         
     });
