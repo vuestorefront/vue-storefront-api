@@ -8,6 +8,10 @@ const queue = kue.createQueue();
 const logger = require('./log');
 const unirest = require('unirest');
 
+const Ajv = require('ajv'); // json validator
+const ajv = new Ajv(); // validator
+const validate = ajv.compile(require('../models/order.schema.json'));
+
 
 import config from '../config.json';
 let numCPUs = require('os').cpus().length;
@@ -32,22 +36,191 @@ cli.option({
         'Content-Type': 'application/json'        
       }, addHeaders);
 
-    return unirest[method](config.magento2.url + 'V1/' + endpoint).headers(headers)
+
+    const baseUrl = process.env.MAGE_URL || config.magento2.url;
+    const httpUser = process.env.MAGE_HTTP_USER || config.magento2.httpUserName;
+    const httpPass = process.env.MAGE_HTTP_PASS || config.magento2.httpPassword;
+    
+    const url = baseUrl + 'V1/' + endpoint;
+    logger.debug('Preparing REST CLIENT for ' + url);
+    return unirest[method](url).auth({
+        user: httpUser,
+        pass: httpPass,
+        sendImmediately: false // send only if asked
+      }).headers(headers)
   }
 
-/**
+/** 
  * Send single order to Magento Instance
  * 
  * The Magento2 API: https://magento.stackexchange.com/questions/136028/magento-2-create-order-using-rest-api
  * 
  * @param {json} orderData order data with format as described in '../models/order.md'
  * @param {Object} config global CLI configuration
+ * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
  */
-function processSingleOrder(orderData, config){
+function processSingleOrder(orderData, config, job, done){
 
-    const apiClient = client('post', 'guest-carts').send().end( (response)=> {
-        console.log(response);
+    const TOTAL_STEPS = 4;
+    let currentStep = 1;
 
+    if (!validate(orderData)) { // schema validation of upcoming order
+        logger.error("Order validation error!", validate.errors);
+        done(new Error('Error while validating order object',  validate.errors));
+
+        if(job) job.progress(currentStep++, TOTAL_STEPS);
+        return;
+    }			
+   
+    new Promise((resolve, reject) =>  // TODO: add magento client authorization support to support logged in customers
+        client('post', 'guest-carts').send().end( (response)=> {
+            resolve(response.body.replace("\"", ""));
+            if(job) job.progress(currentStep++, TOTAL_STEPS);
+        })
+    ).then((cartKey) => {
+
+        logger.debug('CART KEY = ' + cartKey);
+        logger.debug(' + Adding products...');
+
+        const productPromises = new Array();
+        for(const orderItem of orderData.products){
+            
+            productPromises.push(
+                new Promise((resolve, reject) => {
+
+                    client('post', 'guest-carts/' + cartKey + '/items').send( { // add products to cart
+                        cartItem: {
+                            sku: orderItem.sku, 
+                            qty: orderItem.qty, 
+                            quoteId: cartKey}
+                    }).end((response) => {
+                        if(response.code >=200 && response.code <= 299) // OK
+                        {
+                            logger.debug('Product ' + orderItem.sku +' added.', response.body, response.code);
+                            resolve( response.body);
+                        }
+                        else{ 
+                            reject(response.body);
+                        }
+                    })
+                })
+            );
+        }
+
+        Promise.all(productPromises).then((results) =>{
+            
+            if(job) job.progress(currentStep++, TOTAL_STEPS);
+
+            // up to this point - all products added to the cart
+
+            const billingAddr = orderData.addressInformation.billingAddress;
+            const shippingAddr = orderData.addressInformation.shippingAddress;
+            
+            const addPromises = new Array();
+            addPromises.push(
+                new Promise((resolve, reject) => {
+        
+
+                    client('post', 'guest-carts/' + cartKey + '/billing-address').send( { // sum up totals
+
+                        "address":
+                            {
+                                "countryId": billingAddr.country_id,
+                                "street": billingAddr.street, 
+                                "telephone": billingAddr.telephone, 
+                                "postcode": billingAddr.postcode, 
+                                "city": billingAddr.city,
+                                "firstname": billingAddr.firstname,
+                                "lastname": billingAddr.lastname,
+                                "email": billingAddr.email,
+                                "regionCode": billingAddr.regionCode,
+                                "company": billingAddr.company
+                            }
+                    
+                    }).end((response) => {
+                        resolve( response.body);
+                        job.progress(1, 5);
+                    })
+                })
+            );
+            
+            
+            addPromises.push(
+                new Promise((resolve, reject) => {
+                    
+            
+                            client('post', 'guest-carts/' + cartKey + '/shipping-information').send( { // sum up totals
+            
+                                "addressInformation":
+                                    {
+                                    "shippingAddress":
+                                        {
+                                            "countryId": shippingAddr.country_id,
+                                            "street": shippingAddr.street, 
+                                            "telephone": shippingAddr.telephone, 
+                                            "postcode": shippingAddr.postcode, 
+                                            "city": shippingAddr.city,
+                                            "firstname": shippingAddr.firstname,
+                                            "lastname": shippingAddr.lastname,
+                                            "email": shippingAddr.email,
+                                            "regionCode": shippingAddr.regionCode,
+                                            "company": shippingAddr.company
+                                        },
+
+                                        "billingAddress":
+                                        {
+                                            "countryId": billingAddr.country_id,
+                                            "street": billingAddr.street, 
+                                            "telephone": billingAddr.telephone, 
+                                            "postcode": billingAddr.postcode, 
+                                            "city": billingAddr.city,
+                                            "firstname": billingAddr.firstname,
+                                            "lastname": billingAddr.lastname,
+                                            "email": billingAddr.email,
+                                            "regionCode": billingAddr.regionCode,
+                                            "company": billingAddr.company
+                                        },
+                                        "shippingMethodCode": orderData.addressInformation.shipping_method_code,
+                                        "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code
+                                    }
+                                
+                            }).end((response) => {
+                                resolve( response.body);
+                            })
+                        })
+                    );
+                    
+                    Promise.all(addPromises).then( (result) => {
+                                // addressses already added
+                            logger.debug(" + Addresses already added, placing order!")
+                            if(job) job.progress(currentStep++, TOTAL_STEPS);
+
+                            client('put', 'guest-carts/' + cartKey + '/order').send( { // sum up totals
+                                
+                                                    "paymentMethod":
+                                                        {
+                                                        "method":orderData.addressInformation.payment_method_code
+                                                        }
+                                                    
+                                                }).end((response) => {
+                                                    logger.debug("ORDER PLACED ", response.body);
+                                                    if(job) job.progress(currentStep++, TOTAL_STEPS);
+                                                    return done(null, { magentoOrderId: response.body, transferedAt: new Date() });
+                                                })
+
+                    }).catch((errors) => {
+                        logger.error('Error while adding addresses!', errors);
+                        return done(new Error('Error while adding addresses', errors));
+                    });
+
+
+        }).catch((results) => {
+        
+            logger.error(' Erorr while adding products ', results);
+            return done(new Error('Error while adding products', results));
+        });
+        
+ 
     });
 
     
@@ -66,9 +239,9 @@ cli.command('start', ()=>{  // default command is to run the service worker
 
         const order = job.data.order;
         logger.info('Processing order: ' + job.data.title);
-        processSingleOrder(order, config);
+        return processSingleOrder(order, config, job, done);
         
-        return done(); // end of processing
+        
     });
 
 
@@ -76,7 +249,7 @@ cli.command('start', ()=>{  // default command is to run the service worker
 
 
 cli.command('test', ()=> {
-    processSingleOrder(require('../../var/testOrder.json'), config);
+    processSingleOrder(require('../../var/testOrder.json'), config, null, (err, result) => {});
 });
 
 

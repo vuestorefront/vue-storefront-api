@@ -1,14 +1,14 @@
 {
     "products": [
         {
-        "sku": "24-MB01",
+        "sku": "product_dynamic_1",
         "qty": 1,
         "name": "Product one",
         "price": 19,
         "product_type": "simple"
         },
         {
-        "sku": "24-UG04",
+        "sku": "product_dynamic_2",
         "qty": 1,
         "name": "Product two",
         "price": 54,
@@ -54,6 +54,6 @@
         },
         "shipping_method_code": "flatrate",
         "shipping_carrier_code": "flatrate",
-        "payment_method_code": "flatrate"
+        "payment_method_code": "cashondelivery"
     }
 }
