@@ -1,5 +1,5 @@
 import resource from 'resource-router-middleware';
-import apiStatus from '../lib/util';
+import { apiStatus } from '../lib/util';
 const Ajv = require('ajv'); // json validator
 
 const kue = require('kue');
@@ -17,15 +17,13 @@ export default ({ config, db }) => resource({
 		const ajv = new Ajv();
 		const validate = ajv.compile(require('../models/order.schema.json'));
 
-
-		if (!validate(req.body)) {
+		if (!validate(req.body)) { // schema validation of upcoming order
 			apiStatus(res, validate.errors, 403);
 			return;
 		}				
 
-		// TODO: order must be validated - we can use https://www.npmjs.com/package/json-validation
-		let queue = kue.createQueue();
-		queue.createJob('order', req.body /*using bodyParser.json*/).save();
+		let queue = kue.createQueue(config.kue);
+		queue.createJob('order', { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */).save();
 		apiStatus(res, "Order acknowledged!", 200);
 	},
 

@@ -1,61 +1,76 @@
 {
-    "items": [
-        {
-            "item_id": 100,
-            "sku": "abc-1",
-            "qty": 1,
-            "name": "Product one",
-            "price": 19,
-            "product_type": "simple"
-        },
-        {
-            "item_id": 101,
-            "sku": "abc-2",
-            "qty": 1,
-            "name": "Product two",
-            "price": 54,
-            "product_type": "simple"
+    "additionalProperties": false,
+    "required": [ "products", "addressInformation" ],
+    "properties": {
+
+        "products": {
+           "type": "array",
+           "minItems": 1,
+           "items": [
+               {
+                    "required": [ "sku", "price", "qty" ],
+                    "properties": {
+                        "item_id": { "type": "number" },
+                        "sku": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },
+                        "qty": { "type" : "number", "minimum": 1 },
+                        "name": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },
+                        "price": { "type" : "number", "minimum": 1 },
+                        "product_type": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z]+" }
+                    }
+                }
+           ]
+        }, 
+        "addressInformation": {
+
+            "properties": {
+                "shippingAddress": {
+                    "required": [ "street", "city", "postcode", "firstname", "lastname" ],
+                    "properties": {
+                        "region": { "type": "string", "pattern": "[a-zA-Z]+" },
+                        "region_id": { "type": "number" },
+                        "country_id": { "type": "string", "pattern": "[a-zA-Z]+" },
+                        "street": {
+                            "minItems": 1,
+                            "items": { "type": "string", "minLength": 1}
+                        },
+                        "company": { "type": "string" },
+                        "telephone": { "type": "string" , "minLength": 9 },
+                        "postcode": { "type": "string", "minLength": 5,  "pattern": "[a-zA-Z0-9_]+" },
+                        "city": { "type": "string", "pattern": "[a-zA-Z]+" },
+                        "firstname": { "type": "string", "pattern": "[a-zA-Z]+" },
+                        "lastname": { "type": "string", "pattern": "[a-zA-Z]+" },
+                        "email": { "type": "string", "pattern": "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" },
+                        "region_code":{ "type": "string", "pattern": "[a-zA-Z]+" },
+                        "sameAsBilling": { "type": "number"}
+                    }
+                },
+                "billingAddress": {
+                    "required": [ "street", "city", "postcode", "firstname", "lastname" ],
+                    "properties": {
+                        "properties": {
+                            "region": { "type": "string", "pattern": "[a-zA-Z]+" },
+                            "region_id": { "type": "number" },
+                            "country_id": { "type": "string", "pattern": "[a-zA-Z]+" },
+                            "street": {
+                                "minItems": 1,
+                                "items": { "type": "string", "minLength": 1}
+                            },
+                            "company": { "type": "string" },
+                            "telephone": { "type": "string" , "pattern" : "^([01][- .])?(\\(\\d{3}\\)|\\d{3})[- .]?\\d{3}[- .]\\d{4}$" },
+                            "postcode": { "type": "string", "minLength": 5,  "pattern": "[a-zA-Z0-9_]+" },
+                            "city": { "type": "string", "pattern": "[a-zA-Z]+" },
+                            "firstname": { "type": "string", "pattern": "[a-zA-Z]+" },
+                            "lastname": { "type": "string", "pattern": "[a-zA-Z]+" },
+                            "email": { "type": "string", "pattern": "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" },
+                            "region_code":{ "type": "string", "pattern": "[a-zA-Z]+" },
+                            "sameAsBilling": { "type": "number"}
+                        }
+                    }
+                },
+                "shipping_method_code": { "type": "string",  "pattern": "[a-zA-Z]+" },
+                "shipping_carrier_code": { "type": "string",  "pattern": "[a-zA-Z]+" },
+                "payment_method_code": { "type": "string",  "pattern": "[a-zA-Z]+" }
+            }
         }
-    ], 
-    "addressInformation": {
-        "shippingAddress": {
-            "region": "MH",
-            "region_id": 0,
-            "country_id": "PL",
-            "street": [
-                "Street name line no 1",
-                "Street name line no 2"
-            ],
-            "company": "Company name",
-            "telephone": "0048 123 123 123",
-            "postcode": "00123",
-            "city": "Cityname",
-            "firstname": "John ",
-            "lastname": "Doe",
-            "email": "john@doe.com",
-            "region_code": "MH",
-            "sameAsBilling": 1
-        },
-        "billingAddress": {
-            "region": "MH",
-            "region_id": 0,
-            "country_id": "PL",
-            "street": [
-                "Street name line no 1",
-                "Street name line no 2"
-            ],
-            "company": "abc",
-            "telephone": "1111111",
-            "postcode": "00123",
-            "city": "Mumbai",
-            "firstname": "Sameer",
-            "lastname": "Sawant",
-            "email": "john@doe.com",
-            "prefix": "address_",
-            "region_code": "MH"
-        },
-        "shipping_method_code": "flatrate",
-        "shipping_carrier_code": "flatrate",
-        "payment_method_code": "flatrate"
     }
 }
