@@ -7,6 +7,8 @@ import initializeDb from './db';
 import middleware from './middleware';
 import api from './api';
 import config from './config.json';
+import img from './api/img';
+
 
 let app = express();
 app.server = http.createServer(app);
@@ -31,6 +33,7 @@ initializeDb( db => {
 
 	// api router
 	app.use('/api', api({ config, db }));
+	app.use('/img', img({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);

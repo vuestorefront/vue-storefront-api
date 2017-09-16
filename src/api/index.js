@@ -13,9 +13,6 @@ export default ({ config, db }) => {
 	// mount the order reosource
 	api.use('/order', order({ config, db }));
 	
-	// mount the image reosource
-	api.use('/img', order({ config, db }));
-	
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
 		res.json({ version });
