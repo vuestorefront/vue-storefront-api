@@ -1,5 +1,5 @@
 let request = require('request');
-let RequestHandler = require('imageable/lib/request-handler');
+let RequestHandler = require('./imageable/lib/request-handler');
 
  
 export default ({ config, db }) => function (req, res, body) {
