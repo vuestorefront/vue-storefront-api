@@ -22,7 +22,7 @@ export default ({ config, db }) => function(req, res, body) {
   }
   
   // pass the request to elasticsearch
-  var url = config.esUrl + '/' + req.url;
+  var url = 'http://' + config.esHost + req.url; 
     req.pipe(request({
       uri  : url,
       auth : {
