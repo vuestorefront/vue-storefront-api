@@ -25,7 +25,7 @@ Code autoreload is enabled along with eslint, babel support.
 ## API access
 Catalog API calls are compliant with ElasticSearch (it works like a filtering proxy to ES). More on ES queries: [ElasticSearch queries tutorial](http://okfnlabs.org/blog/2013/07/01/elasticsearch-query-tutorial.html)
 
-Elastic search endpoint: `http://localhost:8080/api/search/<INDEX_NAME>/`. You can run the following command to check if everything is up and runing (it assumes `vue_storefront_catalog` as default index name):
+Elastic search endpoint: `http://localhost:8080/api/catalog/search/<INDEX_NAME>/`. You can run the following command to check if everything is up and runing (it assumes `vue_storefront_catalog` as default index name):
 
 `curl -i http://localhost:8080/api/search/vue_storefront_catalog/_search?query=*`
 
