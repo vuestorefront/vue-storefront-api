@@ -19,6 +19,7 @@ Besides a big improvement for the shopping experience, we also want to create a 
 
 **Warm up ElasticSearch and Redis**
 `docker-compose up`
+`npm run migrate` to execute all data migrations up to date
 
 **Import product catalog**
 Product catalog is imported using [elasticdump](https://www.npmjs.com/package/elasticdump), which is installed automatically via project dependency. The default ElasticSearch index name is: `vue_storefront_catalog`
