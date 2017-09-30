@@ -2,7 +2,6 @@
 	"port": 8080,
 	"esHost": "localhost:9200",
 	"esIndexes": [
-		"magento2_default_catalog_product",
 		"vue_storefront_catalog"
 	],
 	"esUser": "",
