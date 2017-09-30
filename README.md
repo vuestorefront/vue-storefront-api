@@ -47,6 +47,9 @@ This backend is using ElasticSearch data formats popularized by [ElasticSuite fo
 * [Product model](./src/models/catalog-category.md)
 * [Category model](./src/models/catalog-product.md)
 
+## Data migrations
+Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
+
 License
 -------
 
