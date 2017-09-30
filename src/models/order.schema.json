@@ -2,6 +2,13 @@
     "additionalProperties": false,
     "required": [ "products", "addressInformation" ],
     "properties": {
+        "order_id" : { "type": "string"  },
+        "created_at" : { "type": "string"  },
+        "updated_at": { "type": "string" },
+        "transmited" : { "type": "boolean"  },
+        "transmited_at": { "type": "string" },
+        "status": { "type": "string" },
+        "state": { "type": "string" },
 
         "products": {
            "type": "array",

@@ -18,6 +18,7 @@ export default ({ config, db }) => resource({
 		const validate = ajv.compile(require('../models/order.schema.json'));
 
 		if (!validate(req.body)) { // schema validation of upcoming order
+			console.dir(validate.errors);
 			apiStatus(res, validate.errors, 403);
 			return;
 		}				
