@@ -6,3 +6,6 @@ npm-debug.log
 yarn.lock
 api_start.sh
 api_test.sh
+package-lock.json
+src/config.json
+var/magento2-sample-data/
