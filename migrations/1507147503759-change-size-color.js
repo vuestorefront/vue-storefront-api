@@ -27,6 +27,7 @@ module.exports.up = function (next) {
             size: { type: "integer" },
             price: { type: "double" },
             color: { type: "integer" },
+            pattern: { type: "integer" },
             id: { type: "integer" },
             status: { type: "integer" },
             weight: { type: "integer" },
