@@ -14,7 +14,8 @@
     "o2m-dev": "nodemon -w src/worker/order_to_magento2.js --exec \"babel-node --presets es2015,stage-0 src/worker/order_to_magento2.js\"",
     "migrate": "node_modules/migrate/bin/migrate",
     "prestart": "npm run -s build",
-    "test": "eslint src"
+    "test": "eslint src",
+    "setup": "npm run migrate; npm run restore"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -48,7 +49,7 @@
     "imageable": "^0.10.5",
     "kue": "^0.11.6",
     "lodash": "^4.17.4",
-    "migrate": "^1.0.0-1",
+    "migrate": "^1.0.0-2",
     "morgan": "^1.8.0",
     "request": "^2.81.0",
     "resource-router-middleware": "^0.6.0",

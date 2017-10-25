@@ -16,9 +16,6 @@ module.exports.up = function (next) {
     
     next()
   })
-
-    
-  next()
 }
 
 module.exports.down = function (next) {
