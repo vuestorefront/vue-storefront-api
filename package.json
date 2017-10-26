@@ -12,7 +12,7 @@
     "kue-dashboard": "node node_modules/kue/bin/kue-dashboard -p 3050 -r redis://127.0.0.1:6379",
     "o2m": "babel src -s -D -d dist --presets es2015,stage-0; node dist/worker/order_to_magento2.js start",
     "o2m-dev": "nodemon -w src/worker/order_to_magento2.js --exec \"babel-node --presets es2015,stage-0 src/worker/order_to_magento2.js\"",
-    "migrate": "node_modules/migrate/bin/migrate",
+    "migrate": "node node_modules/migrate/bin/migrate",
     "prestart": "npm run -s build",
     "test": "eslint src",
     "setup": "npm run migrate; npm run restore"
