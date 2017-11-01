@@ -15,7 +15,7 @@
     "migrate": "node node_modules/migrate/bin/migrate",
     "prestart": "npm run -s build",
     "test": "eslint src",
-    "setup": "npm run migrate; npm run restore"
+    "setup": "npm run restore; npm run migrate"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
