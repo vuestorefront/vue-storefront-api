@@ -19,7 +19,7 @@ export default ({ config, db }) => resource({
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
-			apiStatus(res, validate.errors, 403);
+			apiStatus(res, validate.errors, 200);
 			return;
 		}				
 
