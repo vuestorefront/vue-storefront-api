@@ -4,6 +4,7 @@ var Utils       = require("./utils")
   , URL         = require("url")
   , oneYear     = 31557600000
   , fs          = require('fs')
+  , mime        = require('mime-types')
 
 var RequestHandler = module.exports = function(config, options) {
   this.config             = config || {}
@@ -29,7 +30,6 @@ RequestHandler.prototype.handle = function(req, res, next) {
   
   if (this.isImageProcessUrl(req) && this.isImageSourceHostAllowed(req)) {
     this.logger.log('Image processing request')
-    console.log('pr');
     if(this.options.before) beforeHookResult = this.options.before(this.stats)
 
     this.processImage(req, res, function() {
@@ -152,7 +152,7 @@ RequestHandler.prototype._afterResize = function(err, path, res, callback) {
   } else {
     this.logger.log('Sending processed image')
 
-    res.contentType(path.replace(/\?(.*)/, ""))
+    res.contentType(mime.lookup(path))
     res.sendFile(path, { maxAge: oneYear }, function() {
       self.logger.log('File sent')
 
