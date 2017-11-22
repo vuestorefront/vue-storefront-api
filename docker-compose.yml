@@ -19,7 +19,7 @@ services:
     networks:
       - esnet
   es2:
-    image: elasticsearch:2.4.6
+    image: elasticsearch:5.5
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
