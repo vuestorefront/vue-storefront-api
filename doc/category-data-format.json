@@ -1,0 +1,38 @@
+    {
+        "_index": "vue_storefront_catalog1510349212167",
+        "_type": "category",
+        "_id": "22",
+        "_score": 1,
+        "_source": {
+          "id": 22,
+          "parent_id": 20,
+          "name": "Bottoms",
+          "is_active": true,
+          "position": 2,
+          "level": 3,
+          "product_count": 0,
+          "children_data": [
+            {
+              "is_active": true,
+              "level": 4,
+              "parent_id": 22,
+              "product_count": 91,
+              "name": "Pants",
+              "id": 27,
+              "position": 1,
+              "children_data": []
+            },
+            {
+              "is_active": true,
+              "level": 4,
+              "parent_id": 22,
+              "product_count": 137,
+              "name": "Shorts",
+              "id": 28,
+              "position": 2,
+              "children_data": []
+            }
+          ],
+          "tsk": 1509551138285
+        }
+      }

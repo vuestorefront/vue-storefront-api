@@ -1,0 +1,232 @@
+
+-- PRODUCT SEARCH
+
+ starting request {
+    "method": "POST",
+    "path": "/vue_storefront_catalog/product/_search",
+    "body": {
+      "query": {
+        "bool": {
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "range": {
+                    "visibility": {
+                      "gte": 3,
+                      "lte": 4
+                    }
+                  }
+                },
+                {
+                  "terms": {
+                    "category.category_id": [
+                      20,
+                      21,
+                      23
+                    ]
+                  }
+                }
+              ],
+              "should": [
+                {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "color": 53
+                        }
+                      },
+                      {
+                        "match": {
+                          "size": 173
+                        }
+                      },
+                      {
+                        "match": {
+                          "type_id": "simple"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "color_options": 53
+                        }
+                      },
+                      {
+                        "match": {
+                          "size_options": 173
+                        }
+                      },
+                      {
+                        "match": {
+                          "type_id": "configurable"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "must": {
+            "range": {
+              "price": {
+                "gt": 0
+              }
+            }
+          }
+        }
+      },
+      "aggs": {
+        "agg_terms_color": {
+          "terms": {
+            "field": "color"
+          }
+        },
+        "agg_terms_color_options": {
+          "terms": {
+            "field": "color_options"
+          }
+        },
+        "agg_terms_size": {
+          "terms": {
+            "field": "size"
+          }
+        },
+        "agg_terms_size_options": {
+          "terms": {
+            "field": "size_options"
+          }
+        },
+        "agg_terms_price": {
+          "terms": {
+            "field": "price"
+          }
+        },
+        "agg_range_price": {
+          "range": {
+            "field": "price",
+            "ranges": [
+              {
+                "from": 0,
+                "to": 50
+              },
+              {
+                "from": 50,
+                "to": 100
+              },
+              {
+                "from": 100,
+                "to": 150
+              },
+              {
+                "from": 150
+              }
+            ]
+          }
+        }
+      }
+    },
+    "query": {
+      "size": 18,
+      "from": 0,
+      "sort": ""
+    }
+  }
+
+  
+-- GET CATEGORIES
+
+  starting request {
+    "method": "POST",
+    "path": "/vue_storefront_catalog/category/_search",
+    "body": {
+      "query": {
+        "bool": {
+          "filter": {
+            "term": {
+              "is_active": true
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "size": 50,
+      "from": 0,
+      "sort": "position:asc"
+    }
+  }
+
+
+
+  -- GET ATTRIBUTES FOR FILTERS
+
+  starting request {
+    "method": "POST",
+    "path": "/vue_storefront_catalog/attribute/_search",
+    "body": {
+      "query": {
+        "bool": {
+          "filter": {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "attribute_id": "93"
+                  }
+                },
+                {
+                  "term": {
+                    "attribute_id": "141"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "size": 50,
+      "from": 0,
+      "sort": ""
+    }
+  }
+
+
+  -- GET ATTRIBUTES FOR PRODUCT PAGE
+
+  starting request {
+    "method": "POST",
+    "path": "/vue_storefront_catalog/attribute/_search",
+    "body": {
+      "query": {
+        "bool": {
+          "filter": {
+            "bool": {
+              "should": [
+                {
+                  "term": {
+                    "is_user_defined": true
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "size": 50,
+      "from": 0,
+      "sort": ""
+    }
+  }
+
