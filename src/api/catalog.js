@@ -35,6 +35,7 @@ export default ({ config, db }) => function (req, res, body) {
     },    
   }, function (_err, _res, _resBody) {
     //do somethings
+    // TODO: Add signatures there
     res.json(_resBody);
   });
 
