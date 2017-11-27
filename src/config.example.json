@@ -4,6 +4,7 @@
 	"esIndexes": [
 		"vue_storefront_catalog"
 	],
+	"objHashSecret": "__SECRET_CHANGE_ME__",
 	"esUser": "",
 	"esPassword": "",
 	"bodyLimit": "100kb",
