@@ -40,14 +40,12 @@ export default ({ config, db }) => function (req, res, body) {
       for (let item of _resBody.hits.hits) {
 
         if (item._type === 'product') {
-          console.log(item._source.sku + ' ' + hmac.sign({ sku: item._source.sku, price: item._source.price }, config.objHashSecret))
           item._source.sgn = hmac.sign({ sku: item._source.sku, price: item._source.price }, config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
 
           if (item._source.configurable_children) {
             for (let subItem of item._source.configurable_children)
             {
               subItem.sgn = hmac.sign({ sku: subItem.sku, price: subItem.price }, config.objHashSecret); 
-              console.log(subItem.sku + ' ' + subItem.sgn)
             }
           }
         } else {
