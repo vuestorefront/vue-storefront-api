@@ -53,6 +53,8 @@
     "migrate": "^1.0.0-2",
     "mime-types": "^2.1.17",
     "morgan": "^1.8.0",
+    "humps": "^1.1.0",
+    "oauth-1.0a": "^1.0.1",
     "request": "^2.81.0",
     "resource-router-middleware": "^0.6.0",
     "unirest": "^0.5.1",
