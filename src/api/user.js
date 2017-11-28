@@ -1,5 +1,6 @@
 import resource from 'resource-router-middleware';
 import { apiStatus } from '../lib/util';
+import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 
 const Ajv = require('ajv'); // json validator
@@ -8,15 +9,20 @@ const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 
-export default ({ config, db }) => resource({
+export default ({ config, db }) => {
 
-	/** Property name to store preloaded entity on `request`. */
-	id : 'user',
+	let userApi = Router();
+	
+	const _getProxy = () => {
+		const platform = config.platform
+		const factory = new PlatformFactory(config)
+		return factory.getAdapter(platform,'user')
+	};
 
 	/** 
 	 * POST create an user
 	 */
-	create(req, res) {
+	userApi.post('/create', (req, res) => {
 
 		const ajv = new Ajv();
 		const validate = ajv.compile(require('../models/user.schema.json'));
@@ -27,17 +33,38 @@ export default ({ config, db }) => resource({
 			return;
 		}				
 
-		const platform = config.platform
-		const factory = new PlatformFactory(config)
-		const userProxy = factory.getAdapter(platform,'user')
-
+		const userProxy = _getProxy()
 		
 		userProxy.register(req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
 		})
-	},
+	})
 
-	
-});
+	/**
+	 * POST login an user
+	 */
+	userApi.post('/login', (req, res) => {	
+		const userProxy = _getProxy()
+		userProxy.login(req.body).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})				
+	});
+
+
+	/**
+	 * GET  an user
+	 */
+	userApi.get('/me', (req, res) => {	
+		const userProxy = _getProxy()
+		userProxy.me(req.param('token')).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})				
+	});	
+	return userApi
+}

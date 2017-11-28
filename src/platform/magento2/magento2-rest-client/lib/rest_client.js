@@ -24,13 +24,21 @@ module.exports.RestClient = function (options) {
         secret: options.accessTokenSecret
     };
 
-    function apiCall(request_data) {
+    function apiCall(request_data, request_token = '') {
         logger.debug('Calling API endpoint: ' + request_data.method + ' ' + request_data.url);
+
+console.log({
+    url: request_data.url,
+    method: request_data.method,
+    headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
+    json: true,
+    body: request_data.body,
+});        
         return new Promise(function (resolve, reject) {
             request({
                 url: request_data.url,
                 method: request_data.method,
-                headers: oauth.toHeader(oauth.authorize(request_data, token)),
+                headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
                 json: true,
                 body: request_data.body,
             }, function (error, response, body) {
@@ -52,6 +60,14 @@ module.exports.RestClient = function (options) {
                 resolve(body);
             });
         });
+    }
+
+    instance.consumerToken = function (login_data) {
+        return apiCall({
+            url: createUrl('/integration/customer/token'),
+            method: 'POST',
+            body: login_data           
+        })
     }
 
     function httpCallSucceeded(response) {
@@ -77,42 +93,42 @@ module.exports.RestClient = function (options) {
         return message;
     }
 
-    instance.get = function (resourceUrl) {
+    instance.get = function (resourceUrl, request_token = '') {
         var request_data = {
             url: createUrl(resourceUrl),
             method: 'GET'
         };
-        return apiCall(request_data);
+        return apiCall(request_data, request_token);
     }
 
     function createUrl(resourceUrl) {
         return servelrUrl + '/' + apiVersion + resourceUrl;
     }
 
-    instance.post = function (resourceUrl, data) {
+    instance.post = function (resourceUrl, data, request_token = '') {
         var request_data = {
             url: createUrl(resourceUrl),
             method: 'POST',
             body: data
         };
-        return apiCall(request_data);
+        return apiCall(request_data, request_token);
     }
 
-    instance.put = function (resourceUrl, data) {
+    instance.put = function (resourceUrl, data, request_token = '') {
         var request_data = {
             url: createUrl(resourceUrl),
             method: 'PUT',
             body: data
         };
-        return apiCall(request_data);
+        return apiCall(request_data, request_token);
     }
 
-    instance.delete = function (resourceUrl) {
+    instance.delete = function (resourceUrl, request_token = '') {
         var request_data = {
             url: createUrl(resourceUrl),
             method: 'DELETE'
         };
-        return apiCall(request_data);
+        return apiCall(request_data, request_token);
     }
 
     return instance;
