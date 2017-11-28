@@ -13,8 +13,13 @@ class UserProxy extends AbstractUserProxy {
     }
     
     login (userData) { 
-        throw new Error('UserProxy::login must be implemented for specific platform')
+        return this.api.customers.token(userData)
     } 
+
+    me (requestToken) { 
+        return this.api.customers.me(requestToken)
+    }        
+    
 }
 
 module.exports = UserProxy
