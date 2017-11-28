@@ -27,13 +27,13 @@ module.exports.RestClient = function (options) {
     function apiCall(request_data, request_token = '') {
         logger.debug('Calling API endpoint: ' + request_data.method + ' ' + request_data.url);
 
-console.log({
-    url: request_data.url,
-    method: request_data.method,
-    headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
-    json: true,
-    body: request_data.body,
-});        
+        logger.debug({
+            url: request_data.url,
+            method: request_data.method,
+            headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
+            json: true,
+            body: request_data.body,
+        });        
         return new Promise(function (resolve, reject) {
             request({
                 url: request_data.url,
