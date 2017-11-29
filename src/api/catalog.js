@@ -36,7 +36,7 @@ export default ({ config, db }) => function (req, res, body) {
       pass : config.esPassword
     },    
   }, function (_err, _res, _resBody) {
-    if (_resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
+    if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
       for (let item of _resBody.hits.hits) {
 
         if (item._type === 'product') {
