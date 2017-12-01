@@ -26,7 +26,7 @@ export default ({ config, db }) => resource({
 		}				
 
 		for (let product of req.body.products) {
-			if (!hmac.verify({ sku: product.sku, price: product.price }, product.sgn, config.objHashSecret)) {
+			if (!hmac.verify({ sku: product.sku, price: product.special_price ? product.originalPrice : product.price }, product.sgn, config.objHashSecret)) {
 				console.error('Invalid hash for ' + product.sku + ': ' + product.sgn)
 				apiStatus(res, "Invalid signature validation of " + product.sku, 200);
 				return;
