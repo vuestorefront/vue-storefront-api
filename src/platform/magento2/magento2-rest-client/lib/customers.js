@@ -14,5 +14,11 @@ module.exports = function (restClient) {
         
         return restClient.get('/customers/me', requestToken)
     }        
+
+    module.resetPassword = function (emailData) {
+        
+        return restClient.put('/customers/password',emailData)
+    }        
+    
     return module;
 }
