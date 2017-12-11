@@ -5,7 +5,7 @@ class StockProxy extends AbstractUserProxy {
     constructor (config){
         const Magento2Client = require('./magento2-rest-client').Magento2Client;
         super(config)
-        this.api = Magento2Client(config.magento2.api);
+        this.api = Magento2Client(config.magento2);
     }       
 
     check (sku) { 
