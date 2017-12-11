@@ -25,7 +25,7 @@
 	},
 	
 	"magento2": {
-		"url": "http://magento2.demo-1.xyz.com",
+		"url": "http://magento2.demo-1.xyz.com/rest",
 		"imgUrl": "http://localhost:8080/media/catalog/product",
 		"magentoUserName": "",
 		"magentoUserPassword": "",
