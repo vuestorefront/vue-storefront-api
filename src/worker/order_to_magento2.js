@@ -37,11 +37,11 @@ cli.option({
       }, addHeaders);
 
 
-    const baseUrl = process.env.MAGE_URL || config.magento2.url;
+    const baseUrl = process.env.MAGE_URL || config.magento2.api.url;
     const httpUser = process.env.MAGE_HTTP_USER || config.magento2.httpUserName;
     const httpPass = process.env.MAGE_HTTP_PASS || config.magento2.httpPassword;
     
-    const url = baseUrl + 'V1/' + endpoint;
+    const url = baseUrl + '/V1/' + endpoint;
     return unirest[method](url).auth({
         user: httpUser,
         pass: httpPass,
