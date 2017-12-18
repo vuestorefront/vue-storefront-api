@@ -26,7 +26,9 @@ export default ({ config, db }) => resource({
 		}				
 
 		for (let product of req.body.products) {
-			if (!hmac.verify({ sku: product.sku, price: product.special_price ? product.originalPrice : product.price }, product.sgn, config.objHashSecret)) {
+			let key = config.tax.calculateServerSide ? { sku: product.sku, price: product.price, priceInclTax: product.priceInclTax, special_price: product.special_price, special_priceInclTax:  product.special_priceInclTax } : { sku: product.sku, price: product.special_price ? product.originalPrice : product.price }
+			
+			if (!hmac.verify(key, product.sgn, config.objHashSecret)) {
 				console.error('Invalid hash for ' + product.sku + ': ' + product.sgn)
 				apiStatus(res, "Invalid signature validation of " + product.sku, 200);
 				return;
