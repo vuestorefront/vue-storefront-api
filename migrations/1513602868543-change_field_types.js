@@ -4,10 +4,9 @@ let config = require('../src/config.json')
 let common = require('./.common')
 
 module.exports.up = next => {
-  let newIndexVersion = config.esIndexes[0] + '_temp'
 
   common.db.indices.putMapping({
-        index: newIndexVersion,
+        index: config.esIndexes[0],
         type: "product",
         body: {
           properties: {
@@ -31,11 +30,29 @@ module.exports.up = next => {
             name: { type: "text" },
           }
         }
-      }).then(res => {
-        console.dir(res, { depth: null, colors: true })
-        next()
-      }).catch(err => {
-        console.dir(err, { depth: null, colors: true })
+      }).then(res1 => {
+        console.dir(res1, { depth: null, colors: true })
+
+        common.db.indices.putMapping({
+          index: config.esIndexes[0],
+          type: "taxrule",
+          body: {
+            properties: {
+              rates: {
+                properties: {
+                  rate: { type: "float" }
+                }
+              }
+            }
+          }
+        }).then(res2 => {
+          console.dir(res2, { depth: null, colors: true })
+          next()
+        }).catch(err2 => {
+          throw new Error(err2)
+        })
+      }).catch(err1 => {
+        console.error(err1)
       })
 }
 
