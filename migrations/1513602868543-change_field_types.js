@@ -53,6 +53,7 @@ module.exports.up = next => {
         })
       }).catch(err1 => {
         console.error(err1)
+        next(err1)
       })
 }
 
