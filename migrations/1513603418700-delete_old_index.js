@@ -13,6 +13,7 @@ module.exports.up = next => {
     next()
   }).catch(err => {
     console.error(err)
+    next(err)
   })
 }
 
