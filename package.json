@@ -7,7 +7,7 @@
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
-    "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog_temp --type=data --maxSockets=5 && node node_modules/elasticdump/bin/elasticdump --input=var/taxrules.json --output=http://localhost:9200/vue_storefront_catalog_temp --type=data --maxSockets=5",
+    "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog_temp --type=data --maxSockets=10",
     "dump": "node node_modules/elasticdump/bin/elasticdump --output=var/catalog.json --input=http://localhost:9200/vue_storefront_catalog",
     "kue-dashboard": "node node_modules/kue/bin/kue-dashboard -p 3050 -r redis://127.0.0.1:6379",
     "o2m": "babel src -s -D -d dist --presets es2015,stage-0; node dist/worker/order_to_magento2.js start",
