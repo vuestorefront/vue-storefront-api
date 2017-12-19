@@ -25,7 +25,7 @@ module.exports.RestClient = function (options) {
     };
 
     function apiCall(request_data, request_token = '') {
-        logger.debug('Calling API endpoint: ' + request_data.method + ' ' + request_data.url);
+        logger.debug('Calling API endpoint: ' + request_data.method + ' ' + request_data.url + ' token: ' + request_token);
 
         logger.debug({
             url: request_data.url,
