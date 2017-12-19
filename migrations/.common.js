@@ -8,7 +8,7 @@ let client = new es.Client({
   host: config.esHost,
   log: 'debug',
   apiVersion: '5.5',
-  requestTimeout: 100000,
+  requestTimeout: 1000 * 60 * 60,
   keepAlive: false
 })
 
