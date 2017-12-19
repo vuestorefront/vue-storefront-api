@@ -8,7 +8,8 @@ let client = new es.Client({
   host: config.esHost,
   log: 'debug',
   apiVersion: '5.5',
-  requestTimeout: 10000
+  requestTimeout: 10000,
+  keepAlive: false
 })
 
 exports.db = client        
