@@ -11,10 +11,13 @@ module.exports.up = next => {
         body: {
           properties: {
             size: { type: "integer" },
-            price: { type: "double" },
+            size_options: { type: "integer" },
+            price: { type: "float" },
+            special_price: { type: "float" },
             color: { type: "integer" },
+            color_options: { type: "integer" },
             pattern: { type: "string" },
-            id: { type: "integer" },
+            id: { type: "long" },
             status: { type: "integer" },
             weight: { type: "integer" },
             visibility: { type: "integer" },
@@ -26,13 +29,35 @@ module.exports.up = next => {
               type: "date",           
               format: "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
             },
+            special_from_date: {
+              type: "date",           
+              format: "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+            },
+            special_to_date: {
+              type: "date",           
+              format: "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+            },
+            news_from_date: {
+              type: "date",           
+              format: "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+            },
             description: { type: "text" },
             name: { type: "text" },
             configurable_children: {
               properties: {
                 price: { type: "float" }
               }
-            }
+            },
+            configurable_options: {
+              properties: {
+                attribute_id: { type: "long" }
+              }
+            },
+            category_ids: { type: "long" },
+            eco_collection: { type: "integer" },
+            eco_collection_options: { type: "integer" },
+            erin_recommends: { type: "integer" },
+            tax_class_id: { type: "long" }
           }
         }
       }).then(res1 => {
@@ -43,6 +68,7 @@ module.exports.up = next => {
           type: "taxrule",
           body: {
             properties: {
+              id: { type: "long" },
               rates: {
                 properties: {
                   rate: { type: "float" }
