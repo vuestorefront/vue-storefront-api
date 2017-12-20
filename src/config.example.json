@@ -5,6 +5,11 @@
 		"vue_storefront_catalog"
 	],
 	"objHashSecret": "__SECRET_CHANGE_ME__",
+	"tax": {
+		"defaultCountry": "PL",
+		"defaultRegion": "",
+		"calculateServerSide": false
+	  },  
 	"esUser": "",
 	"esPassword": "",
 	"bodyLimit": "100kb",

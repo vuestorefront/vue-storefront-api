@@ -77,7 +77,7 @@ export default ({ config, db }) => {
 	 */
 	userApi.get('/me', (req, res) => {	
 		const userProxy = _getProxy()
-		userProxy.me(req.param('token')).then((result) => {
+		userProxy.me(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
