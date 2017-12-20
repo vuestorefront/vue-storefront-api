@@ -28,6 +28,11 @@ module.exports.up = next => {
             },
             description: { type: "text" },
             name: { type: "text" },
+            configurable_children: {
+              properties: {
+                price: { type: "float" }
+              }
+            }
           }
         }
       }).then(res1 => {
