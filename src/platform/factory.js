@@ -6,7 +6,7 @@ class PaltformFactory {
     this.config = app_config;
   }
 
-   getAdapter(platform, type){
+   getAdapter(platform, type, ...constructorParams){
 
     console.log('./' + platform + '/' + type)
     let adapter_class = require('./' + platform + '/' + type);
@@ -16,7 +16,7 @@ class PaltformFactory {
       throw new Error('Invalid adapter ' + platform + ' / ' + type);
     else{
 
-      let adapter_instance = new adapter_class(this.config);
+      let adapter_instance = new adapter_class(this.config, ...constructorParams);
 
       if((typeof adapter_instance.isValidFor == 'function') && !adapter_instance.isValidFor(type))
         throw new Error('Not valid adapter class or adapter is not valid for ' + type);

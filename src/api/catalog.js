@@ -1,6 +1,5 @@
-let request = require('request');
-const jwa = require('jwa');
-const hmac = jwa('HS256');
+const request = require('request');
+import ProcessorFactory from '../processor/factory'
 
 export default ({ config, db }) => function (req, res, body) {
 
@@ -13,18 +12,26 @@ export default ({ config, db }) => function (req, res, body) {
 
   const urlSegments = req.url.split('/');
 
+	const _getTaxProxy = () => {
+	};  
+
+  let indexName = ''
+  let entityType =''
   if (urlSegments.length < 2)
-    throw new Error('No index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
+    throw new Error('No index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/<entity_type>_search')
   else {
-    const indexName = urlSegments[1];
+    indexName = urlSegments[1];
+
+  if (urlSegments.length > 2)
+    entityType = urlSegments[2]
 
     if (config.esIndexes.indexOf(indexName) < 0) {
       throw new Error('Invalid / inaccessible index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
     }
   }
-
+    
   // pass the request to elasticsearch
-  var url = 'http://' + config.esHost + req.url;
+  let url = 'http://' + config.esHost + req.url;
 
   request({ // do the elasticsearch request
     uri: url,
@@ -37,23 +44,23 @@ export default ({ config, db }) => function (req, res, body) {
     },    
   }, function (_err, _res, _resBody) {
     if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
-      for (let item of _resBody.hits.hits) {
+    
+      const factory = new ProcessorFactory(config)
+      let resultProcessor = factory.getAdapter(entityType, indexName)
 
-        if (item._type === 'product') {
-          item._source.sgn = hmac.sign({ sku: item._source.sku, price: item._source.price }, config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
+      if (!resultProcessor)
+        resultProcessor = factory.getAdapter('default', indexName) // get the default processor
 
-          if (item._source.configurable_children) {
-            for (let subItem of item._source.configurable_children)
-            {
-              subItem.sgn = hmac.sign({ sku: subItem.sku, price: subItem.price }, config.objHashSecret); 
-            }
-          }
-        } else {
-          item._source.sgn = hmac.sign(item._source, config.objHashSecret);
-        }
-      }
-    }
-    res.json(_resBody);
+      resultProcessor.process(_resBody.hits.hits).then((result) => {
+        _resBody.hits.hits = result
+        res.json(_resBody);
+      }).catch((err) => {
+        console.error(err)
+      })
+
+    } else 
+      res.json(_resBody);
+    
   });
 
 
