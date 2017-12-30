@@ -45,8 +45,8 @@ Elastic search endpoint: `http://localhost:8080/api/catalog/search/<INDEX_NAME>/
 ## Data formats
 This backend is using ElasticSearch data formats popularized by [ElasticSuite for Magento2 by Smile.fr](https://github.com/Smile-SA/elasticsuite).
 
-* [Product model](./src/models/catalog-category.md)
-* [Category model](./src/models/catalog-product.md)
+* [Product model](./src/models/catalog-product.md)
+* [Category model](./src/models/catalog-category.md)
 
 ## Data migrations
 Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
