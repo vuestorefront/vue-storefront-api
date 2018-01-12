@@ -25,7 +25,7 @@ export default ({ config, db }) => {
 	userApi.post('/create', (req, res) => {
 
 		const ajv = new Ajv();
-		const validate = ajv.compile(require('../models/user.schema.json'));
+		const validate = ajv.compile(require('../models/userRegister.schema.json'));
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
@@ -83,5 +83,39 @@ export default ({ config, db }) => {
 			apiStatus(res, err, 500);
 		})				
 	});	
+
+	/**
+	 * POST for updating user
+	 */
+	userApi.post('/me', (req, res) => {
+		const ajv = new Ajv();
+		const validate = ajv.compile(require('../models/userProfile.schema.json'));
+
+		if (!validate(req.body)) {
+			console.dir(validate.errors);
+			apiStatus(res, validate.errors, 200);
+			return;
+		}
+
+		const userProxy = _getProxy()
+		userProxy.update({ token: req.query.token, body: req.body }).then((result) => {
+			apiStatus(res, result, 200)
+		}).catch(err => {
+			apiStatus(res, err, 500)
+		})
+	})
+
+	/**
+	 * POST for changing user's password
+	 */
+	userApi.post('/changePassword', (req, res) => {
+		const userProxy = _getProxy()
+		userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
+			apiStatus(res, result, 200)
+		}).catch(err => {
+			apiStatus(res, err, 500)
+		})
+	})
+
 	return userApi
 }
