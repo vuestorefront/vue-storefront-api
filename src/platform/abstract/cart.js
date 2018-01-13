@@ -11,11 +11,14 @@ class AbstractCartProxy  {
     create (customerToken) { 
     }        
     
-    update (customerToken, cartItem) { 
+    update (customerToken, cartId, cartItem) { 
     }       
 
-    delete (customerToken, cartItem) { 
+    delete (customerToken, cartId, cartItem) { 
     }        
+
+    pull (customerToken, cartId, params) { 
+    }         
 }
 
 module.exports = AbstractCartProxy

@@ -8,19 +8,21 @@ class CartProxy extends AbstractCartProxy {
         this.api = Magento2Client(config.magento2.api);
     }       
 
-
-
     create (customerToken) { 
         return this.api.cart.create(customerToken)
     }        
     
-    update (customerToken, cartItem) { 
-        return this.api.cart.update(customerToken, cartItem)
+    update (customerToken, cartId, cartItem) { 
+        return this.api.cart.update(customerToken, cartId, cartItem)
     }       
 
-    delete (customerToken, cartItem) { 
-        return this.api.cart.update(customerToken, cartItem)
+    delete (customerToken, cartId, cartItem) { 
+        return this.api.cart.delete(customerToken, cartId, cartItem)
     }        
+    pull (customerToken, cartId,  params) { 
+        return this.api.cart.pull(customerToken, cartId, params)
+    }        
+    
 }
 
 module.exports = CartProxy
