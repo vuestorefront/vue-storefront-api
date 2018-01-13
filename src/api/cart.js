@@ -33,7 +33,7 @@ export default ({ config, db }) => {
 	})
 
 	/** 
-	 * POST update a cart item
+	 * POST update or add the cart item
 	 *   req.query.token - user token
 	 *   body.cartItem: {
 	 *	  sku: orderItem.sku, 
@@ -44,18 +44,18 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy()
 		if (!req.body.cartItem)
 		{
-			apiStatus(res, 'No cartItem element provided within the request body', 500)
+			return apiStatus(res, 'No cartItem element provided within the request body', 500)
+			
 		}
-		cartProxy.update(req.query.token, req.body.cartItem).then((result) => {
+		cartProxy.update(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
 		})			
 	})	
 
-
 	/** 
-	 * POST update a cart item
+	 * POST delete the cart item
 	 *   req.query.token - user token
 	 *   body.cartItem: {
 	 *	  sku: orderItem.sku, 
@@ -66,9 +66,26 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy()
 		if (!req.body.cartItem)
 		{
-			apiStatus(res, 'No cartItem element provided within the request body', 500)
+			return apiStatus(res, 'No cartItem element provided within the request body', 500)
 		}
-		cartProxy.delete(req.query.token, req.body.cartItem).then((result) => {
+		cartProxy.delete(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})			
+	})	
+
+	/** 
+	 * GET pull the whole cart as it's currently se server side
+	 *   req.query.token - user token
+	 *   body.cartItem: {
+	 *	  sku: orderItem.sku, 
+	 *	  qty: orderItem.qty, 
+	 *	 quoteId: cartKey}
+	 */
+	cartApi.get('/pull', (req, res) => {
+		const cartProxy = _getProxy()
+		cartProxy.pull(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
