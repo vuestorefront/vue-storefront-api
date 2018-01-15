@@ -27,7 +27,7 @@ module.exports.RestClient = function (options) {
     function apiCall(request_data, request_token = '') {
         logger.debug('Calling API endpoint: ' + request_data.method + ' ' + request_data.url + ' token: ' + request_token);
 
-        logger.debug({
+        logger.info({
             url: request_data.url,
             method: request_data.method,
             headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
