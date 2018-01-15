@@ -5,6 +5,7 @@ import img from './img';
 import catalog from './catalog'
 import user from './user'
 import stock from './stock'
+import cart from './cart'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -20,6 +21,9 @@ export default ({ config, db }) => {
 
 	// mount the stock reosource
 	api.use('/stock', stock({ config, db }));
+
+	// mount the cart reosource
+	api.use('/cart', cart({ config, db }));
 	
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
