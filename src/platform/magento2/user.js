@@ -23,6 +23,14 @@ class UserProxy extends AbstractUserProxy {
     resetPassword (emailData) { 
         return this.api.customers.resetPassword(emailData)
     }       
+
+    update (userData) {
+        return this.api.customers.update(userData)
+    }
+
+    changePassword (passwordData) {
+        return this.api.customers.changePassword(passwordData)
+    }
 }
 
 module.exports = UserProxy

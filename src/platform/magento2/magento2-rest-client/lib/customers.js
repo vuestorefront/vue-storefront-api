@@ -18,7 +18,15 @@ module.exports = function (restClient) {
     module.resetPassword = function (emailData) {
         
         return restClient.put('/customers/password',emailData)
-    }        
+    }
+
+    module.update = function (userData) {
+        return restClient.put('/customers/me', userData.body, userData.token)
+    }
+
+    module.changePassword = function (passwordData) {
+        return restClient.put('/customers/me/password', passwordData.body, passwordData.token)
+    }
     
     return module;
 }
