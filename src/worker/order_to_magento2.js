@@ -134,7 +134,8 @@ function processSingleOrder(orderData, config, job, done){
                                 "lastname": billingAddr.lastname,
                                 "email": billingAddr.email,
                                 "regionCode": billingAddr.regionCode,
-                                "company": billingAddr.company
+                                "company": billingAddr.company,
+                                "vatId": billingAddr.vat_id
                             }
                     
                     }).end((response) => {
@@ -178,7 +179,8 @@ function processSingleOrder(orderData, config, job, done){
                                             "lastname": billingAddr.lastname,
                                             "email": billingAddr.email,
                                             "regionCode": billingAddr.regionCode,
-                                            "company": billingAddr.company
+                                            "company": billingAddr.company,
+                                            "vatId": billingAddr.vat_id
                                         },
                                         "shippingMethodCode": orderData.addressInformation.shipping_method_code,
                                         "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code
