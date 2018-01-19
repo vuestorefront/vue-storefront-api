@@ -20,7 +20,7 @@ module.exports = function (restClient) {
     }    
     module.delete = function (customerToken, cartId, cartItem) {
         if (customerToken) {
-            return restClient.delete('/carts/mine/items/' + cartItem.item_id, {}, customerToken);
+            return restClient.delete('/carts/mine/items/' + cartItem.item_id, customerToken);
         } else 
         {
             return restClient.delete('/guest-carts/' + cartId + '/items/' + cartItem.item_id);
