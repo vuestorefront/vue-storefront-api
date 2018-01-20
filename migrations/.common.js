@@ -1,5 +1,5 @@
 
-let config = require('../src/config.json');
+let config = require('config');
 let kue = require('kue');
 let queue = kue.createQueue(config.kue);
 

@@ -8,5 +8,6 @@ api_start.sh
 api_test.sh
 package-lock.json
 src/config.json
+config/local.json
 var/magento2-sample-data/
 .migrate

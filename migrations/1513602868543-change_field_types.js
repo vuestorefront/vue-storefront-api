@@ -1,6 +1,6 @@
 'use strict'
 
-let config = require('../src/config.json')
+let config = require('config')
 let common = require('./.common')
 
 module.exports.up = next => {

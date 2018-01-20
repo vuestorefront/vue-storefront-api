@@ -12,8 +12,8 @@ const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
 const validate = ajv.compile(require('../models/order.schema.json'));
 
+const config = require('config')
 
-import config from '../config.json';
 let numCPUs = require('os').cpus().length;
 
 const CommandRouter = require('command-router');
@@ -35,7 +35,6 @@ cli.option({
         'Accept': 'application/json', 
         'Content-Type': 'application/json'        
       }, addHeaders);
-
 
     const baseUrl = process.env.MAGE_URL || config.magento2.api.url;
     const httpUser = process.env.MAGE_HTTP_USER || config.magento2.httpUserName;
