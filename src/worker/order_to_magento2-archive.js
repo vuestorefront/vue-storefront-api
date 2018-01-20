@@ -16,10 +16,6 @@ const config = require('config')
 
 let numCPUs = require('os').cpus().length;
 
-
-const Magento2Client = require('../platform/magento2/magento2-rest-client').Magento2Client;
-const api = Magento2Client(config.magento2.api);
-
 const CommandRouter = require('command-router');
 const cli = CommandRouter();
 cli.option({
@@ -27,6 +23,30 @@ cli.option({
       default: numCPUs,
       type: Number
   });
+
+  /**
+   * Return Magento API client
+   * @param {string} method - post, put, get ...
+   * @param {string} endpoint relative to /rest/V1/<endpoint>
+   * @param {Object} addHeaders dictionary of http headers
+   */
+  function client(method, endpoint, addHeaders){
+    let headers = Object.assign({
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json'        
+      }, addHeaders);
+
+    const baseUrl = process.env.MAGE_URL || config.magento2.api.url;
+    const httpUser = process.env.MAGE_HTTP_USER || config.magento2.httpUserName;
+    const httpPass = process.env.MAGE_HTTP_PASS || config.magento2.httpPassword;
+    
+    const url = baseUrl + '/V1/' + endpoint;
+    return unirest[method](url).auth({
+        user: httpUser,
+        pass: httpPass,
+        sendImmediately: false // send only if asked
+      }).headers(headers)
+  }
 
 /** 
  * Send single order to Magento Instance
@@ -49,10 +69,7 @@ function processSingleOrder(orderData, config, job, done){
 
         if(job) job.progress(currentStep++, TOTAL_STEPS);
         return;
-    }
-
-    console.log(JSON.stringify(orderData))
-    return done()
+    }			
    
     new Promise((resolve, reject) =>  // TODO: add magento client authorization support to support logged in customers
         client('post', 'guest-carts').send().end( (response)=> {
@@ -231,12 +248,8 @@ cli.command('start', ()=>{  // default command is to run the service worker
 });
 
 
-cli.command('testAuth', ()=> {
-    processSingleOrder(require('../../var/testOrderAuth.json'), config, null, (err, result) => {});
-});
-
-cli.command('testAnon', ()=> {
-    processSingleOrder(require('../../var/testOrderAnon.json'), config, null, (err, result) => {});
+cli.command('test', ()=> {
+    processSingleOrder(require('../../var/testOrder.json'), config, null, (err, result) => {});
 });
 
 
