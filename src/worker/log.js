@@ -6,7 +6,7 @@ if(!global.logger) {
   global.logger = new winston.Logger({
       transports: [
           new winston.transports.Console({
-              level: 'debug',
+              level: 'info',
               handleExceptions: false,
               json: false,
               prettyPrint: true,
