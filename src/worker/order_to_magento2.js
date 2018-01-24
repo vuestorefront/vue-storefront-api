@@ -40,11 +40,11 @@ cli.option({
 function processSingleOrder(orderData, config, job, done){
 
     const TOTAL_STEPS = 4;
-    const THREAD_ID = 'ORD:' + (job ? job.id : 1); // job id 
+    const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id 
     let currentStep = 1;
 
     if (!validate(orderData)) { // schema validation of upcoming order
-        logger.error(THREAD_ID +" Order validation error!", validate.errors);
+        logger.error(THREAD_ID + " Order validation error!", validate.errors);
         done(new Error('Error while validating order object',  validate.errors));
 
         if(job) job.progress(currentStep++, TOTAL_STEPS);
@@ -55,19 +55,19 @@ function processSingleOrder(orderData, config, job, done){
     const userId = orderData.user_id
 
     logger.info('> Is order authorized?', isThisAuthOrder)
-    logger.log('> User Id', userId)
+    logger.info('> User Id', userId)
 
     let cartId = orderData.cart_id
     const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId) : new Promise((resolve, reject) => {
         resolve (cartId)
     })
-    logger.log('> Cart Id', cartId)
+    logger.info(THREAD_ID + '> Cart Id', cartId)
 
     const processCart = (result) => {
         cartId = result
 
 
-        logger.log('< Cart Id', cartId)
+        logger.info(THREAD_ID + '< Cart Id', cartId)
 
         // load current cart from the Magento to synchronize elements
         api.cart.pull(null, cartId, null, isThisAuthOrder).then((serverItems) => {
@@ -75,8 +75,8 @@ function processSingleOrder(orderData, config, job, done){
             const clientItems = orderData.products
             const syncPromises = []
             
-            logger.log('> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id }}))
-            logger.log('> ... and serverItems', serverItems)
+            logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id }}))
+            logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
             for (const clientItem of clientItems) {
                 const serverItem = serverItems.find((itm) => {
@@ -84,14 +84,14 @@ function processSingleOrder(orderData, config, job, done){
                 })
             
                 if (!serverItem) {
-                    logger.log('< No server item for ' + clientItem.sku)
+                    logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
                     syncPromises.push(api.cart.update(null, cartId, { // use magento API
                         sku: clientItem.sku,
                         qty: clientItem.qty,
                         quote_id: cartId
                     }, isThisAuthOrder))
                 } else if (serverItem.qty !== clientItem.qty) {
-                    logger.log('< Wrong qty for ' + clientItem.sku, clientItem.qty, serverItem.qty)
+                    logger.info(THREAD_ID + '< Wrong qty for ' + clientItem.sku, clientItem.qty, serverItem.qty)
                     syncPromises.push(api.cart.update(null, cartId, { // use magento API
                         sku: clientItem.sku,
                         qty: clientItem.qty,
@@ -99,7 +99,7 @@ function processSingleOrder(orderData, config, job, done){
                         quote_id: cartId
                     }, isThisAuthOrder))
                 } else {
-                    logger.log('< Server and client items synced for ' + clientItem.sku) // here we need just update local item_id
+                    logger.info(THREAD_ID + '< Server and client items synced for ' + clientItem.sku) // here we need just update local item_id
                 }
             }
         
@@ -109,7 +109,7 @@ function processSingleOrder(orderData, config, job, done){
                 return itm.sku === serverItem.sku
                 })
                 if (!clientItem) {
-                logger.log('< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
+                logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
                 syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart
                     sku: serverItem.sku,
                     item_id: serverItem.item_id
@@ -121,7 +121,7 @@ function processSingleOrder(orderData, config, job, done){
 
             Promise.all(syncPromises).then((results) => {
                 if(job) job.progress(currentStep++, TOTAL_STEPS);
-                logger.log('< Server cart in sync')
+                logger.info(THREAD_ID + '< Server cart in sync')
                 logger.debug(THREAD_ID + results)
 
                 const billingAddr = orderData.addressInformation.billingAddress;
@@ -188,7 +188,7 @@ function processSingleOrder(orderData, config, job, done){
 
 
                 Promise.all(addressPromises).then((results) => {
-                    logger.log('< Addresses assigned', results)
+                    logger.info(THREAD_ID + '< Addresses assigned', results)
                     logger.debug(THREAD_ID + results)
                     
                     if(job) job.progress(currentStep++, TOTAL_STEPS);
@@ -199,7 +199,7 @@ function processSingleOrder(orderData, config, job, done){
                             "method":orderData.addressInformation.payment_method_code
                         }                 
                     }, isThisAuthOrder).then(result => {
-                        logger.log(results)
+                        logger.info(THREAD_ID, results)
                         if(job) job.progress(currentStep++, TOTAL_STEPS);
 
                         logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
@@ -207,16 +207,21 @@ function processSingleOrder(orderData, config, job, done){
                         if(job) job.progress(currentStep++, TOTAL_STEPS);
                         return done(null, { magentoOrderId: result[0], magentoOrderTotals: result[1], transferedAt: new Date() });                    
                     }).catch(err => {
-                        logger.error(err)
+                        logger.error('Error placing an order', err, typeof err)
+                        if (job) job.attempts(6).backoff(  {delay: 30*1000, type:'fixed'} ).save()
+                        return done(new Error('Error placing an order', err));                 
+
                     })
                 }).catch((errors) => {
-                    logger.error(errors)
-                    return done(new Error('Error while adding products', errors));
+                    logger.error('Error while adding addresses', errors)
+                    if (job) job.attempts(3).backoff(  {delay: 60*1000, type:'fixed'} ).save()
+                    return done(new Error('Error while adding addresses', errors));
                 })
                 
 
             }).catch((errors) => {
-                logger.error(errors)
+                logger.error('Error while adding products', errors)
+                if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
                 return done(new Error('Error while adding products', errors));
             })
             
@@ -224,7 +229,7 @@ function processSingleOrder(orderData, config, job, done){
     }
 
     cartIdPrepare.then(processCart).catch((error) => { // cannot create a quote for specific user, so bypass by placing anonymous order
-        logger.error(error)
+        logger.error(THREAD_ID, error)
         logger.info('< Bypassing to anonymous order')
         isThisAuthOrder = false
         
@@ -233,17 +238,17 @@ function processSingleOrder(orderData, config, job, done){
                 processCart(result)
     //            logger.info('< Assigning guest cart with the user')
     //            api.cart.assign(cartId, userId).then((subres) =>{
-    //                console.log(subres)
+    //                console.info(subres)
     //                processCart(result)
     //           }).catch((err) => {
     //               logger.error(err)
     //           })
             }).catch(error => { 
-                console.log(error)
+                logger.info(error)
                 return done(new Error('Error while adding products', error));
             }) // TODO: assign the guest cart with user at last?
         } else {
-            logger.info('< Using cartId provided with the order', cartId)
+            logger.info(THREAD_ID + '< Using cartId provided with the order', cartId)
             processCart(cartId)
         }
     })

@@ -1,3 +1,7 @@
+function isNumeric(val) {
+    return Number(parseFloat(val)) === val;
+}
+
 module.exports = function (restClient) {
     var module = {};
     
@@ -17,7 +21,7 @@ module.exports = function (restClient) {
         if (adminRequest) {
             return restClient.post('/carts/' + cartId + '/items/', { cartItem: cartItem });
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.post('/carts/mine/items', { cartItem: cartItem }, customerToken);
             } else 
             {
@@ -29,7 +33,7 @@ module.exports = function (restClient) {
         if (adminRequest) {
             return restClient.delete('/carts/' + cartId + '/items/' + cartItem.item_id);
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.delete('/carts/mine/items/' + cartItem.item_id, customerToken);
             } else 
             {
@@ -38,10 +42,11 @@ module.exports = function (restClient) {
         }
     }     
     module.pull = function (customerToken, cartId, params, adminRequest = false) {
+        console.log(parseInt(cartId))
         if (adminRequest) {
             return restClient.get('/carts/' + cartId + '/items/');
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.get('/carts/mine/items', customerToken);
             } else 
             {
@@ -54,7 +59,7 @@ module.exports = function (restClient) {
         if (adminRequest) {
             return restClient.post('/carts/' + cartId + '/billing-address', body);
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.post('/carts/mine/billing-address', body, customerToken);
             } else 
             {
@@ -67,7 +72,7 @@ module.exports = function (restClient) {
         if (adminRequest) {
             return restClient.post('/carts/' + cartId + '/shipping-information', body);
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.post('/carts/mine/shipping-information', body, customerToken);
             } else 
             {
@@ -80,7 +85,7 @@ module.exports = function (restClient) {
         if (adminRequest) {
             return restClient.put('/carts/' + cartId + '/order', body);
         } else {
-            if (customerToken && parseInt(cartId) > 0) {
+            if (customerToken && isNumeric(cartId)) {
                 return restClient.put('/carts/mine/order', body, customerToken);
             } else 
             {
