@@ -58,9 +58,9 @@ function processSingleOrder(orderData, config, job, done){
     logger.info('> User Id', userId)
 
     let cartId = orderData.cart_id
-    const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId) : new Promise((resolve, reject) => {
+    const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId) :  ( cartId ? new Promise((resolve, reject) => {
         resolve (cartId)
-    })
+    }) : api.cart.create(null))
     logger.info(THREAD_ID + '> Cart Id', cartId)
 
     const processCart = (result) => {
