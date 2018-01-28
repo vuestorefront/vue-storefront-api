@@ -1,5 +1,5 @@
 function isNumeric(val) {
-    return Number(parseFloat(val)) === val;
+    return Number(parseFloat(val)).toString() === val;
 }
 
 module.exports = function (restClient) {
@@ -42,7 +42,6 @@ module.exports = function (restClient) {
         }
     }     
     module.pull = function (customerToken, cartId, params, adminRequest = false) {
-        console.log(parseInt(cartId))
         if (adminRequest) {
             return restClient.get('/carts/' + cartId + '/items/');
         } else {
