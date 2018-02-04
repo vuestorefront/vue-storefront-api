@@ -6,6 +6,7 @@ import catalog from './catalog'
 import user from './user'
 import stock from './stock'
 import cart from './cart'
+import product from './product'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -13,17 +14,20 @@ export default ({ config, db }) => {
 	// mount the catalog resource
 	api.use('/catalog', catalog({ config, db }) )
 
-	// mount the order reosource
+	// mount the order resource
 	api.use('/order', order({ config, db }));
 	
-	// mount the user reosource
+	// mount the user resource
 	api.use('/user', user({ config, db }));
 
-	// mount the stock reosource
+	// mount the stock resource
 	api.use('/stock', stock({ config, db }));
 
-	// mount the cart reosource
+	// mount the cart resource
 	api.use('/cart', cart({ config, db }));
+	
+	// mount the product resource
+	api.use('/product', product({ config, db }))
 	
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
