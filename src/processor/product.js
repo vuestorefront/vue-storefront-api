@@ -32,8 +32,7 @@ class ProductProcessor {
                 if (!item._source)
                     return item
 
-//                item._source.sgn = hmac.sign({ sku: item._source.sku, price: item._source.price, priceInclTax: item._source.priceInclTax, special_price: item._source.special_price, special_priceInclTax:  item._source.special_priceInclTax }, this._config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
-                let sgnSrc = (this._config.tax.calculateServerSide === true) ? (item) => { return { sku: item.sku, price: item.price, priceInclTax: item.priceInclTax, special_price: item.special_price, special_priceInclTax:  item.special_priceInclTax } } : (item) => { return { sku: item.sku, price: item.price } }
+                let sgnSrc = (this._config.tax.calculateServerSide === true) ? (item) => { return { id: item.id,  priceInclTax: item.priceInclTax,  } } : (item) => { return { id: item.id, price: item.price } }
                 item._source.sgn = hmac.sign(sgnSrc(item._source), this._config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
                                 
                 if (item._source.configurable_children) {
