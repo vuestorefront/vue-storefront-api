@@ -8,7 +8,8 @@
 	"tax": {
 		"defaultCountry": "PL",
 		"defaultRegion": "",
-		"calculateServerSide": true
+		"calculateServerSide": true,
+		"alwaysSyncPlatformPricesOver": false
 	  },  
 	"esUser": "",
 	"esPassword": "",

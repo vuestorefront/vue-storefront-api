@@ -32,7 +32,8 @@ class ProductProcessor {
                 if (!item._source)
                     return item
 
-                let sgnSrc = (this._config.tax.calculateServerSide === true) ? (item) => { return { id: item.id,  priceInclTax: item.priceInclTax,  } } : (item) => { return { id: item.id, price: item.price } }
+                const config = this._config
+                let sgnSrc = (this._config.tax.calculateServerSide === true) ? (item) => { return Object.assign({ priceInclTax: item.priceInclTax }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku })} : (item) => { return Object.assign({ price: item.price }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku })  }
                 item._source.sgn = hmac.sign(sgnSrc(item._source), this._config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
                                 
                 if (item._source.configurable_children) {
