@@ -1,6 +1,7 @@
 import PlatformFactory from '../platform/factory'
 const jwa = require('jwa');
 const hmac = jwa('HS256');
+import { sgnSrc } from '../lib/util'
 
 class ProductProcessor {
     constructor(config, entityType, indexName){
@@ -33,13 +34,14 @@ class ProductProcessor {
                     return item
 
                 const config = this._config
-                let sgnSrc = (this._config.tax.calculateServerSide === true) ? (item) => { return Object.assign({ priceInclTax: item.priceInclTax }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku })} : (item) => { return Object.assign({ price: item.price }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku })  }
-                item._source.sgn = hmac.sign(sgnSrc(item._source), this._config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
+                let sgnObj = (this._config.tax.calculateServerSide === true) ? { priceInclTax: item._source.priceInclTax } : { price: item._source.price } 
+                item._source.sgn = hmac.sign(sgnSrc(sgnObj, item), this._config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
                                 
                 if (item._source.configurable_children) {
                     item._source.configurable_children = item._source.configurable_children.map((subItem) => {
                         if (subItem) {
-                            subItem.sgn = hmac.sign(sgnSrc(subItem), this._config.objHashSecret); 
+                            let sgnObj = (this._config.tax.calculateServerSide === true) ? { priceInclTax: subItem.priceInclTax } : { price: subItem.price } 
+                            subItem.sgn = hmac.sign(sgnSrc(sgnObj, subItem), this._config.objHashSecret); 
                         }
 
                         return subItem

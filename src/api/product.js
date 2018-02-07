@@ -1,4 +1,4 @@
-import { apiStatus } from '../lib/util';
+import { apiStatus, sgnSrc } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 const jwa = require('jwa');
@@ -8,7 +8,6 @@ const Ajv = require('ajv'); // json validator
 
 export default ({ config, db }) => {
 
-	let sgnSrc = (config.tax.calculateServerSide === true) ? (item) => { return Object.assign({  priceInclTax: item.price_info.final_price }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku }) } : (item) => { return Object.assign({  price: item.extension_attributes.tax_adjustments.final_price }, config.tax.alwaysSyncPlatformPricesOver ? { id: item.id } : { sku: item.sku }) }
 	let productApi = Router();
 	
 	const _getProxy = () => {
@@ -44,9 +43,16 @@ export default ({ config, db }) => {
 		if (!req.query.skus)
 			return apiStatus(res, 'skus parameter is required', 500);
 
-		productProxy.renderList(req.query.skus.split(',')).then((result) => {
+		productProxy.renderList(req.query.skus.split(','), req.query.currencyCode).then((result) => {
 			result.items = result.items.map((item) => {
-				item.sgn = hmac.sign(sgnSrc(item), config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
+				let sgnObj = item
+				if (config.tax.calculateServerSide === true) {
+					sgnObj = {  priceInclTax: item.price_info.final_price }
+				} else {
+					sgnObj = {  price: item.price_info.extension_attributes.tax_adjustments.final_price }
+				}
+							
+				item.sgn = hmac.sign(sgnSrc(sgnObj, item), config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
 				return item
 			})
 			apiStatus(res, result, 200);

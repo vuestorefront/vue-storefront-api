@@ -8,9 +8,9 @@ module.exports = function (restClient) {
         var endpointUrl = util.format('/products?%s', query);
         return restClient.get(endpointUrl);
     }
-    module.renderList = function (searchCriteria) {
+    module.renderList = function (searchCriteria, currencyCode = 'USD') {
         var query = 'searchCriteria=' + searchCriteria;
-        var endpointUrl = util.format('/products-render-info?%s&storeId=1&currencyCode=USD', query);
+        var endpointUrl = util.format('/products-render-info?%s&storeId=1&currencyCode=' + currencyCode, query);
         return restClient.get(endpointUrl);
     }
     module.create = function (productAttributes) {

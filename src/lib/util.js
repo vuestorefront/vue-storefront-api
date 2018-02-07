@@ -1,4 +1,4 @@
-
+import config from 'config';
 /**	Creates a callback that proxies node callback style arguments to an Express Response object.
  *	@param {express.Response} res	Express HTTP Response
  *	@param {number} [status=200]	Status code to send on success
@@ -17,6 +17,16 @@ export function toRes(res, status=200) {
 		}
 		res.status(status).json(thing);
 	};
+}
+
+export function sgnSrc (sgnObj, item) {
+	if (config.tax.alwaysSyncPlatformPricesOver) {
+      sgnObj.id = item.id 
+	} else {
+		sgnObj.sku = item.sku
+	}
+	// console.log(sgnObj)
+	return sgnObj
 }
 
 

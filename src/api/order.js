@@ -26,7 +26,13 @@ export default ({ config, db }) => resource({
 		}				
 
 		for (let product of req.body.products) {
-			let key = config.tax.calculateServerSide ? { id: product.id, priceInclTax: product.priceInclTax } : { id: product.id, price: product.special_price ? product.originalPrice : product.price }
+			let key = config.tax.calculateServerSide ? { priceInclTax: product.priceInclTax } : {  price: product.price }
+			if (config.tax.alwaysSyncPlatformPricesOver) {
+				key.id = product.id
+			} else {
+				key.sku = product.sku
+			}
+			// console.log(key)
 			
 			if (!hmac.verify(key, product.sgn, config.objHashSecret)) {
 				console.error('Invalid hash for ' + product.sku + ': ' + product.sgn)
