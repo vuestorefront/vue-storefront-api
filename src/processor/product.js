@@ -16,9 +16,10 @@ class ProductProcessor {
         const processorChain = []
 
         const platform = this._config.platform
-		const factory = new PlatformFactory(this._config)
-		const taxProcessor = factory.getAdapter(platform, 'tax', this._indexName)
-        
+        const factory = new PlatformFactory(this._config)
+        const taxCountry = this._config.tax.defaultCountry
+        const taxProcessor = factory.getAdapter(platform, 'tax', this._indexName, taxCountry)
+
         processorChain.push(taxProcessor.process(items))
 
         return Promise.all(processorChain).then(((resultSet) => {

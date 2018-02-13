@@ -1,4 +1,4 @@
-export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '') {
+export function calculateProductTax (product, taxClasses, taxCountry, taxRegion = '') {
   let rateFound = false
   let taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
   if (taxClass) {
