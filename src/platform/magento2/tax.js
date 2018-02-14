@@ -4,7 +4,7 @@ const es = require('elasticsearch')
 const bodybuilder = require('bodybuilder')
 
 class TaxProxy extends AbstractTaxProxy {
-    constructor (config, indexName, taxCountry = 'PL', taxRegion = ''){
+    constructor (config, indexName, taxCountry, taxRegion = ''){
         super(config)
         this._indexName = indexName
         this._taxCountry = taxCountry
