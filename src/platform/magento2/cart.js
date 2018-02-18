@@ -22,7 +22,9 @@ class CartProxy extends AbstractCartProxy {
     pull (customerToken, cartId,  params) { 
         return this.api.cart.pull(customerToken, cartId, params)
     }        
-    
+    totals (customerToken, cartId,  params) { 
+        return this.api.cart.totals(customerToken, cartId, params)
+    }         
 }
 
 module.exports = CartProxy

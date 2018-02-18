@@ -78,10 +78,7 @@ export default ({ config, db }) => {
 	/** 
 	 * GET pull the whole cart as it's currently se server side
 	 *   req.query.token - user token
-	 *   body.cartItem: {
-	 *	  sku: orderItem.sku, 
-	 *	  qty: orderItem.qty, 
-	 *	 quoteId: cartKey}
+	 *   req.query.cartId - cartId
 	 */
 	cartApi.get('/pull', (req, res) => {
 		const cartProxy = _getProxy()
@@ -91,6 +88,20 @@ export default ({ config, db }) => {
 			apiStatus(res, err, 500);
 		})			
 	})		
+
+	/** 
+	 * GET totals the cart totals
+	 *   req.query.token - user token
+	 *   req.query.cartId - cartId
+	 */
+	cartApi.get('/totals', (req, res) => {
+		const cartProxy = _getProxy()
+		cartProxy.totals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})			
+	})			
 
 	return cartApi
 }

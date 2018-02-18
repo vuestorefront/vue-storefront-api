@@ -53,6 +53,18 @@ module.exports = function (restClient) {
             }
         }
     }              
+    module.totals = function (customerToken, cartId, params, adminRequest = false) {
+        if (adminRequest) {
+            return restClient.get('/carts/' + cartId + '/totals/');
+        } else {
+            if (customerToken && isNumeric(cartId)) {
+                return restClient.get('/carts/mine/totals', customerToken);
+            } else 
+            {
+                return restClient.get('/guest-carts/' + cartId + '/totals/');
+            }
+        }
+    }              
     
     module.billingAddress = function (customerToken, cartId, body, adminRequest = false) {
         if (adminRequest) {
