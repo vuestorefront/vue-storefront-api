@@ -18,7 +18,10 @@ class AbstractCartProxy  {
     }        
 
     pull (customerToken, cartId, params) { 
-    }         
+    }
+    
+    totals (customerToken, cartId, params) { 
+    }            
 }
 
 module.exports = AbstractCartProxy
