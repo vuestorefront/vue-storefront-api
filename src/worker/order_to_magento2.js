@@ -181,7 +181,8 @@ function processSingleOrder(orderData, config, job, done){
                             "vatId": billingAddr.vat_id
                         },
                         "shippingMethodCode": orderData.addressInformation.shipping_method_code,
-                        "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code
+                        "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
+                        "extensionAttributes": orderData.addressInformation.shippingExtraFields
                     }
                 
                 }, isThisAuthOrder))            
