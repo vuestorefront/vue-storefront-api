@@ -112,6 +112,34 @@ module.exports = function (restClient) {
                 storeId: storeId
             }
         )
-    }          
+    }    
+
+    module.shippingMethods = function (customerToken, cartId, address) {
+        if (customerToken && isNumeric(cartId)) {
+            return restClient.post('/carts/mine/estimate-shipping-methods', { address: address }, customerToken)
+        } else 
+        {
+            return restClient.post('/guest-carts/' + cartId + '/estimate-shipping-methods', { address: address })
+        }
+    }
+
+    module.paymentMethods = function (customerToken, cartId) {
+        if (customerToken && isNumeric(cartId)) {
+            return restClient.get('/carts/mine/payment-methods', customerToken)
+        } else 
+        {
+            return restClient.get('/guest-carts/' + cartId + '/payment-methods')
+        }
+    }
+
+    module.collectTotals = function (customerToken, cartId, shippingMethod) {
+        if (customerToken && isNumeric(cartId)) {
+            return restClient.put('/carts/mine/collect-totals', shippingMethod, customerToken)
+        } else
+        {
+            return restClient.put('/guest-carts/' + cartId + '/collect-totals', shippingMethod)
+        }
+    }
+
     return module;
 }
