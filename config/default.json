@@ -9,7 +9,8 @@
 		"defaultCountry": "PL",
 		"defaultRegion": "",
 		"calculateServerSide": true,
-		"alwaysSyncPlatformPricesOver": false
+		"alwaysSyncPlatformPricesOver": false,
+		"usePlatformTotals": false
 	  },  
 	"esUser": "",
 	"esPassword": "",
