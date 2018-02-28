@@ -10,6 +10,7 @@ module.exports.up = next => {
         type: "product",
         body: {
           properties: {
+            sku: { type: "string", "index" : "not_analyzed" },
             size: { type: "integer" },
             size_options: { type: "integer" },
             price: { type: "float" },
@@ -45,7 +46,8 @@ module.exports.up = next => {
             name: { type: "text" },
             configurable_children: {
               properties: {
-                price: { type: "float" }
+                price: { type: "float" },
+                sku: { type: "string", "index" : "not_analyzed" }
               }
             },
             configurable_options: {
