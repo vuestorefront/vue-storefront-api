@@ -93,7 +93,7 @@ export default ({ config, db }) => {
 
 		if (!validate(req.body)) {
 			console.dir(validate.errors);
-			apiStatus(res, validate.errors, 200);
+			apiStatus(res, validate.errors, 500);
 			return;
 		}
 
