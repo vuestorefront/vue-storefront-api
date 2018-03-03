@@ -87,7 +87,9 @@ class AbstractUserProxy {
     me (requestToken) { 
         throw new Error('UserProxy::me must be implemented for specific platform')
     }
-
+    orderHistory (requestToken) { 
+        throw new Error('UserProxy::orderHistory must be implemented for specific platform')
+    }
     resetPassword (emailData) { 
         throw new Error('UserProxy::resetPassword must be implemented for specific platform')
     }            
