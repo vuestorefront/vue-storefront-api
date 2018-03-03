@@ -1,3 +1,4 @@
+var util = require('util');
 module.exports = function (restClient) {
     var module = {};
     
@@ -14,7 +15,16 @@ module.exports = function (restClient) {
         
         return restClient.get('/customers/me', requestToken)
     }        
-
+    module.orderHistory = function (requestToken) {
+        
+        return restClient.get('/customers/me', requestToken).then((result) => {
+            var query = 'searchCriteria=&searchCriteria[filter_groups][0][filters][0][field]=customer_email&' +
+            'searchCriteria[filter_groups][0][filters][0][value]=' + encodeURIComponent(result.email) + '&' +
+            'searchCriteria[filter_groups][0][filters][0][condition_type]=eq';
+            var endpointUrl = util.format('/orders?%s', query);
+            return restClient.get(endpointUrl);            
+        })
+    }        
     module.resetPassword = function (emailData) {
         
         return restClient.put('/customers/password',emailData)

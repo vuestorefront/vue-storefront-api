@@ -19,7 +19,9 @@ class UserProxy extends AbstractUserProxy {
     me (requestToken) { 
         return this.api.customers.me(requestToken)
     }        
-    
+    orderHistory (requestToken) { 
+        return this.api.customers.orderHistory(requestToken)
+    }         
     resetPassword (emailData) { 
         return this.api.customers.resetPassword(emailData)
     }       
