@@ -44,8 +44,8 @@ export default ({ config, db }) => resource({
 		}
 
 		let queue = kue.createQueue(config.kue);
-		queue.createJob('order', { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */).save();
-		apiStatus(res, "Order acknowledged!", 200);
+		const job = queue.createJob('order', { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */).save();
+		apiStatus(res, job.id, 200);
 	},
 
 	
