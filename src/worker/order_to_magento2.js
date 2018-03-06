@@ -20,6 +20,12 @@ let numCPUs = require('os').cpus().length;
 const Magento2Client = require('../platform/magento2/magento2-rest-client').Magento2Client;
 const api = Magento2Client(config.magento2.api);
 
+const Redis = require('redis');
+let redisClient = Redis.createClient(config.redis); // redis client
+redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
+  redisClient = Redis.createClient(config.redis); // redis client
+});
+
 const CommandRouter = require('command-router');
 const cli = CommandRouter();
 cli.option({
@@ -54,6 +60,7 @@ function processSingleOrder(orderData, config, job, done){
     let isThisAuthOrder = parseInt(orderData.user_id) > 0
     const userId = orderData.user_id
 
+    logger.info('> Order Id', orderData.order_id)
     logger.info('> Is order authorized?', isThisAuthOrder)
     logger.info('> User Id', userId)
 
@@ -205,8 +212,16 @@ function processSingleOrder(orderData, config, job, done){
 
                         logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
                         logger.debug(THREAD_ID + result)
+                        redisClient.set("order$$id$$" + orderData.order_id, JSON.stringify(
+                        {
+                           platform_order_id: result,
+                           transmited: true,
+                           transmited_at: new Date()
+                        }));
+                        redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
+
                         if(job) job.progress(currentStep++, TOTAL_STEPS);
-                        return done(null, { magentoOrderId: result[0], magentoOrderTotals: result[1], transferedAt: new Date() });                    
+                        return done(null, { magentoOrderId: result, transferedAt: new Date() });                    
                     }).catch(err => {
                         logger.error('Error placing an order', err, typeof err)
                         if (job) job.attempts(6).backoff(  {delay: 30*1000, type:'fixed'} ).save()
