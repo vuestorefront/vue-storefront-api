@@ -55,6 +55,54 @@ export default ({ config, db }) => {
 	})	
 
 	/** 
+	 * POST apply the coupon code
+	 *   req.query.token - user token
+	 *   req.query.cartId - cart Ids
+	 *   req.query.coupon - coupon
+	 */
+	cartApi.post('/apply-coupon', (req, res) => {
+		const cartProxy = _getProxy()
+		if (!req.query.coupon)
+		{
+			return apiStatus(res, 'No coupon code provided', 500)
+			
+		}
+		cartProxy.applyCoupon(req.query.token, req.query.cartId ? req.query.cartId : null, req.query.coupon).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})			
+	})		
+
+	/** 
+	 * POST remove the coupon code
+	 *   req.query.token - user token
+	 *   req.query.cartId - cart Ids
+	 */
+	cartApi.post('/delete-coupon', (req, res) => {
+		const cartProxy = _getProxy()
+		cartProxy.deleteCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})			
+	})		
+
+	/** 
+	 * GET get the applied coupon code
+	 *   req.query.token - user token
+	 *   req.query.cartId - cart Ids
+	 */
+	cartApi.get('/coupon', (req, res) => {
+		const cartProxy = _getProxy()
+		cartProxy.getCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})			
+	})		
+
+	/** 
 	 * POST delete the cart item
 	 *   req.query.token - user token
 	 *   body.cartItem: {
