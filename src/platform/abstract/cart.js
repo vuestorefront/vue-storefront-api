@@ -14,6 +14,15 @@ class AbstractCartProxy  {
     update (customerToken, cartId, cartItem) { 
     }       
 
+    applyCoupon (customerToken, cartId, coupon) { 
+    }           
+    
+    deleteCoupon (customerToken, cartId) { 
+    }        
+
+    getCoupon (customerToken, cartId) { 
+    }
+    
     delete (customerToken, cartId, cartItem) { 
     }        
 

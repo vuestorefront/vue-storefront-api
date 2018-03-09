@@ -29,6 +29,43 @@ module.exports = function (restClient) {
             }
         }
     }    
+
+    module.applyCoupon = function (customerToken, cartId, coupon, adminRequest = false) {
+        if (adminRequest) {
+            return restClient.put('/carts/' + cartId + '/coupons/' + coupon);
+        } else {
+            if (customerToken && isNumeric(cartId)) {
+                return restClient.put('/carts/mine/coupons/' + coupon, null, customerToken);
+            } else 
+            {
+                return restClient.put('/guest-carts/' + cartId + '/coupons/' + coupon);
+            }
+        }
+    }  
+    module.deleteCoupon = function (customerToken, cartId, adminRequest = false) {
+        if (adminRequest) {
+            return restClient.delete('/carts/' + cartId + '/coupons');
+        } else {
+            if (customerToken && isNumeric(cartId)) {
+                return restClient.delete('/carts/mine/coupons', customerToken);
+            } else 
+            {
+                return restClient.delete('/guest-carts/' + cartId + '/coupons');
+            }
+        }
+    }      
+    module.getCoupon = function (customerToken, cartId, adminRequest = false) {
+        if (adminRequest) {
+            return restClient.get('/carts/' + cartId + '/coupons');
+        } else {
+            if (customerToken && isNumeric(cartId)) {
+                return restClient.get('/carts/mine/coupons', customerToken);
+            } else 
+            {
+                return restClient.get('/guest-carts/' + cartId + '/coupons');
+            }
+        }
+    }   
     module.delete = function (customerToken, cartId, cartItem, adminRequest = false) {
         if (adminRequest) {
             return restClient.delete('/carts/' + cartId + '/items/' + cartItem.item_id);
