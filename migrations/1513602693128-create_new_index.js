@@ -1,7 +1,7 @@
 'use strict'
 
-let config = require('config')
-let common = require('./.common')
+import config from 'config'
+import common from './.common'
 import { createIndex } from '../src/lib/elastic';
 
 module.exports.up = next => {

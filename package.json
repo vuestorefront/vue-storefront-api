@@ -7,7 +7,7 @@
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
-    "db": "babel-node scripts/db.js",
+    "db": "babel-node --plugins transform-es2015-modules-commonjs scripts/db.js",
     "restore": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog_temp",
     "restore2main": "node node_modules/elasticdump/bin/elasticdump --input=var/catalog.json --output=http://localhost:9200/vue_storefront_catalog",
     "dump": "node node_modules/elasticdump/bin/elasticdump --output=var/catalog.json --input=http://localhost:9200/vue_storefront_catalog",

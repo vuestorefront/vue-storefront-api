@@ -1,7 +1,7 @@
 'use strict'
 
-const config = require('config')
-const common = require('./.common')
+import config from 'config'
+import common from './.common'
 import { putMappings } from '../src/lib/elastic'
 
 module.exports.up = next => {
