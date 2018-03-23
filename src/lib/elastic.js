@@ -1,6 +1,6 @@
-export function putAlias(db, originalName, aliasName, next) {
+function putAlias(db, originalName, aliasName, next) {
     let step2 = () => { 
-        db.putAlias({ index: originalName, name: aliasName }).then(result=>{
+        db.indices.putAlias({ index: originalName, name: aliasName }).then(result=>{
             console.log('Index alias created', result)
         }).then(next).catch(err => {
             console.log(err.message)
@@ -19,7 +19,7 @@ export function putAlias(db, originalName, aliasName, next) {
     })      
 }
 
-export function deleteIndex(db, indexName, next) {
+function deleteIndex(db, indexName, next) {
     db.indices.delete({
         "index": indexName
       }).then((res) => {
@@ -30,7 +30,7 @@ export function deleteIndex(db, indexName, next) {
         next(err)
       })    
 }
-export function reIndex(db, fromIndexName, toIndexName, next) {
+function reIndex(db, fromIndexName, toIndexName, next) {
     db.reindex({
       waitForCompletion: true,
       body: {
@@ -50,7 +50,7 @@ export function reIndex(db, fromIndexName, toIndexName, next) {
     })    
 }
 
-export function createIndex(db, indexName, next) {
+function createIndex(db, indexName, next) {
 
     const step2 = () => {
 
@@ -94,7 +94,7 @@ export function createIndex(db, indexName, next) {
     })      
 }
 
-export function putMappings(db, indexName, next) {
+function putMappings(db, indexName, next) {
     db.indices.putMapping({
         index: indexName,
         type: "product",
@@ -214,4 +214,12 @@ export function putMappings(db, indexName, next) {
             console.error(err1)
             next(err1)
         })    
+  }
+
+  module.exports = {
+    putMappings,
+    putAlias,
+    createIndex,
+    deleteIndex,
+    reIndex
   }

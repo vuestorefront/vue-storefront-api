@@ -1,8 +1,8 @@
 'use strict'
 
-import { reIndex } from '../src/lib/elastic'
-import config from 'config'
-import common from './.common'
+const config = require('config')
+const common = require('./.common')
+const reIndex = require('../src/lib/elastic').reIndex
 
 module.exports.up = next => {
   let finalIndexVersion = config.esIndexes[0]

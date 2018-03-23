@@ -1,8 +1,8 @@
 'use strict'
 
-import { deleteIndex } from '../src/lib/elastic';
-import config from 'config'
-import common from './.common'
+const deleteIndex = require('../src/lib/elastic').deleteIndex
+const config = require('config')
+const common = require('./.common')
 
 module.exports.up = next => {
   let tempIndexVersion = config.esIndexes[0] + '_temp'

@@ -1,8 +1,8 @@
 'use strict'
 
-import config from 'config'
-import common from './.common'
-import { createIndex } from '../src/lib/elastic';
+const config = require('config')
+const common = require('./.common')
+const createIndex = require('../src/lib/elastic').createIndex
 
 module.exports.up = next => {
   createIndex(common.db, config.esIndexes[0], next)
