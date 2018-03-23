@@ -53,7 +53,7 @@ cli.command('rebuild',  () => { // TODO: add parallel processing
 cli.command('new',  () => { // TODO: add parallel processing
     console.log('** Hello! I am going to create NE ES index')
     const indexName = cli.options.indexName
-    createIndex(common.db, indexName, function (err) {
+    es.createIndex(common.db, indexName, function (err) {
         if (err) {
             console.log(err)
         }
