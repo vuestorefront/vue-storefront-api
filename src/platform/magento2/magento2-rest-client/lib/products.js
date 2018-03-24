@@ -10,7 +10,7 @@ module.exports = function (restClient) {
     }
     module.renderList = function (searchCriteria, currencyCode = 'USD') {
         var query = 'searchCriteria=' + searchCriteria;
-        var endpointUrl = util.format('/products-render-info?%s&storeId=1&currencyCode=' + currencyCode, query);
+        var endpointUrl = util.format('/products-render-info?%s&storeId=1&currencyCode=' + encodeURIComponent(currencyCode), query);
         return restClient.get(endpointUrl);
     }
     module.create = function (productAttributes) {
@@ -18,12 +18,12 @@ module.exports = function (restClient) {
     }
 
     module.update = function (productSku, productAttributes) {
-        var endpointUrl = util.format('/products/%s', productSku);
+        var endpointUrl = util.format('/products/%s', encodeURIComponent(productSku));
         return restClient.put(endpointUrl, productAttributes);
     }
 
     module.delete = function (productSku) {
-        var endpointUrl = util.format('/products/%s', productSku);
+        var endpointUrl = util.format('/products/%s', encodeURIComponent(productSku));
         return restClient.delete(endpointUrl);
     }
 
