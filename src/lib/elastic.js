@@ -100,7 +100,7 @@ function putMappings(db, indexName, next) {
         type: "product",
         body: {
             properties: {
-                sku: { type: "string", "index" : "not_analyzed" },
+                sku: { type: "keyword" },
                 size: { type: "integer" },
                 size_options: { type: "integer" },
                 price: { type: "float" },
@@ -108,7 +108,7 @@ function putMappings(db, indexName, next) {
                 special_price: { type: "float" },
                 color: { type: "integer" },
                 color_options: { type: "integer" },
-                pattern: { type: "string" },
+                pattern: { type: "text" },
                 id: { type: "long" },
                 status: { type: "integer" },
                 weight: { type: "integer" },
@@ -139,7 +139,7 @@ function putMappings(db, indexName, next) {
                     properties: {
                         has_options: { type: "boolean" },
                         price: { type: "float" },
-                        sku: { type: "string", "index" : "not_analyzed" }
+                        sku: { type: "keyword" }
                     }
                 },
                 configurable_options: {
@@ -155,7 +155,7 @@ function putMappings(db, indexName, next) {
                                 label: { type: "text"},
                                 frontend_label: { type: "text"},                           
                                 store_label: { type: "text"},
-                                value_index:  { type: "string", "index" : "not_analyzed" }                          
+                                value_index:  { type: "keyword" }                          
                             }
                         }
                     }
@@ -196,7 +196,7 @@ function putMappings(db, indexName, next) {
   
                         options: {
                         properties: {
-                            value:  { type: "string", "index" : "not_analyzed" }                          
+                            value:  { type: "text", "index" : "not_analyzed" }                          
                         }
                         }
                     }
