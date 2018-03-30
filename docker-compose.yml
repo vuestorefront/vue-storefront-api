@@ -34,7 +34,16 @@ services:
       - esdat2:/usr/share/elasticsearch/data
     networks:
       - esnet
-  
+
+  kibana:
+    image: kibana:5.5
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://es1:9200
+    networks:
+        - esnet
+
   redis:  
     image: redis
 
