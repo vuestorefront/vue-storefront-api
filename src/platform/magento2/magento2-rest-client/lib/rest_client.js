@@ -33,7 +33,8 @@ module.exports.RestClient = function (options) {
             headers: request_token ? { 'Authorization': 'Bearer ' + request_token } : oauth.toHeader(oauth.authorize(request_data, token)),
             json: true,
             body: request_data.body,
-        });        
+        });
+        /* eslint no-undef: off*/        
         return new Promise(function (resolve, reject) {
             request({
                 url: request_data.url,
