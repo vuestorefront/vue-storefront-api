@@ -20,7 +20,7 @@ module.exports = function (restClient) {
         return restClient.get('/customers/me', requestToken).then((result) => {
             var query = 'searchCriteria=&searchCriteria[filter_groups][0][filters][0][field]=customer_email&' +
             'searchCriteria[filter_groups][0][filters][0][value]=' + encodeURIComponent(result.email) + '&' +
-            'searchCriteria[filter_groups][0][filters][0][condition_type]=eq';
+            'searchCriteria[filter_groups][0][filters][0][condition_type]=eq&searchCriteria[pageSize]=20';
             var endpointUrl = util.format('/orders?%s', query);
             return restClient.get(endpointUrl);            
         })
