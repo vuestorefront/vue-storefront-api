@@ -18,10 +18,13 @@ Besides a big improvement for the shopping experience, we also want to create a 
 ## Installation
 
 **Warm up ElasticSearch and Redis**
+
 `docker-compose up`
+
 `npm run migrate` to execute all data migrations up to date
 
 **Import product catalog**
+
 Product catalog is imported using [elasticdump](https://www.npmjs.com/package/elasticdump), which is installed automatically via project dependency. The default ElasticSearch index name is: `vue_storefront_catalog`
 
 `npm run restore`
@@ -31,9 +34,18 @@ It restores JSON documents stored in `./var/catalog.json`. The oposite command -
 `npm run dump`
 
 **Run development server**
+
 Code autoreload is enabled along with eslint, babel support.
 
 `PORT=8080 npm run dev`
+
+**Access ElasticSearch data with Kibana**
+
+A Kibana service is available to explore, search and visualize indexed data at the following url:
+
+`http://localhost:5601/`
+
+At first access it will ask to specify an index pattern, insert `vue_storefront*`
 
 ## API access
 Catalog API calls are compliant with ElasticSearch (it works like a filtering proxy to ES). More on ES queries: [ElasticSearch queries tutorial](http://okfnlabs.org/blog/2013/07/01/elasticsearch-query-tutorial.html)

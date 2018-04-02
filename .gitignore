@@ -3,6 +3,7 @@ node_modules/
 dist/
 npm-debug.log
 .vscode/
+.idea/
 yarn.lock
 api_start.sh
 api_test.sh
