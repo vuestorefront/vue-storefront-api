@@ -11,7 +11,7 @@
 		"calculateServerSide": true,
 		"alwaysSyncPlatformPricesOver": false,
 		"usePlatformTotals": true
-	  },  
+	  },
 	"esUser": "",
 	"esPassword": "",
 	"bodyLimit": "100kb",
@@ -21,7 +21,7 @@
 	"kue": {},
 	"redis": {
 		"host": "127.0.0.1",
-		"port": 6379		
+		"port": 6379
 	},
 
 	"platform": "magento2",
@@ -34,7 +34,7 @@
 			"apiUrl": "https://us3.api.mailchimp.com/3.0"
 		}
 	},
-	
+
 	"magento2": {
 		"url": "http://magento2.demo-1.xyz.com",
 		"imgUrl": "http://localhost:8080/media/catalog/product",
@@ -47,7 +47,7 @@
 			"consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
 			"consumerSecret": "u9q4fcobv7vfx9td80oupa6uhexc27rb",
 			"accessToken": "040xx3qy7s0j28o3q0exrfop579cy20m",
-			"accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"		
+			"accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
 		}
 	},
 	"imageable": {
@@ -65,6 +65,7 @@
 		},
 		"keepDownloads": true,
 		"maxDownloadCacheSize": 1000,
-		"tmpPathRoot": "/tmp" 
+		"tmpPathRoot": "/tmp",
+    "debug": false
 	}
 }
