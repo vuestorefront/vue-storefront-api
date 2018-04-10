@@ -19,7 +19,7 @@ var RequestHandler = module.exports = function(config, options) {
 RequestHandler.Stats = require("./stats")
 
 // will get called via connect
-RequestHandler.prototype.handle = function(req, res, next) {  
+RequestHandler.prototype.handle = function(req, res, next) {
   req.socket.setMaxListeners(this.config.maxListeners || 50)
 
   var start            = Date.now()
@@ -27,7 +27,7 @@ RequestHandler.prototype.handle = function(req, res, next) {
     , self             = this
 
   this.logger.log('Received request')
-  
+
   if (this.isImageProcessUrl(req) && this.isImageSourceHostAllowed(req)) {
     this.logger.log('Image processing request')
     if(this.options.before) beforeHookResult = this.options.before(this.stats)
@@ -106,7 +106,7 @@ RequestHandler.prototype.getImageProcessUrlRegExp = function() {
   return new RegExp(template)
 }
 
-RequestHandler.prototype.getImageProcessUrlMatch = function(req) { 
+RequestHandler.prototype.getImageProcessUrlMatch = function(req) {
   var urlRegExp = this.getImageProcessUrlRegExp()
   return req.originalUrl.match(urlRegExp)
 }
@@ -147,7 +147,8 @@ RequestHandler.prototype._afterResize = function(err, path, res, callback) {
   var self = this
 
   if (err) {
-    this.logger.log('Image processing failed')
+    this.logger.log('Image processing failed: ');
+    this.logger.log(err);
     res.send(500)
   } else {
     this.logger.log('Sending processed image')
@@ -169,8 +170,9 @@ RequestHandler.prototype._afterResize = function(err, path, res, callback) {
 
 RequestHandler.prototype._afterIdentify = function(err, content, res, callback) {
   if(err) {
-    this.logger.log('Identify failed')
-    res.send(500) 
+    this.logger.log('Identify failed: ');
+    this.logger.log(err);
+    res.send(500)
   } else {
     this.logger.log('Identify succeeded')
     res.send(content);//, callback)
@@ -220,7 +222,8 @@ RequestHandler.prototype._getOldTempFiles = function (callback) {
           stats: fs.statSync(path)
         })
       } catch(e) {
-        this.logger.log('statsSync failed for ' + path)
+        this.logger.log('statsSync failed for ' + path + ' : ');
+        this.logger.log(e);
       }
     }.bind(this))
 
