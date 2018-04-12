@@ -5,7 +5,7 @@ This is a backend service for [vue-storefront](https://github.com/DivanteLtd/vue
 
 ## Vue Storefront
 
-Vue Storefront is a standalone PWA storefront for your eCommerce, possible to connect with any eCommerce backend (eg. Magento, Prestashop or Shopware) through the API.
+Vue Storefront is a standalone [PWA](https://developers.google.com/web/progressive-web-apps/) (Progressive Web Application ) storefront for your eCommerce, possible to connect with any eCommerce backend (eg. Magento, Prestashop or Shopware) through the API.
 
 Vue Storefront is and always will be in the open source. Anyone can use and support the project, we want it to be a tool for the improvement of the shopping experience. The project is still in the prove of concept phase. We are looking for Contributors and Designer willing to help us the the solution development.
 
@@ -14,12 +14,17 @@ Here you can read more about the proof of concept for [Vue Storefront connected 
 
 Besides a big improvement for the shopping experience, we also want to create a great code base for every developer who needs to work on a front-end application for the eCommerce.
 
+## Requirements
+
+- Node.js 8.x or higher
+- Docker and Docker Compose
+- [ImageMagick](https://www.imagemagick.org/script/index.php) (to fit, resize and crop images)
 
 ## Installation
 
-**Warm up ElasticSearch and Redis**
+**Warm up [ElasticSearch](https://www.elastic.co/products/elasticsearch) Cluster and [Redis](https://redis.io/)**
 
-`docker-compose up`
+`docker-compose up -d`
 
 `npm run migrate` to execute all data migrations up to date
 
@@ -29,19 +34,19 @@ Product catalog is imported using [elasticdump](https://www.npmjs.com/package/el
 
 `npm run restore`
 
-It restores JSON documents stored in `./var/catalog.json`. The oposite command - used to generate `catalog.json` file from runing ElasticSearch cluster:
+It restores JSON documents stored in `./var/catalog.json`. The opposite command - used to generate `catalog.json` file from running ElasticSearch cluster:
 
 `npm run dump`
 
 **Run development server**
 
-Code autoreload is enabled along with eslint, babel support.
+Code auto reload is enabled along with ESLint, babel support.
 
 `PORT=8080 npm run dev`
 
 **Access ElasticSearch data with Kibana**
 
-A Kibana service is available to explore, search and visualize indexed data at the following url:
+A [Kibana](https://www.elastic.co/products/kibana) service is available to explore, search and visualize indexed data at the following url:
 
 `http://localhost:5601/`
 
@@ -66,4 +71,4 @@ Please use data migration mechanism provided to manipulate Redis, ElasticSearch 
 License
 -------
 
-MIT
+[MIT](./LICENSE)
