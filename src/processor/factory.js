@@ -21,16 +21,14 @@ class ProcessorFactory {
 
     if (!module_exists(moduleName))
     {
-      console.log('No additional data adapter for ' + adapter_class)
+      console.log('No additional data adapter for ' + entityType)
       return null
     }
 
     let adapter_class = require(moduleName);
-    console.log(adapter_class)
-
     if(!adapter_class)
     {
-      console.log('No additional data adapter for ' + adapter_class)
+      console.log('No additional data adapter for ' + entityType)
       return null
     }
     else{
