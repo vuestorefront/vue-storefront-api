@@ -1,0 +1,18 @@
+{
+    "properties": {
+        "id": {
+            "type": "long"
+        },
+        "attribute_id": {
+            "type": "long"
+        },
+        "options": {
+            "properties": {
+                "value": {
+                    "type": "text",
+                    "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}
