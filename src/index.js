@@ -36,8 +36,10 @@ initializeDb( db => {
 	app.use('/api', api({ config, db }));
 	app.use('/img', img({ config, db }));
 
-	app.server.listen(process.env.PORT || config.port, () => {
-		console.log(`Started on port ${app.server.address().port}`);
+    const port = process.env.PORT || config.server.port
+    const host = process.env.HOST || config.server.host
+	app.server.listen(port, host, () => {
+		console.log(`Vue Storefront API started at http://${host}:${port}`);
 	});
 });
 
