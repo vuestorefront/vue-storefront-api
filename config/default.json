@@ -1,5 +1,8 @@
 {
-	"port": 8080,
+    "server": {
+      "host": "localhost",
+      "port": 8080
+    },
 	"esHost": "localhost:9200",
 	"esIndexes": [
 		"vue_storefront_catalog"
