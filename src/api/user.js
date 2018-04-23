@@ -2,6 +2,7 @@ import resource from 'resource-router-middleware';
 import { apiStatus } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
+import jwt from 'jwt-simple'
 
 const Ajv = require('ajv'); // json validator
 
@@ -48,11 +49,32 @@ export default ({ config, db }) => {
 	userApi.post('/login', (req, res) => {	
 		const userProxy = _getProxy()
 		userProxy.login(req.body).then((result) => {
-			apiStatus(res, result, 200);
+			apiStatus(res, result, 200, { refreshToken:  jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret) });
 		}).catch(err=> {
 			apiStatus(res, err, 500);
 		})				
 	});
+
+	/**
+	 * POST refresh user token
+	 */
+	userApi.post('/refresh', (req, res) => {	
+		const userProxy = _getProxy()
+
+		if(!req.body || !req.body.refreshToken) {
+			return apiStatus(res, 'No refresh token provided', 500);
+		}
+
+		const decodedToken = jwt.decode(req.body ? req.body.refreshToken : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+		if(!decodedToken) {
+			return apiStatus(res, 'Invalid refresh token provided', 500);
+		}
+		userProxy.login(decodedToken).then((result) => {
+			apiStatus(res, result, 200, { refreshToken:  jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret) });
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})				
+	});	
 
 	/**
 	 * POST resetPassword
