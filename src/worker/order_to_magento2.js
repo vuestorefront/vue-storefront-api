@@ -89,19 +89,20 @@ function processSingleOrder(orderData, config, job, done){
                 const serverItem = serverItems.find((itm) => {
                     return itm.sku === clientItem.sku
                 })
-            
                 if (!serverItem) {
                     logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
                     syncPromises.push(api.cart.update(null, cartId, { // use magento API
-                        sku: clientItem.sku,
+                        sku: clientItem.parentSku && config.cart.setConfigurableProductOptions ? clientItem.parentSku : clientItem.sku,
                         qty: clientItem.qty,
+                        product_option: clientItem.product_option,
                         quote_id: cartId
                     }, isThisAuthOrder))
                 } else if (serverItem.qty !== clientItem.qty) {
                     logger.info(THREAD_ID + '< Wrong qty for ' + clientItem.sku, clientItem.qty, serverItem.qty)
                     syncPromises.push(api.cart.update(null, cartId, { // use magento API
-                        sku: clientItem.sku,
+                        sku: clientItem.parentSku && config.cart.setConfigurableProductOptions ? clientItem.parentSku : clientItem.sku,
                         qty: clientItem.qty,
+                        product_option: clientItem.product_option,
                         item_id: serverItem.item_id,
                         quote_id: cartId
                     }, isThisAuthOrder))
