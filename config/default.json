@@ -10,7 +10,7 @@
 	"authHashSecret": "__SECRET_CHANGE_ME__",
 	"objHashSecret": "__SECRET_CHANGE_ME__",
 	"cart": {
-		"setConfigurableProductOptions": true
+		"setConfigurableProductOptions": false
 	},
 	"tax": {
 		"defaultCountry": "PL",
