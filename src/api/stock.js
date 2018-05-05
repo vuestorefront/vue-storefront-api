@@ -31,5 +31,22 @@ export default ({ config, db }) => {
 		})
 	})
 
+	/** 
+	 * GET get stock item - 2nd version with the query url parameter
+	 */
+	stockApi.get('/check', (req, res) => {
+
+		const stockProxy = _getProxy()
+		
+		if (!req.query.sku)
+			return apiStatus(res, 'sku parameter is required', 500);
+
+		stockProxy.check(req.query.sku).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})
+	})	
+
 	return stockApi
 }
