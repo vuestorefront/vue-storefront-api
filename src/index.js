@@ -15,7 +15,7 @@ app.server = http.createServer(app);
 // logger
 app.use(morgan('dev'));
 
-app.use('/media', express.static(__dirname + '/../var/magento2-sample-data/pub/media'))
+app.use('/media', express.static(__dirname + config[config.platform].assetPath))
 
 // 3rd party middleware
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(cors({
 
 app.use(bodyParser.json({
 	limit : config.bodyLimit
-})); 
+}));
 
 // connect to db
 initializeDb( db => {
