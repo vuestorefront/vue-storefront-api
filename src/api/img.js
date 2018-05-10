@@ -1,7 +1,7 @@
 let request = require('request');
 let RequestHandler = require('./imageable/lib/request-handler');
 
- 
+
 export default ({ config, db }) => function (req, res, body) {
 
   // Image proxy for products
@@ -24,7 +24,7 @@ export default ({ config, db }) => function (req, res, body) {
   if(urlParts.length < 4)
     throw new Error('Please provide following parameters: /img/<width>/<height>/<action:crop,fit,resize,identify>/<relative_url>');
 
-  const imgUrl = config.magento2.imgUrl + '/' + urlParts.slice(4).join('/')//.split('/'); // full original image url
+  const imgUrl = config[config.platform].imgUrl + '/' + urlParts.slice(4).join('/')//.split('/'); // full original image url
 
   let rh = new RequestHandler(config.imageable, {
     before: function (stats) {},
@@ -42,10 +42,5 @@ export default ({ config, db }) => function (req, res, body) {
   req.originalUrl = '/'+ (action ? action : 'fit') + '?url=' + encodeURIComponent(imgUrl) + '&size=' + width + 'x' + height;
   console.log(req.originalUrl );
   req.url = req.originalUrl;
-  
-  return rh.handle(req, res)
 
-  
-  
-
-}
+  return rh.handle(req, res)}
