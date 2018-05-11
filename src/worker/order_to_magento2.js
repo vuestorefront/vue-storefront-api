@@ -87,8 +87,8 @@ function processSingleOrder(orderData, config, job, done){
 
             for (const clientItem of clientItems) {
                 const serverItem = serverItems.find((itm) => {
-                    return itm.sku === clientItem.sku
-                })
+                    return itm.sku === clientItem.sku || itm.sku.indexOf(clientItem.sku + '-') >= 0 /* bundle products */
+                  })
                 if (!serverItem) {
                     logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
                     syncPromises.push(api.cart.update(null, cartId, { // use magento API
@@ -112,18 +112,18 @@ function processSingleOrder(orderData, config, job, done){
             }
         
             for (const serverItem of serverItems) {
-            if (serverItem) {
-                const clientItem = clientItems.find((itm) => {
-                return itm.sku === serverItem.sku
-                })
-                if (!clientItem) {
-                logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
-                syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart
-                    sku: serverItem.sku,
-                    item_id: serverItem.item_id
-                }, isThisAuthOrder))
+                if (serverItem) {
+                    const clientItem = clientItems.find((itm) => {
+                        return itm.sku === serverItem.sku || serverItem.sku.indexOf(itm.sku + '-') >= 0 /* bundle products */
+                    })
+                    if (!clientItem) {
+                    logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
+                    syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart
+                        sku: serverItem.sku,
+                        item_id: serverItem.item_id
+                    }, isThisAuthOrder))
+                    }
                 }
-            }
             }
             
 
