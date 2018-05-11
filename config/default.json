@@ -32,7 +32,7 @@
 	},
 
 	"platform": "magento2",
-	"registeredExtensions": ["mailchimp-subscribe"],
+	"registeredExtensions": ["mailchimp-subscribe", "example-magento-api"],
 
 	"extensions": {
 		"mailchimp": {
