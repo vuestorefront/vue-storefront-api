@@ -34,6 +34,10 @@ cli.option({
       type: Number
   });
 
+function isNumeric(val) {
+  return Number(parseFloat(val)).toString() === val;
+}
+
 /** 
  * Send single order to Magento Instance
  * 
@@ -251,7 +255,7 @@ function processSingleOrder(orderData, config, job, done){
         logger.info('< Bypassing to anonymous order')
         isThisAuthOrder = false
         
-        if (parseInt(cartId) > 0) { // we have numeric id - assigned to the user provided
+        if (isNumeric(cartId)) { // we have numeric id - assigned to the user provided
             api.cart.create(null, null).then((result) => {
                 processCart(result)
     //            logger.info('< Assigning guest cart with the user')
