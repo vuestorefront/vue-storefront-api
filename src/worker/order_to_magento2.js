@@ -82,7 +82,7 @@ function processSingleOrder(orderData, config, job, done){
             const clientItems = orderData.products
             const syncPromises = []
             
-            logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id }}))
+            logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id, product_option: item.product_option }}))
             logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
             for (const clientItem of clientItems) {
