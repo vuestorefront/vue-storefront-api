@@ -17,7 +17,8 @@
 		"defaultRegion": "",
 		"calculateServerSide": true,
 		"alwaysSyncPlatformPricesOver": false,
-		"usePlatformTotals": true
+		"usePlatformTotals": true,
+		"setConfigurableProductOptions": true
 	  },
 	"esUser": "",
 	"esPassword": "",
