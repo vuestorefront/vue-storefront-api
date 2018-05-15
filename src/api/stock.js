@@ -48,5 +48,27 @@ export default ({ config, db }) => {
 		})
 	})	
 
+	/** 
+	 * GET get stock item list by skus (comma separated)
+	 */
+	stockApi.get('/list', (req, res) => {
+
+		const stockProxy = _getProxy()
+		
+		if (!req.query.skus)
+			return apiStatus(res, 'skus parameter is required', 500);
+
+		const skuArray = req.query.skus.split(',')
+		const promisesList = []
+		for (const sku of skuArray) {
+			promisesList.push(stockProxy.check(sku))
+		}
+		Promise.all(promisesList).then((results) => {
+			apiStatus(res, results, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})		
+	})		
+
 	return stockApi
 }
