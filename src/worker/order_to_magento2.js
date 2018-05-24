@@ -17,7 +17,7 @@ const config = require('config')
 let numCPUs = require('os').cpus().length;
 
 
-const Magento2Client = require('../platform/magento2/magento2-rest-client').Magento2Client;
+const Magento2Client = require('magento2-rest-client').Magento2Client;
 const api = Magento2Client(config.magento2.api);
 
 const Redis = require('redis');
