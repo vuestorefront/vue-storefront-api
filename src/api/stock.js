@@ -8,9 +8,9 @@ export default ({ config, db }) => {
 
 	let stockApi = Router();
 	
-	const _getProxy = () => {
+	const _getProxy = (req) => {
 		const platform = config.platform
-		const factory = new PlatformFactory(config)
+		const factory = new PlatformFactory(config, req)
 		return factory.getAdapter(platform,'stock')
 	};
 
@@ -19,7 +19,7 @@ export default ({ config, db }) => {
 	 */
 	stockApi.get('/check/:sku', (req, res) => {
 
-		const stockProxy = _getProxy()
+		const stockProxy = _getProxy(req)
 		
 		if (!req.params.sku)
 			return apiStatus(res, 'sku parameter is required', 500);
@@ -36,7 +36,7 @@ export default ({ config, db }) => {
 	 */
 	stockApi.get('/check', (req, res) => {
 
-		const stockProxy = _getProxy()
+		const stockProxy = _getProxy(req)
 		
 		if (!req.query.sku)
 			return apiStatus(res, 'sku parameter is required', 500);
@@ -53,7 +53,7 @@ export default ({ config, db }) => {
 	 */
 	stockApi.get('/list', (req, res) => {
 
-		const stockProxy = _getProxy()
+		const stockProxy = _getProxy(req)
 		
 		if (!req.query.skus)
 			return apiStatus(res, 'skus parameter is required', 500);
