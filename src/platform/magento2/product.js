@@ -1,11 +1,11 @@
 import AbstractProductProxy from '../abstract/product'
-
+import { multiStoreConfig } from './util'
 
 class ProductProxy extends AbstractProductProxy {
     constructor (config, req){
         const Magento2Client = require('magento2-rest-client').Magento2Client;
         super(config, req)
-        this.api = Magento2Client(config.magento2.api);
+        this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
     }       
 
     renderList (skus, currencyCode) { 

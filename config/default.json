@@ -7,6 +7,8 @@
 	"esIndexes": [
 		"vue_storefront_catalog"
 	],
+	"availableStores": [
+	],
 	"authHashSecret": "__SECRET_CHANGE_ME__",
 	"objHashSecret": "__SECRET_CHANGE_ME__",
 	"cart": {

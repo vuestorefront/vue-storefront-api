@@ -18,7 +18,6 @@ let numCPUs = require('os').cpus().length;
 
 
 const Magento2Client = require('magento2-rest-client').Magento2Client;
-const api = Magento2Client(config.magento2.api);
 
 const Redis = require('redis');
 let redisClient = Redis.createClient(config.redis); // redis client
@@ -63,6 +62,16 @@ function processSingleOrder(orderData, config, job, done){
 
     let isThisAuthOrder = parseInt(orderData.user_id) > 0
     const userId = orderData.user_id
+
+    let apiConfig = config.magento2.api
+    if (orderData.store_code) {
+        if (config.availableStores.indexOf(orderData.store_code) >= 0) {
+            apiConfig = Object.assign({}, apiConfig, { url: apiConfig.url + '/' + orderData.store_code })
+        } else {
+            logger.error('Invalid store code', orderData.store_code)
+        }
+    }
+    const api = Magento2Client(apiConfig);
 
     logger.info('> Order Id', orderData.order_id)
     logger.info('> Is order authorized?', isThisAuthOrder)
