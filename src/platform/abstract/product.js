@@ -1,6 +1,7 @@
 class AbstractProductProxy {
-    constructor(config){
+    constructor(config, req){
         this._config = config
+        this._request = req
     }
 
    
