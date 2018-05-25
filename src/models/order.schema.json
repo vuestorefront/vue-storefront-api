@@ -12,6 +12,7 @@
     "user_id": { "type": "string" },
     "cart_id": { "type": "string" },
     "store_code": { "type": "string" },
+    "store_id": { "type": "number" },
     "products": {
       "description": "Products list",
       "type": "array",

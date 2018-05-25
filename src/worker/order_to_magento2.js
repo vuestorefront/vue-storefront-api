@@ -67,6 +67,7 @@ function processSingleOrder(orderData, config, job, done){
     if (orderData.store_code) {
         if (config.availableStores.indexOf(orderData.store_code) >= 0) {
             apiConfig = Object.assign({}, apiConfig, { url: apiConfig.url + '/' + orderData.store_code })
+            console.log('> Store code', orderData.store_code)
         } else {
             logger.error('Invalid store code', orderData.store_code)
         }
