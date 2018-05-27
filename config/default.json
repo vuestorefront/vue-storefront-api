@@ -5,10 +5,13 @@
     },
 	"esHost": "localhost:9200",
 	"esIndexes": [
-		"vue_storefront_catalog"
+		"vue_storefront_catalog",
+		"vue_storefront_catalog_de",
+		"vue_storefront_catalog_it"
 	],
 	"availableStores": [
-	],
+		"de", "it"
+	],	
 	"authHashSecret": "__SECRET_CHANGE_ME__",
 	"objHashSecret": "__SECRET_CHANGE_ME__",
 	"cart": {
