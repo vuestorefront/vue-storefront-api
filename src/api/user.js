@@ -14,9 +14,9 @@ export default ({ config, db }) => {
 
 	let userApi = Router();
 	
-	const _getProxy = () => {
+	const _getProxy = (req) => {
 		const platform = config.platform
-		const factory = new PlatformFactory(config)
+		const factory = new PlatformFactory(config, req)
 		return factory.getAdapter(platform,'user')
 	};
 
@@ -34,7 +34,7 @@ export default ({ config, db }) => {
 			return;
 		}				
 
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		
 		userProxy.register(req.body).then((result) => {
 			apiStatus(res, result, 200);
@@ -47,7 +47,7 @@ export default ({ config, db }) => {
 	 * POST login an user
 	 */
 	userApi.post('/login', (req, res) => {	
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		userProxy.login(req.body).then((result) => {
 			apiStatus(res, result, 200, { refreshToken:  jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret) });
 		}).catch(err=> {
@@ -59,7 +59,7 @@ export default ({ config, db }) => {
 	 * POST refresh user token
 	 */
 	userApi.post('/refresh', (req, res) => {	
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 
 		if(!req.body || !req.body.refreshToken) {
 			return apiStatus(res, 'No refresh token provided', 500);
@@ -80,7 +80,7 @@ export default ({ config, db }) => {
 	 * POST resetPassword
 	 */
 	userApi.post('/resetPassword', (req, res) => {	
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 
 		if(!req.body.email) {
 			return apiStatus(res, "Invalid e-mail provided!", 500)
@@ -98,7 +98,7 @@ export default ({ config, db }) => {
 	 * GET  an user
 	 */
 	userApi.get('/me', (req, res) => {	
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		userProxy.me(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
@@ -111,7 +111,7 @@ export default ({ config, db }) => {
 	 * GET  an user order history
 	 */
 	userApi.get('/order-history', (req, res) => {	
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		userProxy.orderHistory(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
@@ -132,7 +132,7 @@ export default ({ config, db }) => {
 			return;
 		}
 
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		userProxy.update({ token: req.query.token, body: req.body }).then((result) => {
 			apiStatus(res, result, 200)
 		}).catch(err => {
@@ -144,7 +144,7 @@ export default ({ config, db }) => {
 	 * POST for changing user's password
 	 */
 	userApi.post('/changePassword', (req, res) => {
-		const userProxy = _getProxy()
+		const userProxy = _getProxy(req)
 		userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
 			apiStatus(res, result, 200)
 		}).catch(err => {

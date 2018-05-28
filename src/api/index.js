@@ -11,7 +11,7 @@ import sync from './sync'
 
 export default ({ config, db }) => {
 	let api = Router();
-
+	
 	// mount the catalog resource
 	api.use('/catalog', catalog({ config, db }) )
 
