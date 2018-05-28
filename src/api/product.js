@@ -10,9 +10,9 @@ export default ({ config, db }) => {
 
 	let productApi = Router();
 	
-	const _getProxy = () => {
+	const _getProxy = (req) => {
 		const platform = config.platform
-		const factory = new PlatformFactory(config)
+		const factory = new PlatformFactory(config, req)
 		return factory.getAdapter(platform,'product')
 	};
 
@@ -21,7 +21,7 @@ export default ({ config, db }) => {
 	 */
 	productApi.get('/list', (req, res) => {
 
-		const productProxy = _getProxy()
+		const productProxy = _getProxy(req)
 		
 		if (!req.query.skus)
 			return apiStatus(res, 'skus parameter is required', 500);
@@ -38,7 +38,7 @@ export default ({ config, db }) => {
 	 */
 	productApi.get('/render-list', (req, res) => {
 
-		const productProxy = _getProxy()
+		const productProxy = _getProxy(req)
 		
 		if (!req.query.skus)
 			return apiStatus(res, 'skus parameter is required', 500);

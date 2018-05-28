@@ -1,11 +1,11 @@
 import AbstractUserProxy from '../abstract/user'
-
+import { multiStoreConfig } from './util'
 
 class UserProxy extends AbstractUserProxy {
-    constructor (config){
+    constructor (config, req){
         const Magento2Client = require('magento2-rest-client').Magento2Client;
-        super(config)
-        this.api = Magento2Client(config.magento2.api);
+        super(config, req)
+        this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
     }       
 
     register (userData) { 
