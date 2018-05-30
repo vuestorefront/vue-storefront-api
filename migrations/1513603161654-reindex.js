@@ -5,8 +5,8 @@ const common = require('./.common')
 const reIndex = require('../src/lib/elastic').reIndex
 
 module.exports.up = next => {
-  let finalIndexVersion = config.esIndexes[0]
-  let tempIndexVersion = config.esIndexes[0] + '_temp'
+  let finalIndexVersion = config.elasticsearch.indices[0]
+  let tempIndexVersion = config.elasticsearch.indices[0] + '_temp'
 
   reIndex(common.db, tempIndexVersion, finalIndexVersion, next)
 }
