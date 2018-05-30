@@ -12,7 +12,10 @@ export default ({ config, db }) => function (req, res, body) {
     /**
     const elasticsearch = require('elasticsearch');
     const client = new elasticsearch.Client({
-        host: config.esHost,
+        host: {
+          host: config.elasticsearch.host,
+          port: config.elasticsearch.port
+        },
         log: 'trace'
     });
     */
