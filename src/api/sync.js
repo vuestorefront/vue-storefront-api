@@ -14,9 +14,9 @@ export default ({ config, db }) => {
 	syncApi.get('/order/:order_id', (req, res) => {
 
 		const Redis = require('redis');
-		let redisClient = Redis.createClient(config.redis); // redis client
+		let redisClient = Redis.createClient(config.kue.redis); // redis client
 		redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-			redisClient = Redis.createClient(config.redis); // redis client
+			redisClient = Redis.createClient(config.kue.redis); // redis client
 		});
 		
 		redisClient.get('order$$id$$' + req.param('order_id'), function (err, reply) {

@@ -20,9 +20,9 @@ let numCPUs = require('os').cpus().length;
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 const Redis = require('redis');
-let redisClient = Redis.createClient(config.redis); // redis client
+let redisClient = Redis.createClient(config.kue.redis); // redis client
 redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-  redisClient = Redis.createClient(config.redis); // redis client
+  redisClient = Redis.createClient(config.kue.redis); // redis client
 });
 
 const CommandRouter = require('command-router');
