@@ -7,10 +7,10 @@ ENV VS_ENV prod
 
 WORKDIR /var/www
 
-RUN apk add --no-cache --virtual .build-deps ca-certificates wget git \
-  && wget https://raw.githubusercontent.com/DivanteLtd/vue-storefront-api/$REPO_TAG/package.json \
-  && yarn install --no-cache \
-  && apk del .build-deps
+RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && \
+    wget https://raw.githubusercontent.com/DivanteLtd/vue-storefront-api/$REPO_TAG/package.json && \
+    yarn install --no-cache && \
+    apk del .build-deps
 
 COPY vue-storefront-api.sh /usr/local/bin/
 
