@@ -1,8 +1,8 @@
 {
-    "server": {
-      "host": "localhost",
-      "port": 8080
-    },
+	"server": {
+		"host": "localhost",
+		"port": 8080
+	},
 	"esHost": "localhost:9200",
 	"esIndexes": [
 		"vue_storefront_catalog",
@@ -10,8 +10,68 @@
 		"vue_storefront_catalog_it"
 	],
 	"availableStores": [
-		"de", "it"
-	],	
+		"de",
+		"it"
+	],
+	"storeViews": {
+		"multistore": true,
+		"mapStoreUrlsFor": [
+			"de",
+			"it"
+		],
+		"de": {
+			"storeCode": "de",
+			"disabled": true,
+			"storeId": 3,
+			"name": "German Store",
+			"url": "/de",
+			"elasticsearch": {
+				"host": "localhost:8080/api/catalog",
+				"index": "vue_storefront_catalog_de"
+			},
+			"tax": {
+				"defaultCountry": "DE",
+				"defaultRegion": "",
+				"calculateServerSide": true
+			},
+			"i18n": {
+				"fullCountryName": "Germany",
+				"fullLanguageName": "German",
+				"defaultLanguage": "DE",
+				"defaultCountry": "DE",
+				"defaultLocale": "de-DE",
+				"currencyCode": "EUR",
+				"currencySign": "EUR",
+				"dateFormat": "HH:mm D-M-YYYY"
+			}
+		},
+		"it": {
+			"storeCode": "it",
+			"disabled": true,
+			"storeId": 4,
+			"name": "Italian Store",
+			"url": "/it",
+			"elasticsearch": {
+				"host": "localhost:8080/api/catalog",
+				"index": "vue_storefront_catalog_it"
+			},
+			"tax": {
+				"defaultCountry": "IT",
+				"defaultRegion": "",
+				"calculateServerSide": true
+			},
+			"i18n": {
+				"fullCountryName": "Italy",
+				"fullLanguageName": "Italian",
+				"defaultCountry": "IT",
+				"defaultLanguage": "IT",
+				"defaultLocale": "it-IT",
+				"currencyCode": "EUR",
+				"currencySign": "EUR",
+				"dateFormat": "HH:mm D-M-YYYY"
+			}
+		}
+	},
 	"authHashSecret": "__SECRET_CHANGE_ME__",
 	"objHashSecret": "__SECRET_CHANGE_ME__",
 	"cart": {
@@ -24,7 +84,7 @@
 		"alwaysSyncPlatformPricesOver": false,
 		"usePlatformTotals": true,
 		"setConfigurableProductOptions": true
-	  },
+	},
 	"esUser": "",
 	"esPassword": "",
 	"bodyLimit": "100kb",
@@ -36,10 +96,11 @@
 		"host": "127.0.0.1",
 		"port": 6379
 	},
-
 	"platform": "magento2",
-	"registeredExtensions": ["mailchimp-subscribe", "example-magento-api"],
-
+	"registeredExtensions": [
+		"mailchimp-subscribe",
+		"example-magento-api"
+	],
 	"extensions": {
 		"mailchimp": {
 			"listId": "e06875a7e1",
@@ -47,7 +108,6 @@
 			"apiUrl": "https://us3.api.mailchimp.com/3.0"
 		}
 	},
-
 	"magento2": {
 		"url": "http://magento2.demo-1.xyz.com",
 		"imgUrl": "http://localhost:8080/media/catalog/product",
@@ -69,17 +129,23 @@
 		"maxListeners": 512,
 		"imageSizeLimit": 1024,
 		"timeouts": {
-		  "convert": 5000,
-		  "identify": 100,
-		  "download": 1000
+			"convert": 5000,
+			"identify": 100,
+			"download": 1000
 		},
 		"whitelist": {
-			"allowedHosts": [".*divante.pl", ".*vuestorefront.io"],
-			"trustedHosts": [".*divante.pl", ".*vuestorefront.io"]
+			"allowedHosts": [
+				".*divante.pl",
+				".*vuestorefront.io"
+			],
+			"trustedHosts": [
+				".*divante.pl",
+				".*vuestorefront.io"
+			]
 		},
 		"keepDownloads": true,
 		"maxDownloadCacheSize": 1000,
 		"tmpPathRoot": "/tmp",
-    "debug": false
+		"debug": false
 	}
 }

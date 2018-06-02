@@ -8,8 +8,33 @@ class TaxProxy extends AbstractTaxProxy {
         super(config)
         this._entityType = entityType
         this._indexName = indexName
+
+        if (this._config.storeViews && this._config.storeViews.multistore) {
+            for (let storeCode in this._config.storeViews){
+                let store = this._config.storeViews[storeCode]
+                if (typeof store === 'object') {
+                    if (store.elasticsearch && store.elasticsearch.index) { // workaround to map stores
+                        if (store.elasticsearch.index === indexName) {
+                            taxRegion = store.tax.defaultRegion
+                            taxCountry = store.tax.defaultCountry
+                            break;
+                        }
+                    }
+
+                }
+            }
+        } else {
+            if (!taxRegion) {
+                taxRegion = this._config.tax.defaultRegion
+            }
+            if (!taxCountry) {
+                taxCountry = this._config.tax.defaultCountry
+            }
+        }
+        
         this._taxCountry = taxCountry
         this._taxRegion = taxRegion
+        console.log('Taxes will be calculated for', taxCountry, taxRegion)
         this.taxFor = this.taxFor.bind(this)
     }       
 
@@ -37,7 +62,7 @@ class TaxProxy extends AbstractTaxProxy {
                 client.search(esQuery).then(function (taxClasses) { // we're always trying to populate cache - when online
                     inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })        
                     for (let item of productList) {
-                        inst.taxFor(item._source, taxClasses, inst._config.tax.defaultCountry, inst._config.tax.defaultRegion)
+                        inst.taxFor(item._source)
                     }
 
                     resolve(productList)
