@@ -18,12 +18,7 @@
     "host": "localhost",
     "port": 6379
   },
-  "kue": {
-    "redis": {
-      "host": "localhost",
-      "port": 6379
-    }
-  },
+  "kue": {},
   "availableStores": [
     "de",
     "it"
