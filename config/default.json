@@ -18,7 +18,7 @@
 		"setConfigurableProductOptions": false
 	},
 	"tax": {
-		"defaultCountry": "PL",
+		"defaultCountry": "US",
 		"defaultRegion": "",
 		"calculateServerSide": true,
 		"alwaysSyncPlatformPricesOver": false,
