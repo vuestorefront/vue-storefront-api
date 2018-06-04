@@ -5,6 +5,7 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
   let priceExclTax = product.price
   if (sourcePriceInclTax) {
     priceExclTax = product.price / (1 + (rate.rate / 100))
+    product.price = priceExclTax
   }
   
   product.priceInclTax = (priceExclTax + priceExclTax * (parseFloat(rate.rate) / 100))
@@ -15,6 +16,7 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
   let specialPriceExclTax = product.special_price
   if (sourcePriceInclTax) {
     specialPriceExclTax = product.special_price / (1 + (rate.rate / 100))
+    product.special_price = specialPriceExclTax
   }
 
   product.specialPriceInclTax = (specialPriceExclTax + specialPriceExclTax * (parseFloat(rate.rate) / 100))
@@ -47,6 +49,7 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
       let priceExclTax = configurableChild.price
       if (sourcePriceInclTax) {
         priceExclTax = configurableChild.price / (1 + (rate.rate / 100))
+        configurableChild.price = priceExclTax
       }
 
       configurableChild.priceInclTax = (priceExclTax + priceExclTax * (parseFloat(rate.rate) / 100))
@@ -55,6 +58,7 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
       let specialPriceExclTax = configurableChild.special_price
       if (sourcePriceInclTax) {
         specialPriceExclTax = configurableChild.special_price / (1 + (rate.rate / 100))
+        configurableChild.special_price = specialPriceExclTax
       }
 
       configurableChild.specialPriceInclTax = (specialPriceExclTax + specialPriceExclTax * (parseFloat(rate.rate) / 100))
