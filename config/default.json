@@ -32,6 +32,7 @@
 			"tax": {
 				"defaultCountry": "DE",
 				"defaultRegion": "",
+				"sourcePriceIncludesTax": false,				
 				"calculateServerSide": true
 			},
 			"i18n": {
@@ -58,6 +59,7 @@
 			"tax": {
 				"defaultCountry": "IT",
 				"defaultRegion": "",
+				"sourcePriceIncludesTax": false,				
 				"calculateServerSide": true
 			},
 			"i18n": {
@@ -83,6 +85,7 @@
 		"calculateServerSide": true,
 		"alwaysSyncPlatformPricesOver": false,
 		"usePlatformTotals": true,
+		"sourcePriceIncludesTax": false,
 		"setConfigurableProductOptions": true
 	},
 	"esUser": "",
