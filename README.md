@@ -68,15 +68,14 @@ This backend is using ElasticSearch data formats popularized by [ElasticSuite fo
 ## Data migrations
 Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
 
-## Adding custom modules with own dependencies in platform and extensions (Yarn usres)
-When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md). You might want to add your own custom modules with their own dependencies under `src/api/extensions/` and `src/platforms` directory. 
+## Adding custom modules with own dependencies (Yarn only)
+When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependecies defined inside your custom module will be intaled when you execute `yarn` at project root level, so it's way esier and faster than installing all modules dependcies separetly.
 
-Just define the `package.json` with your dependencies in your custom module 
-e.g.
+To do this, define the `package.json` with your dependencies in your custom module:
 - `src/api/extensions/{your-custom-extension}/package.json` 
 - `src/platforms/{your-custom-platform}/package.json`
 
-Executing `yarn` at root level will also download your custom modules dependencies. 
+Executing `yarn` at root level will also download your custom modules dependencies.
 
 NOTE: `npm` users will still have to install the dependencies individually in their modules.
 
