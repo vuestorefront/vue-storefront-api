@@ -32,7 +32,6 @@ class ProcessorFactory {
       return null
     }
     else{
-
       let adapter_instance = new adapter_class(this.config, entityType, indexName);
 
       if((typeof adapter_instance.isValidFor == 'function') && !adapter_instance.isValidFor(entityType))
