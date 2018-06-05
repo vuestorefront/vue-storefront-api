@@ -25,13 +25,13 @@ export default ({ config, db }) => function (req, res, body) {
   if (urlSegments.length > 2)
     entityType = urlSegments[2]
 
-    if (config.esIndexes.indexOf(indexName) < 0) {
+    if (config.elasticsearch.indices.indexOf(indexName) < 0) {
       throw new Error('Invalid / inaccessible index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
     }
   }
     
   // pass the request to elasticsearch
-  let url = 'http://' + config.esHost + req.url;
+  let url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + req.url;
 
   request({ // do the elasticsearch request
     uri: url,
@@ -39,8 +39,8 @@ export default ({ config, db }) => function (req, res, body) {
     body: req.body,
     json: true,
     auth : {
-      user : config.esUser,
-      pass : config.esPassword
+      user : config.elasticsearch.user,
+      pass : config.elasticsearch.password
     },    
   }, function (_err, _res, _resBody) { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
     if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)

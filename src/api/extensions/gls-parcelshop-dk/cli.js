@@ -16,7 +16,10 @@ cli.command('buildcache', () => {
     const soap = require('soap')
     const elasticsearch = require('elasticsearch');
     const esClient = new elasticsearch.Client({
-        host: config.esHost,
+        host: {
+            host: config.elasticsearch.host,
+            port: config.elasticsearch.port
+        },
         log: 'error'
     });
 
