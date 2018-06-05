@@ -18,16 +18,70 @@
     "host": "localhost",
     "port": 6379
   },
-  "kue": {
-    "redis": {
-      "host": "localhost",
-      "port": 6379
-    }
-  },
+  "kue": {},
   "availableStores": [
     "de",
     "it"
   ],
+  "storeViews": {
+    "multistore": true,
+    "mapStoreUrlsFor": [
+      "de",
+      "it"
+    ],
+    "de": {
+      "storeCode": "de",
+      "disabled": true,
+      "storeId": 3,
+      "name": "German Store",
+      "url": "/de",
+      "elasticsearch": {
+        "host": "localhost:8080/api/catalog",
+        "index": "vue_storefront_catalog_de"
+      },
+      "tax": {
+        "defaultCountry": "DE",
+        "defaultRegion": "",
+        "calculateServerSide": true
+      },
+      "i18n": {
+        "fullCountryName": "Germany",
+        "fullLanguageName": "German",
+        "defaultLanguage": "DE",
+        "defaultCountry": "DE",
+        "defaultLocale": "de-DE",
+        "currencyCode": "EUR",
+        "currencySign": "EUR",
+        "dateFormat": "HH:mm D-M-YYYY"
+      }
+    },
+    "it": {
+      "storeCode": "it",
+      "disabled": true,
+      "storeId": 4,
+      "name": "Italian Store",
+      "url": "/it",
+      "elasticsearch": {
+        "host": "localhost:8080/api/catalog",
+        "index": "vue_storefront_catalog_it"
+      },
+      "tax": {
+        "defaultCountry": "IT",
+        "defaultRegion": "",
+        "calculateServerSide": true
+      },
+      "i18n": {
+        "fullCountryName": "Italy",
+        "fullLanguageName": "Italian",
+        "defaultCountry": "IT",
+        "defaultLanguage": "IT",
+        "defaultLocale": "it-IT",
+        "currencyCode": "EUR",
+        "currencySign": "EUR",
+        "dateFormat": "HH:mm D-M-YYYY"
+      }
+    }
+  },
   "authHashSecret": "__SECRET_CHANGE_ME__",
   "objHashSecret": "__SECRET_CHANGE_ME__",
   "cart": {

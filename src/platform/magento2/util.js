@@ -19,7 +19,9 @@ export function multiStoreConfig(apiConfig, req) {
     {
         confCopy.url = confCopy.url + '/' + storeCode
     } else {
-        console.error('Unavailable store code', storeCode)
+        if (storeCode) {
+            console.error('Unavailable store code', storeCode)
+        }
     }
     return confCopy
 }

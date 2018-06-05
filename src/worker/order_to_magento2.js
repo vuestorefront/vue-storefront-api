@@ -7,7 +7,7 @@ const kue = require('kue');
 const queue = kue.createQueue();
 const logger = require('./log');
 const unirest = require('unirest');
-
+const countryMapper = require('../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
 const validate = ajv.compile(require('../models/order.schema.json'));
@@ -140,7 +140,6 @@ function processSingleOrder(orderData, config, job, done){
                 }
             }
             
-
             Promise.all(syncPromises).then((results) => {
                 if(job) job.progress(currentStep++, TOTAL_STEPS);
                 logger.info(THREAD_ID + '< Server cart in sync')
@@ -148,116 +147,144 @@ function processSingleOrder(orderData, config, job, done){
 
                 const billingAddr = orderData.addressInformation.billingAddress;
                 const shippingAddr = orderData.addressInformation.shippingAddress;
+                let mappedShippingRegion = 0
+                let mappedBillingRegion = 0
+                    api.directory.countries().then((countryList) => {
 
-                const addressPromises = []
-
-                addressPromises.push(api.cart.billingAddress(null, cartId,  { // sum up totals
-
-                    "address":
-                        {
-                            "countryId": billingAddr.country_id,
-                            "street": billingAddr.street, 
-                            "telephone": billingAddr.telephone, 
-                            "postcode": billingAddr.postcode, 
-                            "city": billingAddr.city,
-                            "firstname": billingAddr.firstname,
-                            "lastname": billingAddr.lastname,
-                            "email": billingAddr.email,
-                            "regionCode": billingAddr.regionCode,
-                            "company": billingAddr.company,
-                            "vatId": billingAddr.vat_id
+                        if (shippingAddr.region_id > 0) {
+                            mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
+                        } else {
+                            mappedShippingRegion = countryMapper.mapCountryRegion(countryList, shippingAddr.country_id, shippingAddr.region_code ? shippingAddr.region_code : shippingAddr.region)
                         }
-                
-                }, isThisAuthOrder))
 
-                addressPromises.push(api.cart.shippingInformation(null, cartId,  { // sum up totals
+                        if (billingAddr.region_id > 0) {
+                            mappedBillingRegion = { regionId: billingAddr.region_id, regionCode: billingAddr.region_code }
+                        } else {
+                            mappedBillingRegion = countryMapper.mapCountryRegion(countryList, billingAddr.country_id, billingAddr.region_code ? billingAddr.region_code : billingAddr.region)
+                        }
 
-                    "addressInformation":
-                    {
-                    "shippingAddress":
-                        {
-                            "countryId": shippingAddr.country_id,
-                            "street": shippingAddr.street, 
-                            "telephone": shippingAddr.telephone, 
-                            "postcode": shippingAddr.postcode, 
-                            "city": shippingAddr.city,
-                            "firstname": shippingAddr.firstname,
-                            "lastname": shippingAddr.lastname,
-                            "email": shippingAddr.email,
-                            "regionCode": shippingAddr.regionCode,
-                            "company": shippingAddr.company
-                        },
+                        const addressPromises = []
 
-                        "billingAddress":
-                        {
-                            "countryId": billingAddr.country_id,
-                            "street": billingAddr.street, 
-                            "telephone": billingAddr.telephone, 
-                            "postcode": billingAddr.postcode, 
-                            "city": billingAddr.city,
-                            "firstname": billingAddr.firstname,
-                            "lastname": billingAddr.lastname,
-                            "email": billingAddr.email,
-                            "regionCode": billingAddr.regionCode,
-                            "company": billingAddr.company,
-                            "vatId": billingAddr.vat_id
-                        },
-                        "shippingMethodCode": orderData.addressInformation.shipping_method_code,
-                        "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
-                        "extensionAttributes": orderData.addressInformation.shippingExtraFields
-                    }
-                
-                }, isThisAuthOrder))            
+                        const billingAddressInfo =  { // sum up totals
+
+                            "address":
+                                {
+                                    "countryId": billingAddr.country_id,
+                                    "street": billingAddr.street, 
+                                    "telephone": billingAddr.telephone, 
+                                    "postcode": billingAddr.postcode, 
+                                    "city": billingAddr.city,
+                                    "firstname": billingAddr.firstname,
+                                    "lastname": billingAddr.lastname,
+                                    "email": billingAddr.email,
+                                    "regionCode": mappedBillingRegion.regionCode,
+                                    "regionId": mappedBillingRegion.regionId,
+                                    "company": billingAddr.company,
+                                    "vatId": billingAddr.vat_id
+                                }
+                        
+                        }
+                        logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
+                        addressPromises.push(api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder))
+
+                        const shippingAddressInfo = { // sum up totals
+
+                            "addressInformation":
+                            {
+                            "shippingAddress":
+                                {
+                                    "countryId": shippingAddr.country_id,
+                                    "street": shippingAddr.street, 
+                                    "telephone": shippingAddr.telephone, 
+                                    "postcode": shippingAddr.postcode, 
+                                    "city": shippingAddr.city,
+                                    "firstname": shippingAddr.firstname,
+                                    "lastname": shippingAddr.lastname,
+                                    "email": shippingAddr.email,
+                                    "regionId": mappedShippingRegion.regionId,
+                                    "regionCode": mappedShippingRegion.regionCode,
+                                    "company": shippingAddr.company
+                                },
+
+                                "billingAddress":
+                                {
+                                    "countryId": billingAddr.country_id,
+                                    "street": billingAddr.street, 
+                                    "telephone": billingAddr.telephone, 
+                                    "postcode": billingAddr.postcode, 
+                                    "city": billingAddr.city,
+                                    "firstname": billingAddr.firstname,
+                                    "lastname": billingAddr.lastname,
+                                    "email": billingAddr.email,
+                                    "regionId":  mappedBillingRegion.regionId,
+                                    "regionCode": mappedBillingRegion.regionCode,
+                                    "company": billingAddr.company,
+                                    "vatId": billingAddr.vat_id
+                                },
+                                "shippingMethodCode": orderData.addressInformation.shipping_method_code,
+                                "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
+                                "extensionAttributes": orderData.addressInformation.shippingExtraFields
+                            }
+                        
+                        }
+                        logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
+                        addressPromises.push(api.cart.shippingInformation(null, cartId,  shippingAddressInfo, isThisAuthOrder))            
 
 
-                Promise.all(addressPromises).then((results) => {
-                    logger.info(THREAD_ID + '< Addresses assigned', results)
-                    logger.debug(THREAD_ID + results)
-                    
-                    if(job) job.progress(currentStep++, TOTAL_STEPS);
+                        Promise.all(addressPromises).then((results) => {
+                            logger.info(THREAD_ID + '< Addresses assigned', results)
+                            logger.debug(THREAD_ID + results)
+                            
+                            if(job) job.progress(currentStep++, TOTAL_STEPS);
 
-                    api.cart.order(null, cartId, {
-                        "paymentMethod":
-                        {
-                            "method":orderData.addressInformation.payment_method_code
-                        }                 
-                    }, isThisAuthOrder).then(result => {
-                        logger.info(THREAD_ID, results)
-                        if(job) job.progress(currentStep++, TOTAL_STEPS);
+                            api.cart.order(null, cartId, {
+                                "paymentMethod":
+                                {
+                                    "method":orderData.addressInformation.payment_method_code
+                                }                 
+                            }, isThisAuthOrder).then(result => {
+                                logger.info(THREAD_ID, results)
+                                if(job) job.progress(currentStep++, TOTAL_STEPS);
 
-                        logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
-                        logger.debug(THREAD_ID + result)
-                        redisClient.set("order$$id$$" + orderData.order_id, JSON.stringify(
-                        {
-                           platform_order_id: result,
-                           transmited: true,
-                           transmited_at: new Date(),
-                           platform: 'magento2'
-                        }));
-                        redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
+                                logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
+                                logger.debug(THREAD_ID + result)
+                                redisClient.set("order$$id$$" + orderData.order_id, JSON.stringify(
+                                {
+                                platform_order_id: result,
+                                transmited: true,
+                                transmited_at: new Date(),
+                                platform: 'magento2'
+                                }));
+                                redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
 
-                        if(job) job.progress(currentStep++, TOTAL_STEPS);
-                        return done(null, { magentoOrderId: result, transferedAt: new Date() });                    
-                    }).catch(err => {
-                        logger.error('Error placing an order', err, typeof err)
-                        if (job) job.attempts(6).backoff(  {delay: 30*1000, type:'fixed'} ).save()
-                        return done(new Error('Error placing an order', err));                 
+                                if(job) job.progress(currentStep++, TOTAL_STEPS);
+                                return done(null, { magentoOrderId: result, transferedAt: new Date() });                    
+                            }).catch(err => {
+                                logger.error('Error placing an order', err, typeof err)
+                                if (job) job.attempts(6).backoff(  {delay: 30*1000, type:'fixed'} ).save()
+                                return done(new Error('Error placing an order', err));                 
 
-                    })
+                            })
+                        }).catch((errors) => {
+                            logger.error('Error while adding addresses', errors)
+                            if (job) job.attempts(3).backoff(  {delay: 60*1000, type:'fixed'} ).save()
+                            return done(new Error('Error while adding addresses', errors));
+                        })
+                        
+                    }).catch((errors) => {
+                        logger.error('Error while synchronizing country list', errors)
+                        if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
+                        return done(new Error('Error while syncing country list', errors));
+                    })                    
+
                 }).catch((errors) => {
-                    logger.error('Error while adding addresses', errors)
-                    if (job) job.attempts(3).backoff(  {delay: 60*1000, type:'fixed'} ).save()
-                    return done(new Error('Error while adding addresses', errors));
+                    logger.error('Error while adding products', errors)
+                    if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
+                    return done(new Error('Error while adding products', errors));
                 })
                 
-
-            }).catch((errors) => {
-                logger.error('Error while adding products', errors)
-                if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
-                return done(new Error('Error while adding products', errors));
             })
-            
-        })
+  
     }
 
     cartIdPrepare.then(processCart).catch((error) => { // cannot create a quote for specific user, so bypass by placing anonymous order

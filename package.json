@@ -91,5 +91,9 @@
     "rest",
     "api",
     "nodejs"
+  ],
+  "workspaces": [
+    "src/api/extenstions/*",
+    "src/platform/*"
   ]
 }
