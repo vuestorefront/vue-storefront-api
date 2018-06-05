@@ -24,7 +24,7 @@ services:
     # build: docker/elasticsearch/
     env_file: docker/elasticsearch/default.env
     volumes:
-      - 'elasticsearch:/usr/share/elasticsearch/data'
+      - 'esdat1:/usr/share/elasticsearch/data'
     expose:
       - 9200
     ulimits:
@@ -44,4 +44,4 @@ services:
     expose:
       - 6379
 volumes:
-  elasticsearch: null
+  esdat1:
