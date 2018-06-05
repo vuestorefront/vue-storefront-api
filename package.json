@@ -1,6 +1,7 @@
 {
   "name": "vue-storefront-api",
   "version": "0.1.0",
+  "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
