@@ -9,7 +9,7 @@ const es = require('../src/lib/elastic')
 
 cli.option({ name: 'indexName',
  alias: 'i',
- default: config.esIndexes[0],
+ default: config.elasticsearch.indices[0],
  type: String
 })
 
