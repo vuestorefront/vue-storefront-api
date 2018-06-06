@@ -40,8 +40,8 @@ services:
     depends_on:
       - elasticsearch
     env_file: docker/kibana/default.env
-    expose:
-      - 5601
+    ports:
+      - '5601:5601'
   redis:
     image: 'redis:4-alpine'
     expose:
