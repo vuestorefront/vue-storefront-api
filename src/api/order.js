@@ -43,7 +43,7 @@ export default ({ config, db }) => resource({
 			}
 		}
 
-		let queue = kue.createQueue(config.kue);
+		let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
 		const job = queue.createJob('order', { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */).save();
 		apiStatus(res, job.id, 200);
 	},

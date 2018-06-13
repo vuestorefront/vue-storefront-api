@@ -54,7 +54,10 @@ class TaxProxy extends AbstractTaxProxy {
             if (this._config.tax.calculateServerSide)
             {            
                 let client = new es.Client({ // as we're runing tax calculation and other data, we need a ES indexer
-                    host: this._config.esHost,
+                    host: {
+                        host: this._config.elasticsearch.host,
+                        port: this._config.elasticsearch.port
+                    },
                     log: 'debug',
                     apiVersion: '5.5',
                     requestTimeout: 5000
