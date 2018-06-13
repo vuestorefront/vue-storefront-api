@@ -43,7 +43,7 @@ export default ({ config, db }) => {
 		if (!req.query.skus)
 			return apiStatus(res, 'skus parameter is required', 500);
 
-		productProxy.renderList(req.query.skus.split(','), req.query.currencyCode).then((result) => {
+		productProxy.renderList(req.query.skus.split(','), req.query.currencyCode, req.query.storeId || 1).then((result) => {
 			result.items = result.items.map((item) => {
 				let sgnObj = item
 				if (config.tax.calculateServerSide === true) {
