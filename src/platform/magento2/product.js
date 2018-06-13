@@ -8,11 +8,11 @@ class ProductProxy extends AbstractProductProxy {
         this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
     }       
 
-    renderList (skus, currencyCode) { 
+    renderList (skus, currencyCode, storeId = 1) { 
         const query = '&searchCriteria[filter_groups][0][filters][0][field]=sku&' +
         'searchCriteria[filter_groups][0][filters][0][value]=' + encodeURIComponent(skus.join(',')) + '&' +
         'searchCriteria[filter_groups][0][filters][0][condition_type]=in';
-        return this.api.products.renderList(query, currencyCode)
+        return this.api.products.renderList(query, currencyCode, storeId)
     }
     list (skus) { 
         const query = '&searchCriteria[filter_groups][0][filters][0][field]=sku&' +
