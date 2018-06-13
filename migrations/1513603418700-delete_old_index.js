@@ -5,7 +5,7 @@ const config = require('config')
 const common = require('./.common')
 
 module.exports.up = next => {
-  let tempIndexVersion = config.esIndexes[0] + '_temp'
+  let tempIndexVersion = config.elasticsearch.indices[0] + '_temp'
   deleteIndex(common.db, tempIndexVersion, next)
 }
 
