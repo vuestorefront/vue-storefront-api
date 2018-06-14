@@ -24,6 +24,10 @@ function putAlias(db, originalName, aliasName, next) {
     })      
 }
 
+function search (db, query) {
+    return db.search(query)
+}
+
 function deleteIndex(db, indexName, next) {
     db.indices.delete({
         "index": indexName
@@ -156,5 +160,6 @@ function putMappings(db, indexName, next) {
     putAlias,
     createIndex,
     deleteIndex,
-    reIndex
+    reIndex,
+    search
   }
