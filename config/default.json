@@ -42,7 +42,8 @@
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
-        "calculateServerSide": true
+        "calculateServerSide": true,
+		"sourcePriceIncludesTax": false	
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -68,7 +69,8 @@
       "tax": {
         "defaultCountry": "IT",
         "defaultRegion": "",
-        "calculateServerSide": true
+        "calculateServerSide": true,
+		"sourcePriceIncludesTax": false				
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -93,7 +95,8 @@
     "calculateServerSide": true,
     "alwaysSyncPlatformPricesOver": false,
     "usePlatformTotals": true,
-    "setConfigurableProductOptions": true
+    "setConfigurableProductOptions": true,
+	"sourcePriceIncludesTax": false
   },
   "bodyLimit": "100kb",
   "corsHeaders": [
