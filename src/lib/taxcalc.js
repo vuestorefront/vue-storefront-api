@@ -8,7 +8,7 @@ export function updateProductPrices (product, rate) {
   product.specialPriceTax = (parseFloat(product.special_price) * (parseFloat(rate.rate) / 100))
 
   if (product.special_price && (product.special_price < product.price)) {
-    if ((product.special_to_date && new Date(product.special_to_date) > new Date()) || (product.special_from_date && new Date(product.special_from_date) < new Date())) {
+    if ((product.special_to_date && new Date(product.special_to_date) < new Date()) || (product.special_from_date && new Date(product.special_from_date) > new Date())) {
       product.special_price = 0 // out of the dates period
     } else {
       product.originalPrice = product.price
