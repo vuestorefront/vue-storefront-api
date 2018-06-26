@@ -32,7 +32,7 @@ module.exports.up = next => {
       }
 
       if ("esIndexes" in config) {
-        console.log("Parameter 'esIndexes' found - rewriting...", file);
+        console.log("Parameter 'esIndexes' found - rewriting...");
         _set(config, 'elasticsearch.indices', config.esIndexes);
         delete config.esIndexes;
       }
