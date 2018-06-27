@@ -1,44 +1,31 @@
-version: '2'
+version: '2.0'
 services:
   es1:
-    build: elasticsearch/
+    # image: divante/vue-storefront-elasticsearch:5.6.9
+    build: docker/elasticsearch/
     container_name: es1
-    environment:
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    env_file: docker/elasticsearch/default.env
+    volumes:
+      - 'esdat1:/usr/share/elasticsearch/data'
+    networks:
+      default:
+        aliases:
+          - elasticsearch
+    ports:
+      - '9200:9200'
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: 1g
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - esdat1:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - esnet
-
   kibana:
-    build: kibana/
-    volumes:
-      - ./kibana/config/:/usr/share/kibana/config
+    # image: divante/vue-storefront-kibana:5.6.9
+    build: docker/kibana/
+    env_file: docker/kibana/default.env
     ports:
-      - 5601:5601
-    networks:
-      - esnet
-    depends_on:
-      - es1
-
-  redis:  
-    image: redis
-
-    ports:
-      - "6379:6379"
-
-
+      - '5601:5601'
+  redis:
+    image: 'redis:4-alpine'
+    expose:
+      - 6379
 volumes:
   esdat1:
-    driver: local
-
-networks:
-  esnet:
