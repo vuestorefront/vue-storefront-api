@@ -105,7 +105,8 @@
   "platform": "magento2",
   "registeredExtensions": [
     "mailchimp-subscribe",
-    "example-magento-api"
+    "example-magento-api",
+    "cms-data"
   ],
   "extensions": {
     "mailchimp": {
