@@ -15,13 +15,20 @@ cli.option({
 cli.command('buildcache', () => {
     const soap = require('soap')
     const elasticsearch = require('elasticsearch');
-    const esClient = new elasticsearch.Client({
+    const esConfig = {
         host: {
-            host: config.elasticsearch.host,
-            port: config.elasticsearch.port
+          host: config.elasticsearch.host,
+          port: config.elasticsearch.port
         },
-        log: 'error'
-    });
+        log: 'debug',
+        apiVersion: '5.5',
+        requestTimeout: 1000 * 60 * 60,
+        keepAlive: false
+      }
+      if (config.elasticsearch.user) {
+        esConfig.httpAuth = config.elasticsearch.user + ':' +  config.elasticsearch.password
+      }
+    const esClient = new elasticsearch.Client(esConfig);
 
 
     esClient.indices.exists({index: 'gls_parcelshop_dk'}, (err, resp, status) => {

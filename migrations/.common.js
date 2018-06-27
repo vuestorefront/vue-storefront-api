@@ -4,7 +4,7 @@ let kue = require('kue');
 let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
 
 let es = require('elasticsearch')
-let client = new es.Client({
+const esConfig = {
   host: {
     host: config.elasticsearch.host,
     port: config.elasticsearch.port
@@ -13,7 +13,11 @@ let client = new es.Client({
   apiVersion: '5.5',
   requestTimeout: 1000 * 60 * 60,
   keepAlive: false
-})
+}
+if (config.elasticsearch.user) {
+  esConfig.httpAuth = config.elasticsearch.user + ':' +  config.elasticsearch.password
+}
+let client = new es.Client(esConfig)
 
 exports.db = client        
 exports.queue = queue
