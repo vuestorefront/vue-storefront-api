@@ -1,21 +1,25 @@
 version: '2.0'
 services:
   es1:
-    image: divante/vue-storefront-elasticsearch:5.6.9
-    # build: docker/elasticsearch/
+    # image: divante/vue-storefront-elasticsearch:5.6.9
+    build: docker/elasticsearch/
     container_name: es1
     env_file: docker/elasticsearch/default.env
     volumes:
       - 'esdat1:/usr/share/elasticsearch/data'
-    expose:
-      - 9200
+    networks:
+      default:
+        aliases:
+          - elasticsearch
+    ports:
+      - '9200:9200'
     ulimits:
       memlock:
         soft: -1
         hard: -1
   kibana:
-    image: divante/vue-storefront-kibana:5.6.9
-    # build: docker/kibana/
+    # image: divante/vue-storefront-kibana:5.6.9
+    build: docker/kibana/
     env_file: docker/kibana/default.env
     ports:
       - '5601:5601'
