@@ -43,6 +43,8 @@ module.exports.up = next => {
       throw e;
     }
   });
+
+  next()
 }
 
 module.exports.down = next => {
