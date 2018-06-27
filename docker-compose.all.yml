@@ -22,10 +22,10 @@ services:
       - /var/www/dist
     ports:
       - '8080:8080'
-  elasticsearch:
+  es1:
     extends:
       file: docker-compose.yml
-      service: elasticsearch
+      service: es1
   kibana:
     extends:
       file: docker-compose.yml
