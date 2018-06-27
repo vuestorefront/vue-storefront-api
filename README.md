@@ -27,7 +27,11 @@ Already included in `vue-storefront-api` Docker image (required locally, if you 
 
 **Start a containerized environment**
 
+The **legacy** (A) mode - starting just the Elastic and Redis containers:
 `docker-compose up -d`
+
+The **standard** (B) mode - starting Elastic, Redis + Vue Storefront API containers:
+`docker-compose -f docker-compose.yml -f docker-compose.all.yml up -d`
 
 As a result, all necessary services will be launched:
 - Vue Storefront API runtime environment (Node.js with dependencies from `package.json`)
@@ -37,7 +41,8 @@ As a result, all necessary services will be launched:
 
 Then, to update the structures in the database to the latest version (data migrations), do the following:
 
-`docker exec -it vuestorefrontapi_app_1 yarn migrate`
+(A) `docker exec -it vuestorefrontapi_app_1 yarn migrate`
+(B) `yarn migrate`
 
 By default, the application server is started in development mode. It means that code auto reload is enabled along with ESLint, babel support.
 
@@ -45,11 +50,13 @@ By default, the application server is started in development mode. It means that
 
 Product catalog is imported using [elasticdump](https://www.npmjs.com/package/elasticdump), which is installed automatically via project dependency. The default ElasticSearch index name is: `vue_storefront_catalog`
 
-`docker exec -it vuestorefrontapi_app_1 yarn restore`
+(A) `yarn restore`
+(B) `docker exec -it vuestorefrontapi_app_1 yarn restore`
 
 It restores JSON documents stored in `./var/catalog.json`. The opposite command - used to generate `catalog.json` file from running ElasticSearch cluster:
 
-`docker exec -it vuestorefrontapi_app_1 yarn dump`
+(A) `yarn dump`
+(B) `docker exec -it vuestorefrontapi_app_1 yarn dump`
 
 **Access ElasticSearch data with Kibana**
 
@@ -64,7 +71,7 @@ Catalog API calls are compliant with ElasticSearch (it works like a filtering pr
 
 Elastic search endpoint: `http://localhost:8080/api/catalog/search/<INDEX_NAME>/`. You can run the following command to check if everything is up and runing (it assumes `vue_storefront_catalog` as default index name):
 
-`curl -i http://localhost:8080/api/search/vue_storefront_catalog/_search?query=*`
+`curl -i http://elastic:changeme@localhost:8080/api/search/vue_storefront_catalog/_search?query=*`
 
 ## Data formats
 This backend is using ElasticSearch data formats popularized by [ElasticSuite for Magento2 by Smile.fr](https://github.com/Smile-SA/elasticsuite).

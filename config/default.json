@@ -6,8 +6,8 @@
   "elasticsearch": {
     "host": "localhost",
     "port": 9200,
-    "user": "",
-    "password": "",
+    "user": "elastic",
+    "password": "changeme",
     "indices": [
       "vue_storefront_catalog",
       "vue_storefront_catalog_de",

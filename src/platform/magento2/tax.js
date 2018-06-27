@@ -52,8 +52,8 @@ class TaxProxy extends AbstractTaxProxy {
         return new Promise ((resolve, reject) => { 
             
             if (this._config.tax.calculateServerSide)
-            {            
-                let client = new es.Client({ // as we're runing tax calculation and other data, we need a ES indexer
+            {   
+                const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
                     host: {
                         host: this._config.elasticsearch.host,
                         port: this._config.elasticsearch.port
@@ -61,11 +61,16 @@ class TaxProxy extends AbstractTaxProxy {
                     log: 'debug',
                     apiVersion: '5.5',
                     requestTimeout: 5000
-                })
+                }
+                if (this._config.elasticsearch.user) {
+                    esConfig.httpAuth = this._config.elasticsearch.user + ':' +  this._config.elasticsearch.password
+                }
+               
+                let client = new es.Client(esConfig)                
                 const esQuery = {
                     index: this._indexName,
                     type: 'taxrule',
-                    body: bodybuilder()
+                    body: bodybuilder()                   
                 }        
                 client.search(esQuery).then(function (taxClasses) { // we're always trying to populate cache - when online
                     inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })        
