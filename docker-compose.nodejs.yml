@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: docker/vue-storefront-api/Dockerfile
     depends_on:
-      - elasticsearch
+      - es1
       - redis
     env_file: docker/vue-storefront-api/default.env
     environment:
@@ -22,17 +22,3 @@ services:
       - /var/www/dist
     ports:
       - '8080:8080'
-  es1:
-    extends:
-      file: docker-compose.yml
-      service: es1
-  kibana:
-    extends:
-      file: docker-compose.yml
-      service: kibana
-  redis:
-    extends:
-      file: docker-compose.yml
-      service: redis
-volumes:
-  esdat1:
