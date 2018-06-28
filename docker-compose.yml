@@ -25,7 +25,7 @@ services:
       - '5601:5601'
   redis:
     image: 'redis:4-alpine'
-    expose:
-      - 6379
+    ports:
+      - '6379:6379'
 volumes:
   esdat1:
