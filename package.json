@@ -9,6 +9,7 @@
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
     "db": "babel-node --plugins transform-es2015-modules-commonjs scripts/db.js",
+    "seo": "babel-node --plugins transform-es2015-modules-commonjs scripts/seo.js",
     "restore": "babel-node --plugins transform-es2015-modules-commonjs scripts/elastic.js restore",
     "restore_it": "npm run restore -- --input-file=var/catalog_it.json --output-index=vue_storefront_catalog_it && npm run db rebuild -- --indexName=vue_storefront_catalog_it",
     "restore_de": "npm run restore -- --input-file=var/catalog_de.json --output-index=vue_storefront_catalog_de && npm run db rebuild -- --indexName=vue_storefront_catalog_de",
