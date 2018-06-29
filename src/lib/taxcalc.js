@@ -38,7 +38,7 @@ export function updateProductPrices (product, rate) {
       configurableChild.specialPriceTax = (parseFloat(configurableChild.special_price) * (parseFloat(rate.rate) / 100))
 
       if (configurableChild.special_price && (configurableChild.special_price < configurableChild.price)) {
-        if ((configurableChild.special_to_date && new Date(configurableChild.special_to_date) > new Date()) || (configurableChild.special_from_date && new Date(configurableChild.special_from_date) < new Date())) {
+        if ((configurableChild.special_to_date && new Date(configurableChild.special_to_date) < new Date()) || (configurableChild.special_from_date && new Date(configurableChild.special_from_date) > new Date())) {
           configurableChild.special_price = 0 // out of the dates period
         } else {
           configurableChild.originalPrice = parseFloat(configurableChild.price)
