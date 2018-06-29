@@ -31,7 +31,7 @@ The **legacy** (A) mode - starting just the Elastic and Redis containers:
 `docker-compose up -d`
 
 The **standard** (B) mode - starting Elastic, Redis + Vue Storefront API containers:
-`docker-compose -f docker-compose.yml -f docker-compose.all.yml up -d`
+`docker-compose -f docker-compose.yml -f docker-compose.nodejs.yml up -d`
 
 As a result, all necessary services will be launched:
 - Vue Storefront API runtime environment (Node.js with dependencies from `package.json`)
