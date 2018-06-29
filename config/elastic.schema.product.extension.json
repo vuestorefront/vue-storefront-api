@@ -1,5 +1,8 @@
 {
    "properties": {
-       "position": {"type": "long"}
+       "position": {"type": "integer"},
+       "tax_class_id": {"type": "integer"},
+       "required_options": {"type": "integer"},
+       "has_options": {"type": "integer"}       
     }
 }

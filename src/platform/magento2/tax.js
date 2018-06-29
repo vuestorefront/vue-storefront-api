@@ -4,10 +4,11 @@ const es = require('elasticsearch')
 const bodybuilder = require('bodybuilder')
 
 class TaxProxy extends AbstractTaxProxy {
-    constructor (config, entityType, indexName, taxCountry, taxRegion = ''){
+    constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null){
         super(config)
         this._entityType = entityType
         this._indexName = indexName
+        this._sourcePriceInclTax = sourcePriceInclTax
 
         if (this._config.storeViews && this._config.storeViews.multistore) {
             for (let storeCode in this._config.storeViews){
@@ -17,6 +18,7 @@ class TaxProxy extends AbstractTaxProxy {
                         if (store.elasticsearch.index === indexName) {
                             taxRegion = store.tax.defaultRegion
                             taxCountry = store.tax.defaultCountry
+                            sourcePriceInclTax = store.tax.sourcePriceIncludesTax
                             break;
                         }
                     }
@@ -31,15 +33,18 @@ class TaxProxy extends AbstractTaxProxy {
                 taxCountry = this._config.tax.defaultCountry
             }
         }
-        
+        if (sourcePriceInclTax === null) {
+            sourcePriceInclTax = this._config.tax.sourcePriceIncludesTax
+        }                 
         this._taxCountry = taxCountry
         this._taxRegion = taxRegion
-        console.log('Taxes will be calculated for', taxCountry, taxRegion)
+        this._sourcePriceInclTax = sourcePriceInclTax
+        console.log('Taxes will be calculated for', taxCountry, taxRegion, sourcePriceInclTax)
         this.taxFor = this.taxFor.bind(this)
     }       
 
     taxFor (product) {
-        return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion)
+        return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax)
     }
 
     process (productList) {
@@ -47,17 +52,25 @@ class TaxProxy extends AbstractTaxProxy {
         return new Promise ((resolve, reject) => { 
             
             if (this._config.tax.calculateServerSide)
-            {            
-                let client = new es.Client({ // as we're runing tax calculation and other data, we need a ES indexer
-                    host: this._config.esHost,
+            {   
+                const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
+                    host: {
+                        host: this._config.elasticsearch.host,
+                        port: this._config.elasticsearch.port
+                    },
                     log: 'debug',
                     apiVersion: '5.5',
                     requestTimeout: 5000
-                })
+                }
+                if (this._config.elasticsearch.user) {
+                    esConfig.httpAuth = this._config.elasticsearch.user + ':' +  this._config.elasticsearch.password
+                }
+               
+                let client = new es.Client(esConfig)                
                 const esQuery = {
                     index: this._indexName,
                     type: 'taxrule',
-                    body: bodybuilder()
+                    body: bodybuilder()                   
                 }        
                 client.search(esQuery).then(function (taxClasses) { // we're always trying to populate cache - when online
                     inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })        

@@ -1,63 +1,31 @@
-version: '2'
+version: '2.0'
 services:
   es1:
-    image: elasticsearch:5.5
+    # image: divante/vue-storefront-elasticsearch:5.6.9
+    build: docker/elasticsearch/
     container_name: es1
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    mem_limit: 1g
+    env_file: docker/elasticsearch/default.env
     volumes:
-      - esdat1:/usr/share/elasticsearch/data
+      - 'esdat1:/usr/share/elasticsearch/data'
+    networks:
+      default:
+        aliases:
+          - elasticsearch
     ports:
-      - 9200:9200
-    networks:
-      - esnet
-  es2:
-    image: elasticsearch:5.5
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=es1"
+      - '9200:9200'
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: 1g
-    volumes:
-      - esdat2:/usr/share/elasticsearch/data
-    networks:
-      - esnet
-
   kibana:
-    image: kibana:5.5
+    # image: divante/vue-storefront-kibana:5.6.9
+    build: docker/kibana/
+    env_file: docker/kibana/default.env
     ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://es1:9200
-    networks:
-        - esnet
-
-  redis:  
-    image: redis
-
+      - '5601:5601'
+  redis:
+    image: 'redis:4-alpine'
     ports:
-      - "6379:6379"      
-
-
+      - '6379:6379'
 volumes:
   esdat1:
-    driver: local
-  esdat2:
-    driver: local
-
-networks:
-  esnet:
-
-

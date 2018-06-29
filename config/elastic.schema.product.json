@@ -64,6 +64,6 @@
        "eco_collection": {"type": "integer"},
        "eco_collection_options": {"type": "integer"},
        "erin_recommends": {"type": "integer"},
-       "tax_class_id": {"type": "long"}
+       "tax_class_id": {"type": "integer"}
     }
 }

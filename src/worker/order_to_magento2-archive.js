@@ -4,7 +4,6 @@
  */
 
 const kue = require('kue');
-const queue = kue.createQueue();
 const logger = require('./log');
 const unirest = require('unirest');
 
@@ -13,6 +12,7 @@ const ajv = new Ajv(); // validator
 const validate = ajv.compile(require('../models/order.schema.json'));
 
 const config = require('config')
+let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
 
 let numCPUs = require('os').cpus().length;
 
