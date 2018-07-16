@@ -59,6 +59,8 @@
     "elasticdump": "^3.3.12",
     "elasticsearch": "^13.3.1",
     "express": "^4.16.3",
+    "graphql": "^0.10.1",
+    "graphql-tools": "^1.2.1",
     "humps": "^1.1.0",
     "imageable": "^0.10.5",
     "jsonfile": "^4.0.0",
@@ -67,6 +69,7 @@
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
+    "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.5.0",
     "mime-types": "^2.1.18",
     "morgan": "^1.9.0",
@@ -78,6 +81,7 @@
     "winston": "^2.4.2"
   },
   "devDependencies": {
+    "apollo-server-express": "^1.3.6",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",

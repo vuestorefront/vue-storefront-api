@@ -8,6 +8,10 @@ import middleware from './middleware';
 import api from './api';
 import config from 'config';
 import img from './api/img';
+import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
+import { makeExecutableSchema } from 'graphql-tools';
+import resolvers from './graphql/resolvers';
+import typeDefs from './graphql/schema';
 
 let app = express();
 app.server = http.createServer(app);
@@ -42,5 +46,16 @@ initializeDb( db => {
         console.log(`Vue Storefront API started at http://${host}:${port}`);
     });
 });
+
+// graphQl Server part
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
+});
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use('/graphql', graphqlExpress({ schema }));
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 export default app;
