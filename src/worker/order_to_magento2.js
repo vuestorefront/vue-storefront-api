@@ -226,10 +226,10 @@ function processSingleOrder(orderData, config, job, done){
 
                         logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
                         api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder).then((result) => {
-                          logger.info(THREAD_ID + '< Billign address assigned', result)
+                          logger.info(THREAD_ID + '< Billing address assigned', result)
                           logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
                           api.cart.shippingInformation(null, cartId,  shippingAddressInfo, isThisAuthOrder).then((result) => {
-                            logger.info(THREAD_ID + '< Shipping addresses assigned', result)
+                            logger.info(THREAD_ID + '< Shipping address assigned', result)
 
                             if(job) job.progress(currentStep++, TOTAL_STEPS);
 
