@@ -38,5 +38,21 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
+    const client = Magento2Client(config.magento2.api);
+    client.addMethods('cmsPageIdentifier', function (restClient) {
+      let module = {};
+      module.getPageIdentifier = function () {
+        return restClient.get(`/snowdog/cmsPageIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
+      }
+      return module;
+    })
+    client.cmsPageIdentifier.getPageIdentifier().then((result) => {
+      apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
+    }).catch(err => {
+      apiStatus(res, err, 500);
+    })
+  })
+
   return cmsApi
 }
