@@ -1,6 +1,6 @@
 scalar Date
 
-type Product {
+type ProductSource {
   id: Int!
   sku: String
   name: String
@@ -12,6 +12,7 @@ type Product {
   weight: Float
   description: String
   image: String
+  url_key: String
   small_image: String
   thumbnail: String
   price: Float
@@ -23,7 +24,15 @@ type Product {
   final_price: Float
 }
 
+type Product {
+  _index: String
+  _id: Int
+  _score: Float
+  _source: ProductSource
+}
+
 type Query {
   Product(id: Int!): Product
   ProductList(query: String!): [Product]
+  ProductSourceList(query: String!): [ProductSource]
 }
