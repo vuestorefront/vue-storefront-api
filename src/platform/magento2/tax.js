@@ -2,6 +2,7 @@ import AbstractTaxProxy from '../abstract/tax'
 import { calculateProductTax } from '../../lib/taxcalc'
 const es = require('elasticsearch')
 const bodybuilder = require('bodybuilder')
+import TierHelper from '../../helpers/priceTiers'
 
 class TaxProxy extends AbstractTaxProxy {
     constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null){
@@ -47,10 +48,19 @@ class TaxProxy extends AbstractTaxProxy {
         return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax)
     }
 
-    process (productList) {
+    applyTierPrices (productList, groupId) {
+        if (this._config.usePriceTiers) {
+            for (let item of productList) {
+                TierHelper(item._source, groupId)
+            }
+        }
+    }
+
+    process (productList, groupId = null) {
         let inst = this
-        return new Promise ((resolve, reject) => { 
-            
+        return new Promise ((resolve, reject) => {
+            inst.applyTierPrices(productList, groupId)
+
             if (this._config.tax.calculateServerSide)
             {   
                 const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
