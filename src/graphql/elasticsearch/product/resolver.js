@@ -71,7 +71,7 @@ async function searchList(req) {
     type: 'product',
     body: {
       _source: {
-        includes: includes
+        excludes: ''
       },
       query: {
         multi_match: {
@@ -88,36 +88,10 @@ async function searchList(req) {
   return allRecords;
 }
 
-async function searchSourceList(req) {
-  let allRecords = [];
-  const response = await client.search({
-    index: config.elasticsearch.index,
-    type: 'product',
-    body: {
-      _source: {
-        includes: includes
-      },
-      query: {
-        multi_match: {
-          query: req,
-          fields: ['name', 'description']
-        }
-      }
-    }
-  });
-
-  response.hits.hits.forEach(function(hit) {
-    allRecords.push(hit._source);
-  });
-  console.log(response.hits.hits);
-  return allRecords;
-}
-
 const resolver = {
   Query: {
     Product: (_, { id }) => search(id),
-    ProductList: (_, { query }) => searchList(query),
-    ProductSourceList: (_, { query }) => searchSourceList(query)
+    ProductList: (_, { query }) => searchList(query)
   }
 };
 

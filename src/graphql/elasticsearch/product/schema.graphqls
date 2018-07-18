@@ -1,38 +1,13 @@
-scalar Date
-
-type ProductSource {
-  id: Int!
-  sku: String
-  name: String
-  status: Int
-  visibility: Int
-  type_id: String
-  created_at: Date
-  updated_at: Date
-  weight: Float
-  description: String
-  image: String
-  url_key: String
-  small_image: String
-  thumbnail: String
-  price: Float
-  max_price: Float
-  minimal_price: Float
-  regular_price: Float
-  max_regular_price: Float
-  minimal_regular_price: Float
-  final_price: Float
-}
+scalar JSON
 
 type Product {
   _index: String
   _id: Int
   _score: Float
-  _source: ProductSource
+  _source: JSON
 }
 
 type Query {
   Product(id: Int!): Product
   ProductList(query: String!): [Product]
-  ProductSourceList(query: String!): [ProductSource]
 }
