@@ -43,28 +43,7 @@ const includes = [
   'url_key'
 ];
 
-async function search(id) {
-  let allRecords = '';
-  const response = await client.search({
-    index: config.elasticsearch.index,
-    type: 'product',
-    body: {
-      query: {
-        match: {
-          id: id
-        }
-      }
-    }
-  });
-
-  response.hits.hits.forEach(function(hit) {
-    allRecords = hit._source;
-  });
-
-  return allRecords;
-}
-
-async function searchList(req) {
+async function searchList(search, filter, pageSize, currentPage, sort) {
   let allRecords = [];
   const response = await client.search({
     index: config.elasticsearch.index,
@@ -75,7 +54,7 @@ async function searchList(req) {
       },
       query: {
         multi_match: {
-          query: req,
+          query: search,
           fields: ['name', 'description']
         }
       }
@@ -90,8 +69,8 @@ async function searchList(req) {
 
 const resolver = {
   Query: {
-    Product: (_, { id }) => search(id),
-    ProductList: (_, { query }) => searchList(query)
+    //Product: (_, { id }) => search(id),
+    products: (_, { search, filter, pageSize, currentPage, sort }) => searchList(search, filter, pageSize, currentPage, sort)
   }
 };
 
