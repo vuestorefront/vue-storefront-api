@@ -1,0 +1,8 @@
+type Query {
+  searchProducts (
+        filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
+        range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return."),
+        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+        search: String @doc(description: "Performs a full-text search using the specified key words.")
+     ): [Products]
+}
