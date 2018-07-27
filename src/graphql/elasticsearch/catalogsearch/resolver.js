@@ -10,7 +10,7 @@ async function searchList(page, filter, range, sort, search) {
     body: query
   });
 
-  return response.hits.hits;
+  return response;
 }
 
 const resolver = {

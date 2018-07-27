@@ -7,12 +7,18 @@ type Products {
   _source: JSON
 }
 
+type ESResponse {
+  hits: JSON
+  suggest: JSON
+  aggregations: JSON
+}
+
 type Query {
   products (
         filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
         range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return."),
         sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
-     ): [Products]
+     ): ESResponse
 }
 
 type Query {
@@ -21,7 +27,7 @@ type Query {
         filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
         range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return."),
         sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
-     ): [Products]
+     ): ESResponse
 }
 
 input FilterTypeInput {
