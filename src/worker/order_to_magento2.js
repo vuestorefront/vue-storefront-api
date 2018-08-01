@@ -236,7 +236,8 @@ function processSingleOrder(orderData, config, job, done){
                             api.cart.order(null, cartId, {
                                 "paymentMethod":
                                 {
-                                    "method":orderData.addressInformation.payment_method_code
+                                    "method":orderData.addressInformation.payment_method_code,
+                                    "additional_data":orderData.addressInformation.payment_method_additional
                                 }
                             }, isThisAuthOrder).then(result => {
                                 logger.info(THREAD_ID, result)
