@@ -74,9 +74,8 @@
     "request": "^2.85.0",
     "resource-router-middleware": "^0.6.0",
     "soap": "^0.23.0",
-    "unirest": "^0.5.1",
     "winston": "^2.4.2",
-    "pm2": "^2.10.4"    
+    "pm2": "^2.10.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

@@ -5,7 +5,6 @@
 
 const kue = require('kue');
 const logger = require('./log');
-const unirest = require('unirest');
 const countryMapper = require('../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
