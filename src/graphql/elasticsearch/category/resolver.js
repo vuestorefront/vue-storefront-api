@@ -1,53 +1,31 @@
 import config from 'config';
 import client from '../client';
+import bodybuilder from 'bodybuilder';
 
-async function search(id) {
-  let allRecords = '';
+async function search(ids, name, from, size) {
+  let query = bodybuilder();
+  query.from = from;
+  query.size = size;
+
+  if (ids) {
+    query.orFilter('terms', 'id', ids);
+  }
+  if (name) {
+    query.orFilter('match', 'name', { query: name, boost: 3 });
+  }
+
   const response = await client.search({
-    index: config.elasticsearch.index,
-    type: 'category',
-    body: {
-      query: {
-        match: {
-          id: id
-        }
-      }
-    }
+    index: config.elasticsearch.indices[0],
+    type: config.elasticsearch.indexTypes[1],
+    body: query.build()
   });
 
-  response.hits.hits.forEach(function(hit) {
-    allRecords = hit._source;
-  });
-
-  return allRecords;
-}
-
-async function searchList(req) {
-  let allRecords = [];
-  const response = await client.search({
-    index: config.elasticsearch.index,
-    type: 'category',
-    body: {
-      query: {
-        multi_match: {
-          query: req,
-          fields: ['name', 'description']
-        }
-      }
-    }
-  });
-
-  response.hits.hits.forEach(function(hit) {
-    allRecords.push(hit._source);
-  });
-
-  return allRecords;
+  return response;
 }
 
 const resolver = {
   Query: {
-    Category: (_, { id }) => search(id),
-    CategoryList: (_, { query }) => searchList(query)
+    categories: (_, { ids, name, from, size }) => search(ids, name, from, size)
   }
 };
 

@@ -1,12 +1,12 @@
 import config from 'config';
 import client from '../client';
-import { buildQuery } from '../queryBuilder'
+import { buildQuery } from '../queryBuilder';
 
-async function searchList(page, filter, range, sort, search) {
-  let query = buildQuery(page, filter, range, sort, search);
+async function searchList(page, filter, sort, from, size, search) {
+  let query = buildQuery(page, filter, sort, from, size, search);
   const response = await client.search({
-    index: config.elasticsearch.index,
-    type: config.elasticsearch.indexTypes.product,
+    index: config.elasticsearch.indices[0],
+    type: config.elasticsearch.indexTypes[0],
     body: query
   });
 
@@ -15,7 +15,8 @@ async function searchList(page, filter, range, sort, search) {
 
 const resolver = {
   Query: {
-    searchProducts: (_, { filter, range, sort, search}) => searchList('catealogsearch', filter, range, sort, search)
+    searchProducts: (_, { filter, sort, from, size, search }) =>
+      searchList('catalogsearch', filter, sort, from, size, search)
   }
 };
 

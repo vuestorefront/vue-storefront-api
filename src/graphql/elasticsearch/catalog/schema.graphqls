@@ -15,18 +15,10 @@ type ESResponse {
 
 type Query {
   products (
-        filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
-        range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return."),
+        filter: ProductFilterTypeInput @doc(description: "Identifies which product attributes to search for and return.")
         sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
-     ): ESResponse
-}
-
-type Query {
-  searchProducts (
-        search: String @doc(description: "Performs a full-text search using the specified key words."),
-        filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
-        range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return."),
-        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+        from: Int @doc(description: "Defines the offset from the first result you want to fetch.")
+        size: Int @doc(description: "Parameter allows configure the maximum amount of hits to be returned.")
      ): ESResponse
 }
 
@@ -69,6 +61,11 @@ input ProductSortInput {
     country_of_manufacture: SortEnum @doc(description: "The product's country of origin")
     custom_layout: SortEnum @doc(description: "The name of a custom layout")
     gift_message_available: SortEnum @doc(description: "Indicates whether a gift message is available")
+}
+
+input ProductFilterTypeInput {
+    terms: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return.")
+    range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return.")
 }
 
 input ProductFilterInput {

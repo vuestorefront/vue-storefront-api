@@ -1,15 +1,13 @@
-type Category {
-  id: Int!
-  parent_id: Int
-  name: String
-  is_active: Int
-  position: Int
-  level: Int
-  product_count: Int
-  tsk: Int
+type ESResponse {
+  hits: JSON
+  suggest: JSON
 }
 
 type Query {
-  Category(id: Int!): Category
-  CategoryList(query: String!): [Category]
+  categories (
+    ids: [Int] @doc(description: "Ids of the categories")
+    name: String  @doc(description: "Name of the categories")
+    from: Int @doc(description: "Defines the offset from the first result you want to fetch.")
+    size: Int @doc(description: "Parameter allows configure the maximum amount of hits to be returned.")
+    ): ESResponse
 }

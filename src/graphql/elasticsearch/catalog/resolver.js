@@ -2,11 +2,11 @@ import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
 
-async function list(page, filter, range, sort, search) {
-  let query = buildQuery(page, filter, range, sort, search);
+async function list(page, filter, sort, from, size) {
+  let query = buildQuery(page, filter, sort, from, size);
   const response = await client.search({
-    index: config.elasticsearch.index,
-    type: config.elasticsearch.indexTypes.product,
+    index: config.elasticsearch.indices[0],
+    type: config.elasticsearch.indexTypes[0],
     body: query
   });
 
@@ -15,8 +15,9 @@ async function list(page, filter, range, sort, search) {
 
 const resolver = {
   Query: {
-    products: (_, { filter, range, sort }) => list('catalog', filter, range, sort)
+    products: (_, { filter, sort, from, size }) =>
+      list('catalog', filter, sort, from, size)
   }
-}
+};
 
 export default resolver;

@@ -2,32 +2,59 @@ import config from 'config';
 import map from 'lodash/map';
 import bodybuilder from 'bodybuilder';
 
-export function buildQuery (page, filter, range, sort, search) {
-  let query = bodybuilder();
-  if (page == 'catalogsearch') {
-    query
-      .orQuery('match', 'name', { query: search, boost: 3 })
-      .orQuery('match', 'category.name', { query: search, boost: 1 })
-      .orQuery('match', 'short_description', { query: search, boost: 2 })
-      .orQuery('match', 'description', { query: search, boost: 1 });
-  }
+function applyFilters(page, filter, search, query) {
   query._sourceInclude = config.entities.productListWithChildren.includeFields;
   query._sourceExclude = config.entities.productListWithChildren.excludeFields;
-  query.filter('range', 'visibility', { gte: 3, lte: 4 });
+  query
+    .filter('range', 'visibility', { gte: 2, lte: 4 })
+    .filter('range', 'status', { gte: 0, lte: 2 });
 
-  map(filter, function(value, key) {
-    query.filter('terms', key, value);
-    query.agg('terms', key);
-  });
+  if (page == 'catalogsearch') {
+    query
+      .orFilter('match', 'name', { query: search, boost: 3 })
+      .orFilter('match', 'category.name', { query: search, boost: 1 })
+      .orFilter('match', 'short_description', { query: search, boost: 2 })
+      .orFilter('match', 'description', { query: search, boost: 1 });
+  }
 
-  map(range, function(value, key) {
-    query.filter('range', key, value);
-    query.agg('stats', key);
-  });
+  if (filter) {
+    map(filter, function(value, key) {
+      switch (key) {
+        case 'terms':
+          map(value, function(v, k) {
+            query.orFilter('terms', k, v);
+            query.agg('terms', k);
+          });
+          break;
+        case 'range':
+          map(value, function(v, k) {
+            query.filter('range', k, v);
+            query.agg('stats', k);
+          });
+          break;
+        default:
+          map(value, function(v, k) {
+            query.orFilter('terms', k, v);
+            query.agg('terms', k);
+          });
+          break;
+      }
+    });
+  }
 
-  map(sort, function(value, key) {
-    query.sort(key, value);
-  });
+  return query;
+}
+
+export function buildQuery(page, filter, sort, from, size, search = '') {
+  let query = bodybuilder();
+  query.from = from;
+  query.size = size;
+  query = applyFilters(page, filter, search, query);
+  if (sort) {
+    map(sort, function(value, key) {
+      query.sort(key, value);
+    });
+  }
 
   return query.build();
 }
