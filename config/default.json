@@ -155,5 +155,6 @@
     "maxDownloadCacheSize": 1000,
     "tmpPathRoot": "/tmp",
     "debug": false
-  }
+  },
+  "priceTiers": false
 }
