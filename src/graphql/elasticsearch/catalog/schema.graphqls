@@ -94,6 +94,8 @@ input ProductFilterInput {
     or: String @doc(description: "The keyword required to perform a logical OR comparison")
     color: [Int] @doc(description: "The product color. Customers use this color to identify the products.")
     size: [Int] @doc(description: "The product size. Customers use this size to identify the products.")
+    visibility: [Int] @doc(description: "The product visibility.")
+    status: [Int] @doc(description: "The product status.")
 }
 
 input ProductRangeInput {

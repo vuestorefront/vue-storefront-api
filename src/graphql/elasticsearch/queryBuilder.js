@@ -9,7 +9,7 @@ function applyFilters(page, filter, search, query) {
     .filter('range', 'visibility', { gte: 2, lte: 4 })
     .filter('range', 'status', { gte: 0, lte: 2 });
 
-  if (page == 'catalogsearch') {
+  if (page == 'catalogsearch' && search != '') {
     query
       .orFilter('match', 'name', { query: search, boost: 3 })
       .orFilter('match', 'category.name', { query: search, boost: 1 })
@@ -22,7 +22,7 @@ function applyFilters(page, filter, search, query) {
       switch (key) {
         case 'terms':
           map(value, function(v, k) {
-            query.orFilter('terms', k, v);
+            query.filter('terms', k, v);
             query.agg('terms', k);
           });
           break;
@@ -34,7 +34,7 @@ function applyFilters(page, filter, search, query) {
           break;
         default:
           map(value, function(v, k) {
-            query.orFilter('terms', k, v);
+            query.filter('terms', k, v);
             query.agg('terms', k);
           });
           break;
@@ -47,14 +47,6 @@ function applyFilters(page, filter, search, query) {
 
 export function buildQuery(page, filter, sort, from, size, search = '') {
   let query = bodybuilder();
-  query.from = from;
-  query.size = size;
   query = applyFilters(page, filter, search, query);
-  if (sort) {
-    map(sort, function(value, key) {
-      query.sort(key, value);
-    });
-  }
-
   return query.build();
 }
