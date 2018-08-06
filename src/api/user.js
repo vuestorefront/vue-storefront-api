@@ -77,7 +77,7 @@ export default ({ config, db }) => {
 	});	
 
 	/**
-	 * POST resetPassword
+	 * POST resetPassword (old, keep for backward compatibility)
 	 */
 	userApi.post('/resetPassword', (req, res) => {	
 		const userProxy = _getProxy(req)
@@ -91,10 +91,27 @@ export default ({ config, db }) => {
 		}).catch(err=> {
 			apiStatus(res, err, 500);
 		})				
-	});	
+	});
+
+    /**
+     * POST resetPassword
+     */
+    userApi.post('/reset-password', (req, res) => {
+        const userProxy = _getProxy(req)
+
+        if(!req.body.email) {
+            return apiStatus(res, "Invalid e-mail provided!", 500)
+        }
+
+        userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
+            apiStatus(res, result, 200);
+        }).catch(err=> {
+            apiStatus(res, err, 500);
+        })
+    });
 
 
-	/**
+    /**
 	 * GET  an user
 	 */
 	userApi.get('/me', (req, res) => {	
@@ -141,7 +158,7 @@ export default ({ config, db }) => {
 	})
 
 	/**
-	 * POST for changing user's password
+	 * POST for changing user's password (old, keep for backward compatibility)
 	 */
 	userApi.post('/changePassword', (req, res) => {
 		const userProxy = _getProxy(req)
@@ -150,7 +167,19 @@ export default ({ config, db }) => {
 		}).catch(err => {
 			apiStatus(res, err, 500)
 		})
-	})
+	});
+
+	/**
+	 * POST for changing user's password
+	 */
+	userApi.post('/change-password', (req, res) => {
+		const userProxy = _getProxy(req)
+		userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
+			apiStatus(res, result, 200)
+		}).catch(err => {
+			apiStatus(res, err, 500)
+		})
+	});
 
 	return userApi
 }
