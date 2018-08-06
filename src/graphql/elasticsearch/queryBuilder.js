@@ -2,14 +2,14 @@ import config from 'config';
 import map from 'lodash/map';
 import bodybuilder from 'bodybuilder';
 
-function applyFilters(page, filter, search, query) {
+function applyFilters(filter, search, query) {
   query._sourceInclude = config.entities.productListWithChildren.includeFields;
   query._sourceExclude = config.entities.productListWithChildren.excludeFields;
   query
     .filter('range', 'visibility', { gte: 2, lte: 4 })
     .filter('range', 'status', { gte: 0, lte: 2 });
 
-  if (page == 'catalogsearch' && search != '') {
+  if (search != '') {
     query
       .orFilter('match', 'name', { query: search, boost: 3 })
       .orFilter('match', 'category.name', { query: search, boost: 1 })

@@ -15,18 +15,33 @@ type ESResponse {
 
 type Query {
   products (
-        filter: ProductFilterTypeInput @doc(description: "Identifies which product attributes to search for and return.")
+        search: String @doc(description: "Performs a full-text search using the specified key words.")
+        filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return.")
         sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
-        from: Int @doc(description: "Defines the offset from the first result you want to fetch.")
-        size: Int @doc(description: "Parameter allows configure the maximum amount of hits to be returned.")
+        currentPage: Int @doc(description: "Defines the offset from the first result you want to fetch.")
+        pageSize: Int @doc(description: "Parameter allows configure the maximum amount of hits to be returned.")
      ): ESResponse
 }
 
-input FilterTypeInput {
-    gte: Float @doc(description: "Greater than or equal to")
-    gt: Float @doc(description: "Greater than")
-    lte: Float @doc(description: "Less than or equal to")
-    lt: Float @doc(description: "Less than")
+input FilterTypeInput @doc(description: "FilterTypeInput specifies which action will be performed in a query ") {
+    eq: String @doc(description: "Equals")
+    finset: [String] @doc(description: "Find in set. The value can contain a set of comma-separated values")
+    from: String @doc(description: "From. Must be used with 'to'")
+    gt: String @doc(description: "Greater than")
+    gte: String @doc(description: "Greater than or equal to")
+    gteq: String @doc(description: "Greater than or equal to")
+    in: [String] @doc(description: "In. The value can contain a set of comma-separated values")
+    like: String @doc(description: "Like. The specified value can contain % (percent signs) to allow matching of 0 or more characters")
+    lt: String @doc(description: "Less than")
+    lte: String @doc(description: "Less than or equal to")
+    lteq: String @doc(description: "Less than or equal to")
+    moreq: String @doc(description: "More than or equal to")
+    neq: String @doc(description: "Not equal to")
+    notnull: String @doc(description: "Not null")
+    null: String @doc(description: "Is null")
+    to: String@doc(description: "To. Must be used with 'from'")
+    nin: [String] @doc(description: "Not in. The value can contain a set of comma-separated values")
+    scope: [String] @doc(description: "describe the filter scope (default | catalog)")
 }
 
 input ProductSortInput {
@@ -63,43 +78,46 @@ input ProductSortInput {
     gift_message_available: SortEnum @doc(description: "Indicates whether a gift message is available")
 }
 
-input ProductFilterTypeInput {
-    terms: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return.")
-    range: ProductRangeInput @doc(description: "Identifies which product attributes to search range for and return.")
-}
-
-input ProductFilterInput {
-    name: String @doc(description: "The product name. Customers use this name to identify the product.")
-    sku: [String] @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
-    description: String @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
-    short_description: String @doc(description: "A short description of the product. Its use depends on the theme.")
-    manufacturer: String @doc(description: "A number representing the product's manufacturer")
-    meta_title: String @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists")
-    meta_keyword: String @doc(description: "A comma-separated list of keywords that are visible only to search engines")
-    meta_description: String @doc(description: "A brief overview of the product for search results listings, maximum 255 characters")
-    image: String @doc(description: "The relative path to the main image on the product page")
-    small_image: String @doc(description: "The relative path to the small image, which is used on catalog pages")
-    thumbnail: String @doc(description: "The relative path to the product's thumbnail image")
-    custom_layout_update: String @doc(description: "XML code that is applied as a layout update to the product page")
-    category_ids: [Int] @doc(description: "Category ID the product belongs to")
-    options_container: String @doc(description: "If the product has multiple options, determines where they appear on the product page")
-    required_options: Boolean @doc(description: "Indicates whether the product has required options")
-    has_options: Boolean @doc(description: "Indicates whether additional attributes have been created for the product")
-    image_label: String @doc(description: "The label assigned to a product image")
-    small_image_label: String @doc(description: "The label assigned to a product's small image")
-    thumbnail_label: String @doc(description: "The label assigned to a product's thumbnail image")
-    country_of_manufacture: String @doc(description: "The product's country of origin")
-    custom_layout: String @doc(description: "The name of a custom layout")
-    gift_message_available: Boolean @doc(description: "Indicates whether a gift message is available")
-    or: String @doc(description: "The keyword required to perform a logical OR comparison")
-    color: [Int] @doc(description: "The product color. Customers use this color to identify the products.")
-    size: [Int] @doc(description: "The product size. Customers use this size to identify the products.")
-    visibility: [Int] @doc(description: "The product visibility.")
-    status: [Int] @doc(description: "The product status.")
-}
-
-input ProductRangeInput {
-    price: [FilterTypeInput] @doc(description: "The price of an item")
+input ProductFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    visibility: FilterTypeInput @doc(description: "The product visibility. Customers use this visibility to identify the product.")
+    status: FilterTypeInput @doc(description: "The product status. Customers use this status to identify the product.")
+    name: FilterTypeInput @doc(description: "The product name. Customers use this name to identify the product.")
+    sku: FilterTypeInput @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
+    description: FilterTypeInput @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
+    short_description: FilterTypeInput @doc(description: "A short description of the product. Its use depends on the theme.")
+    price: FilterTypeInput @doc(description: "The price of an item")
+    special_price: FilterTypeInput @doc(description: "The discounted price of the product")
+    special_from_date: FilterTypeInput @doc(description: "The beginning date that a product has a special price")
+    special_to_date: FilterTypeInput @doc(description: "The end date that a product has a special price")
+    weight: FilterTypeInput @doc(description: "The weight of the item, in units defined by the store")
+    manufacturer: FilterTypeInput @doc(description: "A number representing the product's manufacturer")
+    meta_title: FilterTypeInput @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists")
+    meta_keyword: FilterTypeInput @doc(description: "A comma-separated list of keywords that are visible only to search engines")
+    meta_description: FilterTypeInput @doc(description: "A brief overview of the product for search results listings, maximum 255 characters")
+    image: FilterTypeInput @doc(description: "The relative path to the main image on the product page")
+    small_image: FilterTypeInput @doc(description: "The relative path to the small image, which is used on catalog pages")
+    thumbnail: FilterTypeInput @doc(description: "The relative path to the product's thumbnail image")
+    tier_price: FilterTypeInput @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    news_from_date: FilterTypeInput @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
+    news_to_date: FilterTypeInput @doc(description: "The end date for new product listings")
+    custom_layout_update: FilterTypeInput @doc(description: "XML code that is applied as a layout update to the product page")
+    min_price: FilterTypeInput @doc(description:"The numeric minimal price of the product. Do not include the currency code.")
+    max_price: FilterTypeInput @doc(description:"The numeric maximal price of the product. Do not include the currency code.")
+    special_price: FilterTypeInput @doc(description:"The numeric special price of the product. Do not include the currency code.")
+    category_ids: FilterTypeInput @doc(description: "Category ID the product belongs to")
+    options_container: FilterTypeInput @doc(description: "If the product has multiple options, determines where they appear on the product page")
+    required_options: FilterTypeInput @doc(description: "Indicates whether the product has required options")
+    has_options: FilterTypeInput @doc(description: "Indicates whether additional attributes have been created for the product")
+    image_label: FilterTypeInput @doc(description: "The label assigned to a product image")
+    small_image_label: FilterTypeInput @doc(description: "The label assigned to a product's small image")
+    thumbnail_label: FilterTypeInput @doc(description: "The label assigned to a product's thumbnail image")
+    created_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was created")
+    updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was updated")
+    country_of_manufacture: FilterTypeInput @doc(description: "The product's country of origin")
+    custom_layout: FilterTypeInput @doc(description: "The name of a custom layout")
+    gift_message_available: FilterTypeInput @doc(description: "Indicates whether a gift message is available")
+    price: FilterTypeInput @doc(description: "The price of an item")
+    final_price: FilterTypeInput @doc(description: "The final price of an item")
     special_price: FilterTypeInput @doc(description: "The discounted price of the product")
     special_from_date: FilterTypeInput @doc(description: "The beginning date that a product has a special price")
     special_to_date: FilterTypeInput @doc(description: "The end date that a product has a special price")
@@ -112,6 +130,10 @@ input ProductRangeInput {
     special_price: FilterTypeInput @doc(description:"The numeric special price of the product. Do not include the currency code.")
     created_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was created")
     updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was updated")
+    erin_recommends: FilterTypeInput @doc(description: "The product erin_recommends. Customers use this erin_recommends to identify the product.")
+    size: FilterTypeInput @doc(description: "The product size. Customers use this size to identify the product.")
+    color: FilterTypeInput @doc(description: "The product color. Customers use this color to identify the product.")
+    or: ProductFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
 enum SortEnum {

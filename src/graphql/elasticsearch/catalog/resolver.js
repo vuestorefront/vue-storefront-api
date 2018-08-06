@@ -1,17 +1,9 @@
 import config from 'config';
 import client from '../client';
-import map from 'lodash/map';
-import { buildQuery } from '../queryBuilder';
+import { buildQuery } from '../queryBuilderVSF';
 
-async function list(page, filter, sort, from, size) {
-  let query = buildQuery(page, filter, sort, from, size);
-  query.from = from;
-  query.size = size;
-  if (sort) {
-    map(sort, function(value, key) {
-      query.sort(key, value);
-    });
-  }
+async function list(filter, sort, currentPage, pageSize, search,) {
+  let query = buildQuery(filter, sort, currentPage, pageSize, search);
 
   const response = await client.search({
     index: config.elasticsearch.indices[0],
@@ -24,8 +16,8 @@ async function list(page, filter, sort, from, size) {
 
 const resolver = {
   Query: {
-    products: (_, { filter, sort, from, size }) =>
-      list('catalog', filter, sort, from, size)
+    products: (_, { search, filter, sort, currentPage, pageSize }) =>
+      list(filter, sort, currentPage, pageSize, search)
   }
 };
 

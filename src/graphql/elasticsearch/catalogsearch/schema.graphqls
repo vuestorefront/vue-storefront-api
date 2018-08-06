@@ -1,9 +1,0 @@
-type Query {
-  searchProducts (
-        filter: ProductFilterTypeInput @doc(description: "Identifies which product attributes to search for and return.")
-        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
-        search: String @doc(description: "Performs a full-text search using the specified key words.")
-        from: Int @doc(description: "Defines the offset from the first result you want to fetch.")
-        size: Int @doc(description: "Parameter allows configure the maximum amount of hits to be returned.")
-     ): ESResponse
-}
