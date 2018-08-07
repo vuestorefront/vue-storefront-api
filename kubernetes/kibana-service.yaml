@@ -5,8 +5,8 @@ metadata:
   labels:
     app: kibana
 spec:
+  selector:
+    app: kibana
   ports:
   - port: 5601
     targetPort: 5601
-  selector:
-    app: kibana
