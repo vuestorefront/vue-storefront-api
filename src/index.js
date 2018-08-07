@@ -55,7 +55,14 @@ const schema = makeExecutableSchema({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use('/graphql', graphqlExpress({ schema }));
+
+app.use('/graphql', graphqlExpress(req => ({
+    schema,
+    context: { req: req },
+    rootValue: global
+
+  })));
+
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 export default app;
