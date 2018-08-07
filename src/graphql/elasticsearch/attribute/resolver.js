@@ -18,7 +18,7 @@ async function listAttributes(AttributeInput) {
 
 const resolver = {
   Query: {
-    procustomAttributeMetadataducts: (_, {AttributeInput}) =>
+    customAttributeMetadata: (_, {AttributeInput}) =>
     listAttributes(AttributeInput)
   }
 };
