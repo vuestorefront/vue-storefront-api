@@ -35,6 +35,4 @@ spec:
           name: data
       volumes:
       - name: data
-        hostPath:
-          path: "/root/elasticsearch"
-          type: DirectoryOrCreate
+        emptyDir: {}

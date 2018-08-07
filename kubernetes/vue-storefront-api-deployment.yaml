@@ -15,21 +15,9 @@ spec:
       containers:
       - name: vue-storefront-api
         image: divante/vue-storefront-api:latest
-        env:
-        - name: BIND_HOST
-          value: 0.0.0.0
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: REDIS_HOST
-          value: redis
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_DB
-          value: "0"
-        - name: VS_ENV
-          value: dev
+        envFrom:
+        - configMapRef:
+            name: vue-storefront-api-config
         ports:
         - containerPort: 8080
         volumeMounts:
@@ -57,12 +45,11 @@ spec:
           subPath: var
           readOnly: true
         - mountPath: /var/www/dist
-          name: tmpfs
-      restartPolicy: Always
+          name: dist
       volumes:
       - name: code
         hostPath:
           path: "/root/vue-storefront-api"
-      - name: tmpfs
+      - name: dist
         emptyDir:
           medium: Memory
