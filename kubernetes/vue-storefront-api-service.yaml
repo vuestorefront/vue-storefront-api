@@ -5,8 +5,8 @@ metadata:
   labels:
     app: vue-storefront-api
 spec:
+  selector:
+    app: vue-storefront-api
   ports:
   - port: 8080
     targetPort: 8080
-  selector:
-    app: vue-storefront-api
