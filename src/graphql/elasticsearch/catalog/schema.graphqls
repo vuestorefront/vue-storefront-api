@@ -38,7 +38,7 @@ input FilterTypeInput @doc(description: "FilterTypeInput specifies which action 
     gt: String @doc(description: "Greater than")
     gte: String @doc(description: "Greater than or equal to")
     gteq: String @doc(description: "Greater than or equal to")
-    in: [String] @doc(description: "In. The value can contain a set of comma-separated values")
+    in: [JSON] @doc(description: "In. The value can contain a set of comma-separated values")
     like: String @doc(description: "Like. The specified value can contain % (percent signs) to allow matching of 0 or more characters")
     lt: String @doc(description: "Less than")
     lte: String @doc(description: "Less than or equal to")
