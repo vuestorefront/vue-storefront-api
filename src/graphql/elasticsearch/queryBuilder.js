@@ -2,7 +2,7 @@ import bodybuilder from 'bodybuilder';
 import getBoosts from '../../lib/boost'
 import map from 'lodash/map';
 
-function applyFilters(filter, query) {
+function applyFilters(filter, query, type) {
 
   if (filter.length == 0) {
     return query
@@ -83,7 +83,7 @@ function applyFilters(filter, query) {
     }
 
     // Add aggregations for filters
-    if (appliedFilters.length > 0) {
+    if (appliedFilters.length > 0 && type == 'product') {
       for (let attrToFilter of appliedFilters) {
         if (attrToFilter.attribute !== 'price') {
           query = query.aggregation('terms', attrToFilter.attribute)
@@ -136,12 +136,13 @@ export function buildQuery({
   pageSize = 10,
   search = '',
   includeFields = [],
-  excludeFields = []
+  excludeFields = [],
+  type = 'product'
 }) {
   let query = bodybuilder();
 
   query = applySearchQuery(search, query);
-  query = applyFilters(filter, query);
+  query = applyFilters(filter, query, type);
   query = applySort(sort, query);
 
   query._sourceInclude = includeFields;

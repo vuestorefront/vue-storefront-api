@@ -10,7 +10,8 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     pageSize: pageSize,
     search: search,
     includeFields: config.entities.productListWithChildren.includeFields,
-    excludeFields: config.entities.productListWithChildren.excludeFields
+    excludeFields: config.entities.productListWithChildren.excludeFields,
+    type: 'product'
   });
 
   const parseURL = context.req.url.replace(/^\/+|\/+$/g, '');
