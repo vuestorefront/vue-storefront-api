@@ -3,8 +3,15 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 
 async function list(filter, sort, currentPage, pageSize, search, context, rootValue) {
-  let query = buildQuery(filter, sort, currentPage, pageSize, search);
-
+  let query = buildQuery({
+    filter: filter,
+    sort: sort,
+    currentPage: currentPage,
+    pageSize: pageSize,
+    search: search,
+    includeFields: config.entities.productListWithChildren.includeFields,
+    excludeFields: config.entities.productListWithChildren.excludeFields
+  });
   const parseURL = context.req.url.replace(/^\/+|\/+$/g, '');
   let urlParts = parseURL.split('/');
   if (urlParts.length < 1) {

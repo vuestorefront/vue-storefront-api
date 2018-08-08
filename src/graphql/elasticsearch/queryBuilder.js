@@ -1,36 +1,15 @@
-import config from 'config';
 import bodybuilder from 'bodybuilder';
 import getBoosts from '../../lib/boost'
 import map from 'lodash/map';
 
-function applyFilters(filter, search, query) {
+function applyFilters(filter, query) {
 
-  console.log('---------------------------------------------------')
+  if (filter.length == 0) {
+    return query
+  }
+
   const rangeOperators = ['gt', 'lt', 'gte', 'lte', 'moreq', 'from', 'to']
   const optionsPrfeix = '_options'
-
-  query._sourceInclude = config.entities.productListWithChildren.includeFields;
-  query._sourceExclude = config.entities.productListWithChildren.excludeFields;
-  query
-    .filter('range', 'visibility', { gte: 2, lte: 4 })
-    .filter('range', 'status', { gte: 0, lte: 2 });
-
-  if (search != '') {
-    /* if (config.products.listOutOfStockProducts === false) {
-      query = query.andQuery('match', 'stock.is_in_stock', true);
-    } */
-
-    query = query.andQuery('bool', b => b.orQuery('match_phrase_prefix', 'name', { query: search, boost: getBoosts('name'), slop: 2 })
-      .orQuery('match_phrase', 'category.name', { query: search, boost: getBoosts('category.name') })
-      .orQuery('match_phrase', 'short_description', { query: search, boost: getBoosts('short_description') })
-      .orQuery('match_phrase', 'description', { query: search, boost: getBoosts('description') })
-      .orQuery('bool', b => b.orQuery('terms', 'sku', search.split('-'))
-        .orQuery('terms', 'configurable_children.sku', search.split('-'))
-        .orQuery('match_phrase', 'sku', { query: search, boost: getBoosts('sku') })
-        .orQuery('match_phrase', 'configurable_children.sku', { query: search, boost: getBoosts('configurable_children.sku') }))
-    );
-
-  }
 
   const appliedFilters = [];
   if (filter) {
@@ -73,8 +52,6 @@ function applyFilters(filter, search, query) {
     })
 
     // apply catalog scope filters
-
-
     let attrFilterBuilder = (filterQr, attrPostfix = '') => {
       appliedFilters.forEach(function (catalogfilter) {
         const valueKeys = Object.keys(catalogfilter.value);
@@ -105,7 +82,7 @@ function applyFilters(filter, search, query) {
         .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrfeix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
     }
 
-      // Add aggregations for filters
+    // Add aggregations for filters
     if (appliedFilters.length > 0) {
       for (let attrToFilter of appliedFilters) {
         if (attrToFilter.attribute !== 'price') {
@@ -124,20 +101,52 @@ function applyFilters(filter, search, query) {
         }
       }
     }
-
   }
-
   return query;
 }
 
-export function buildQuery(filter, sort, currentPage = 1, pageSize = 10, search = '') {
-  let query = bodybuilder();
-  query = applyFilters( filter, search, query);
+function applySearchQuery(search, query) {
+  if (search != '') {
+    query = query.andQuery('bool', b => b.orQuery('match_phrase_prefix', 'name', { query: search, boost: getBoosts('name'), slop: 2 })
+      .orQuery('match_phrase', 'category.name', { query: search, boost: getBoosts('category.name') })
+      .orQuery('match_phrase', 'short_description', { query: search, boost: getBoosts('short_description') })
+      .orQuery('match_phrase', 'description', { query: search, boost: getBoosts('description') })
+      .orQuery('bool', b => b.orQuery('terms', 'sku', search.split('-'))
+        .orQuery('terms', 'configurable_children.sku', search.split('-'))
+        .orQuery('match_phrase', 'sku', { query: search, boost: getBoosts('sku') })
+        .orQuery('match_phrase', 'configurable_children.sku', { query: search, boost: getBoosts('configurable_children.sku') }))
+    );
+  }
+  return query;
+}
+
+function applySort(sort, query) {
   if (sort) {
     map(sort, function(value, key) {
       query.sort(key, value);
     });
   }
+  return query;
+}
+
+export function buildQuery({
+  filter = [],
+  sort = '',
+  currentPage = 1,
+  pageSize = 10,
+  search = '',
+  includeFields = [],
+  excludeFields = []
+}) {
+  let query = bodybuilder();
+
+  query = applySearchQuery(search, query);
+  query = applyFilters(filter, query);
+  query = applySort(sort, query);
+
+  query._sourceInclude = includeFields;
+  query._sourceExclude = excludeFields;
+
   query = query.from((currentPage - 1) * pageSize).size(pageSize);
 
   return query.build();
