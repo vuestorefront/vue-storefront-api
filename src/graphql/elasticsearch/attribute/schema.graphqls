@@ -13,8 +13,8 @@ type Attribute @doc(description: "Attribute contains the attribute_type of the s
 }
 
 input AttributeInput @doc(description: "AttributeInput specifies the attribute_code and entity_type to search") {
-    attribute_code: String @doc(description: "The unique identifier for an attribute code. This value should be in lowercase letters without spaces.")
+    attribute_code: FilterTypeInput @doc(description: "The unique identifier for an attribute code. This value should be in lowercase letters without spaces.")
     entity_type: String @doc(description: "The type of entity that defines the attribute")
     attribute_id: FilterTypeInput @doc(description: "The id of attribute. This value should be in lowercase letters without spaces.")
-    attribute_code: FilterTypeInput
+    is_user_defined: FilterTypeInput @doc(description: "THe attribute is user defined parameter.")
 }
