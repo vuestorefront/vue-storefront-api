@@ -2,14 +2,13 @@ import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
 
-async function listAttributes(AttributeInput) {
-
-  console.log(AttributeInput)
-  let query = buildQuery(filter, sort, currentPage, pageSize);
+async function listAttributes(attributes) {
+  let includeFields = config.entities.attribute.includeFields;
+  let query = buildQuery({ filter: attributes, pageSize: 150, includeFields });
 
   const response = await client.search({
     index: config.elasticsearch.indices[0],
-    type: config.elasticsearch.indexTypes[0],
+    type: config.elasticsearch.indexTypes[3],
     body: query
   });
 
@@ -18,8 +17,7 @@ async function listAttributes(AttributeInput) {
 
 const resolver = {
   Query: {
-    customAttributeMetadata: (_, {AttributeInput}) =>
-    listAttributes(AttributeInput)
+    customAttributeMetadata: (_, { attributes }) => listAttributes(attributes)
   }
 };
 

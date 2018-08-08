@@ -17,7 +17,8 @@
     "indexTypes": [
       "product",
       "category",
-      "cms"
+      "cms",
+      "attribute"
     ]
   },
   "redis": {
