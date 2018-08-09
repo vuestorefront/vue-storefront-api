@@ -1,6 +1,14 @@
 import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
+import esResultsProcessor from './processor'
+
+const resolver = {
+  Query: {
+    products: (_, { search, filter, sort, currentPage, pageSize }, context, rootValue) =>
+      list(filter, sort, currentPage, pageSize, search, context, rootValue)
+  }
+};
 
 async function list(filter, sort, currentPage, pageSize, search, context, rootValue) {
   let query = buildQuery({
@@ -21,11 +29,16 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
   }
   const storeId = parseInt(urlParts[0])
 
-  const esResponse = await client.search({
+  let esResponse = await client.search({
     index: config.elasticsearch.indices[storeId],
     type: config.elasticsearch.indexTypes[0],
     body: query
   });
+
+  if (esResponse && esResponse.hits && esResponse.hits.hits) {
+    // process response result (caluclate taxes etc...)
+    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], config.elasticsearch.indices[storeId]);
+  }
 
   let response = {}
 
@@ -53,7 +66,6 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     )
   }
 
-
   response.aggregations = esResponse.aggregations
   response.sort_fields = {}
   if (sortOptions.length > 0) {
@@ -68,13 +80,12 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
   return response;
 }
 
-const resolver = {
-  Query: {
-    products: (_, { search, filter, sort, currentPage, pageSize }, context, rootValue) =>
-      list(filter, sort, currentPage, pageSize, search, context, rootValue)
-  }
-};
-
+/*
+* Convert Aggregations to the Filters type provided by Magento graphQl EAV schema
+*
+* @TODO need to check if we can switch to using Filters intsead of Aggregation in the response
+* following by Magento Products response type and finihs convertions
+*/
 function prepareFiltersByAggregations(aggregations, filter) {
   console.log('filter', filter);
   let filters = {}
