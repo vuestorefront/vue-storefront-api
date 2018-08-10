@@ -3,6 +3,7 @@ import { apiStatus } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 import jwt from 'jwt-simple'
+import { merge } from 'lodash'
 
 const Ajv = require('ajv'); // json validator
 
@@ -26,7 +27,9 @@ export default ({ config, db }) => {
 	userApi.post('/create', (req, res) => {
 
 		const ajv = new Ajv();
-		const validate = ajv.compile(require('../models/userRegister.schema.json'));
+		const userRegisterSchema = require('../models/userRegister.schema.json')
+		const userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json')
+		const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
@@ -141,7 +144,9 @@ export default ({ config, db }) => {
 	 */
 	userApi.post('/me', (req, res) => {
 		const ajv = new Ajv();
-		const validate = ajv.compile(require('../models/userProfile.schema.json'));
+		const userProfileSchema = require('../models/userProfile.schema.json')
+		const userProfileSchemaExtension = require('../models/userProfile.schema.extension.json')
+		const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
 		if (!validate(req.body)) {
 			console.dir(validate.errors);
