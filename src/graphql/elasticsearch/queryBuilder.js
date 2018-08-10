@@ -7,7 +7,6 @@ function applyFilters(filter, query, type) {
   if (filter.length == 0) {
     return query
   }
-
   const rangeOperators = ['gt', 'lt', 'gte', 'lte', 'moreq', 'from', 'to']
   const optionsPrfeix = '_options'
 
@@ -102,6 +101,7 @@ function applyFilters(filter, query, type) {
       }
     }
   }
+
   return query;
 }
 
@@ -117,6 +117,7 @@ function applySearchQuery(search, query) {
         .orQuery('match_phrase', 'configurable_children.sku', { query: search, boost: getBoosts('configurable_children.sku') }))
     );
   }
+
   return query;
 }
 
@@ -126,6 +127,7 @@ function applySort(sort, query) {
       query.sort(key, value);
     });
   }
+
   return query;
 }
 

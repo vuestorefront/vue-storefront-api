@@ -1,23 +1,15 @@
 import config from 'config';
 import client from '../client';
-import bodybuilder from 'bodybuilder';
+import { buildQuery } from '../queryBuilder';
 
-async function search(ids, name, from, size) {
-  let query = bodybuilder();
-  query.from = from;
-  query.size = size;
-
-  if (ids) {
-    query.orFilter('terms', 'id', ids);
-  }
-  if (name) {
-    query.orFilter('match', 'name', { query: name, boost: 3 });
-  }
+async function list(search, filter, currentPage, pageSize = 200, sort) {
+  let includeFields = config.entities.category.includeFields;
+  let query = buildQuery({ search, filter, currentPage, pageSize, includeFields, sort, type: 'category' });
 
   const response = await client.search({
     index: config.elasticsearch.indices[0],
     type: config.elasticsearch.indexTypes[1],
-    body: query.build()
+    body: query
   });
 
   return response;
@@ -25,7 +17,7 @@ async function search(ids, name, from, size) {
 
 const resolver = {
   Query: {
-    categories: (_, { ids, name, from, size }) => search(ids, name, from, size)
+    categories: (_, { search, filter, currentPage, pageSize, sort }) => list(search, filter, currentPage, pageSize, sort)
   }
 };
 
