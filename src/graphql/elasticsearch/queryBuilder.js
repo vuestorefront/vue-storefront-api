@@ -2,6 +2,20 @@ import bodybuilder from 'bodybuilder';
 import getBoosts from '../../lib/boost'
 import map from 'lodash/map';
 
+function processNestedFieldFilter(attribute, value) {
+  let processedFilter = {
+    'attribute': attribute,
+    'value': value
+  };
+  let filterAttributeKeys = Object.keys(value);
+  for (let filterAttributeKey of filterAttributeKeys) {
+    if (value[filterAttributeKey] && !Array.isArray(value[filterAttributeKey]) && typeof value[filterAttributeKey] === 'object') {
+      processedFilter = processNestedFieldFilter(attribute + '.' + filterAttributeKey, value[filterAttributeKey]);
+    }
+  }
+  return processedFilter;
+}
+
 function applyFilters(filter, query, type) {
 
   if (filter.length == 0) {
@@ -13,13 +27,13 @@ function applyFilters(filter, query, type) {
   const appliedFilters = [];
   if (filter) {
     for (var attribute in filter) {
-      const scope = filter[attribute].scope || 'default';
-      delete filter[attribute].scope;
-      const value = filter[attribute];
-      // console.log('typeof value: ', typeof value);
+      let processedFilter = processNestedFieldFilter(attribute, filter[attribute])
+      let appliedAttributeValue = processedFilter['value']
+      const scope = appliedAttributeValue.scope || 'default';
+      delete appliedAttributeValue.scope;
       appliedFilters.push({
-        attribute: attribute,
-        value: value,
+        attribute: processedFilter['attribute'],
+        value: appliedAttributeValue,
         scope: scope
       });
     }

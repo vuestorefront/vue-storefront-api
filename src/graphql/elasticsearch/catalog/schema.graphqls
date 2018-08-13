@@ -142,6 +142,8 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     size: FilterTypeInput @doc(description: "The product size. Customers use this size to identify the product.")
     color: FilterTypeInput @doc(description: "The product color. Customers use this color to identify the product.")
     or: ProductFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+    category: ProductFilterInput @doc(description: "The product color. Customers use this color to identify the product.")
+    category_id: FilterTypeInput @doc(description: "Category ID the product belongs to")
 }
 
 type LayerFilter {
