@@ -48,8 +48,8 @@ Product catalog is imported using [elasticdump](https://www.npmjs.com/package/el
 
 Then, to update the structures in the database to the latest version (data migrations), do the following:
 
-- (A) `docker exec -it vuestorefrontapi_app_1 yarn migrate`
-- (B) `yarn migrate`
+- (A) `yarn migrate`
+- (B) `docker exec -it vuestorefrontapi_app_1 yarn migrate`
 
 By default, the application server is started in development mode. It means that code auto reload is enabled along with ESLint, babel support.
 
