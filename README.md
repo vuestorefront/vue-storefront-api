@@ -71,7 +71,7 @@ Catalog API calls are compliant with ElasticSearch (it works like a filtering pr
 
 Elastic search endpoint: `http://localhost:8080/api/catalog/search/<INDEX_NAME>/`. You can run the following command to check if everything is up and runing (it assumes `vue_storefront_catalog` as default index name):
 
-`curl -i http://elastic:changeme@localhost:8080/api/search/vue_storefront_catalog/_search?query=*`
+`curl -i http://elastic:changeme@localhost:8080/api/catalog/vue_storefront_catalog/_search`
 
 ## Data formats
 This backend is using ElasticSearch data formats popularized by [ElasticSuite for Magento2 by Smile.fr](https://github.com/Smile-SA/elasticsuite).
