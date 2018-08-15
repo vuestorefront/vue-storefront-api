@@ -144,6 +144,7 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     or: ProductFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
     category: ProductFilterInput @doc(description: "The product color. Customers use this color to identify the product.")
     category_id: FilterTypeInput @doc(description: "Category ID the product belongs to")
+    configurable_children: ProductFilterInput @doc(description: "Configurable product childrens")
 }
 
 type LayerFilter {
