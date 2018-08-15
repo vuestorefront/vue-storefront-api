@@ -18,7 +18,8 @@
       "product",
       "category",
       "cms",
-      "attribute"
+      "attribute",
+      "taxrule"
     ]
   },
   "redis": {
