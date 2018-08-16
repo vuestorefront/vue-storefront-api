@@ -98,19 +98,21 @@ function applyFilters(filter, query, type) {
     // Add aggregations for filters
     if (appliedFilters.length > 0 && type == 'product') {
       for (let attrToFilter of appliedFilters) {
-        if (attrToFilter.attribute !== 'price') {
-          query = query.aggregation('terms', attrToFilter.attribute)
-          query = query.aggregation('terms', attrToFilter.attribute + optionsPrfeix)
-        } else {
-          query = query.aggregation('terms', attrToFilter.attribute)
-          query.aggregation('range', 'price', {
-            ranges: [
-              { from: 0, to: 50 },
-              { from: 50, to: 100 },
-              { from: 100, to: 150 },
-              { from: 150 }
-            ]
-          })
+        if (attrToFilter.scope == 'catalog') {
+          if (attrToFilter.attribute != 'price') {
+            query = query.aggregation('terms', attrToFilter.attribute)
+            query = query.aggregation('terms', attrToFilter.attribute + optionsPrfeix)
+          } else {
+            query = query.aggregation('terms', attrToFilter.attribute)
+            query.aggregation('range', 'price', {
+              ranges: [
+                { from: 0, to: 50 },
+                { from: 50, to: 100 },
+                { from: 100, to: 150 },
+                { from: 150 }
+              ]
+            })
+          }
         }
       }
     }
