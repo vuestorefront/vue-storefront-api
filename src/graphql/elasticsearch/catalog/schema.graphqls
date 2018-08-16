@@ -145,6 +145,8 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     category: ProductFilterInput @doc(description: "The product color. Customers use this color to identify the product.")
     category_id: FilterTypeInput @doc(description: "Category ID the product belongs to")
     configurable_children: ProductFilterInput @doc(description: "Configurable product childrens")
+    stock: ProductFilterInput @doc(description: "The product stock. Customers use this stock to identify the product.")
+    is_in_stock: FilterTypeInput @doc(description: "Is product in stock")
 }
 
 type LayerFilter {
