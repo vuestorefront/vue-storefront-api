@@ -52,9 +52,6 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
 
   response.total_count = esResponse.hits.total
 
-  // Convert aggregations to filters
-  // response.filters = prepareFiltersByAggregations(esResponse.aggregations, filter)
-
   // Process sort
   let sortOptions = []
   for (var sortAttribute in sort){
@@ -78,41 +75,6 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
   }
 
   return response;
-}
-
-/*
-* Convert Aggregations to the Filters type provided by Magento graphQl EAV schema
-*
-* @TODO need to check if we can switch to using Filters intsead of Aggregation in the response
-* following by Magento Products response type and finihs convertions
-*/
-function prepareFiltersByAggregations(aggregations, filter) {
-  console.log('filter', filter);
-  let filters = {}
-  for (var aggregation in aggregations){
-    for (var attrToFilter in filter){
-      // console.log('incomeFilter', attrToFilter);
-      if (aggregation == 'agg_terms_' + attrToFilter) {
-        const aggregationData = aggregations[aggregation]
-        if (typeof aggregationData !== 'function') {
-          // console.log('aggregation', aggregation);
-          // console.log('aggregationData terms', aggregationData);
-          let aggFilter = {}
-          aggFilter.name = aggregation
-        }
-      }
-      if (aggregation == 'agg_range_' + attrToFilter) {
-        const aggregationData = aggregations[aggregation]
-        if (typeof aggregationData !== 'function') {
-          // console.log('aggregation', aggregation);
-          // console.log('aggregationData range', aggregationData);
-          let aggFilter = {}
-          aggFilter.name = aggregation
-        }
-      }
-    }
-  }
-  return filters
 }
 
 export default resolver;

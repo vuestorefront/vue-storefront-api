@@ -47,11 +47,9 @@ function applyFilters(filter, query, type) {
     appliedFilters.forEach(function (filter) {
       if (filter.scope == 'default' && Object.keys(filter.value).length) {
         if (rangeOperators.every(rangeOperator => Object.prototype.hasOwnProperty.call(filter.value, rangeOperator))) {
-          // console.log('range filter.value: ', filter.value);
           // process range filters
           query = query.filter('range', filter.attribute, filter.value);
         } else {
-          // console.log('terms filter.value: ', filter.value);
           // process terms filters
           filter.value = filter.value[Object.keys(filter.value)[0]];
           if (!Array.isArray(filter.value)) {
