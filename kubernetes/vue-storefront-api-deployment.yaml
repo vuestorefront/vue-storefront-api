@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-storefront-api
+spec:
+  selector:
+    matchLabels:
+      app: vue-storefront-api
+  template:
+    metadata:
+      labels:
+        app: vue-storefront-api
+    spec:
+      containers:
+      - name: vue-storefront-api
+        image: divante/vue-storefront-api:latest
+        envFrom:
+        - configMapRef:
+            name: vue-storefront-api-config
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /var/www/config
+          name: code
+          subPath: config
+        - mountPath: /var/www/migrations
+          name: code
+          subPath: migrations
+          readOnly: true
+        - mountPath: /var/www/package.json
+          name: code
+          subPath: package.json
+          readOnly: true
+        - mountPath: /var/www/scripts
+          name: code
+          subPath: scripts
+          readOnly: true
+        - mountPath: /var/www/src
+          name: code
+          subPath: src
+          readOnly: true
+        - mountPath: /var/www/var
+          name: code
+          subPath: var
+          readOnly: true
+        - mountPath: /var/www/dist
+          name: dist
+      volumes:
+      - name: code
+        hostPath:
+          path: "/root/vue-storefront-api"
+      - name: dist
+        emptyDir:
+          medium: Memory

@@ -5,7 +5,6 @@
 
 const kue = require('kue');
 const logger = require('./log');
-const unirest = require('unirest');
 const countryMapper = require('../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
@@ -236,7 +235,8 @@ function processSingleOrder(orderData, config, job, done){
                             api.cart.order(null, cartId, {
                                 "paymentMethod":
                                 {
-                                    "method":orderData.addressInformation.payment_method_code
+                                    "method":orderData.addressInformation.payment_method_code,
+                                    "additional_data":orderData.addressInformation.payment_method_additional
                                 }
                             }, isThisAuthOrder).then(result => {
                                 logger.info(THREAD_ID, result)
