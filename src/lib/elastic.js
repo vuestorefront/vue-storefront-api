@@ -60,6 +60,7 @@ function reIndex(db, fromIndexName, toIndexName, next) {
 }
 
 function createIndex(db, indexName, next) {
+    let indexSchema = loadSchema('index');
 
     const step2 = () => {
 
@@ -69,7 +70,8 @@ function createIndex(db, indexName, next) {
                 console.dir(res1, { depth: null, colors: true })
                 db.indices.create(
                     {
-                        "index": indexName
+                        "index": indexName,
+                        "body": indexSchema
                     }).then(res2 => {
                         console.dir(res2, { depth: null, colors: true })
                         next()
@@ -80,7 +82,8 @@ function createIndex(db, indexName, next) {
                 }).catch(() => {
                     db.indices.create(
                         {
-                        "index": indexName
+                            "index": indexName,
+                            "body": indexSchema
                         }).then(res2 => {
                             console.dir(res2, { depth: null, colors: true })
                             next()

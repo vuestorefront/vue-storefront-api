@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
-    "start": "node dist",
+    "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "babel-node --plugins transform-es2015-modules-commonjs scripts/db.js",
     "seo": "babel-node --plugins transform-es2015-modules-commonjs scripts/seo.js",
     "restore": "babel-node --plugins transform-es2015-modules-commonjs scripts/elastic.js restore",
@@ -78,7 +78,8 @@
     "resource-router-middleware": "^0.6.0",
     "soap": "^0.23.0",
     "unirest": "^0.5.1",
-    "winston": "^2.4.2"
+    "winston": "^2.4.2",
+    "pm2": "^2.10.4"    
   },
   "devDependencies": {
     "apollo-server-express": "^1.3.6",

@@ -22,10 +22,13 @@ cli.option({
 })
 
 cli.command('dashboard', () => {
-  var redis = util.format('redis://%s:%d', config.host, config.port);
 
   kue.createQueue({
-    redis: redis,
+    redis: {
+      host: config.host,
+      port: config.port,
+      db: config.db
+    },
     prefix: cli.options.prefix
   });
 

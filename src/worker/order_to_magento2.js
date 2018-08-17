@@ -1,6 +1,6 @@
 /**
  * CLI tool
- * Queue worker in charge of syncing the Sales order to Magento2 via REST API * 
+ * Queue worker in charge of syncing the Sales order to Magento2 via REST API *
  */
 
 const kue = require('kue');
@@ -37,11 +37,11 @@ function isNumeric(val) {
   return Number(parseFloat(val)).toString() === val;
 }
 
-/** 
+/**
  * Send single order to Magento Instance
- * 
+ *
  * The Magento2 API: https://magento.stackexchange.com/questions/136028/magento-2-create-order-using-rest-api
- * 
+ *
  * @param {json} orderData order data in format as described in '../models/order.md'
  * @param {Object} config global CLI configuration
  * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
@@ -49,7 +49,7 @@ function isNumeric(val) {
 function processSingleOrder(orderData, config, job, done){
 
     const TOTAL_STEPS = 4;
-    const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id 
+    const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
     let currentStep = 1;
 
     if (!validate(orderData)) { // schema validation of upcoming order
@@ -95,7 +95,7 @@ function processSingleOrder(orderData, config, job, done){
 
             const clientItems = orderData.products
             const syncPromises = []
-            
+
             logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id, product_option: item.product_option }}))
             logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
@@ -124,7 +124,7 @@ function processSingleOrder(orderData, config, job, done){
                     logger.info(THREAD_ID + '< Server and client items synced for ' + clientItem.sku) // here we need just update local item_id
                 }
             }
-        
+
             for (const serverItem of serverItems) {
                 if (serverItem) {
                     const clientItem = clientItems.find((itm) => {
@@ -139,7 +139,7 @@ function processSingleOrder(orderData, config, job, done){
                     }
                 }
             }
-            
+
             Promise.all(syncPromises).then((results) => {
                 if(job) job.progress(currentStep++, TOTAL_STEPS);
                 logger.info(THREAD_ID + '< Server cart in sync')
@@ -163,16 +163,14 @@ function processSingleOrder(orderData, config, job, done){
                             mappedBillingRegion = countryMapper.mapCountryRegion(countryList, billingAddr.country_id, billingAddr.region_code ? billingAddr.region_code : billingAddr.region)
                         }
 
-                        const addressPromises = []
-
                         const billingAddressInfo =  { // sum up totals
 
                             "address":
                                 {
                                     "countryId": billingAddr.country_id,
-                                    "street": billingAddr.street, 
-                                    "telephone": billingAddr.telephone, 
-                                    "postcode": billingAddr.postcode, 
+                                    "street": billingAddr.street,
+                                    "telephone": billingAddr.telephone,
+                                    "postcode": billingAddr.postcode,
                                     "city": billingAddr.city,
                                     "firstname": billingAddr.firstname,
                                     "lastname": billingAddr.lastname,
@@ -182,10 +180,8 @@ function processSingleOrder(orderData, config, job, done){
                                     "company": billingAddr.company,
                                     "vatId": billingAddr.vat_id
                                 }
-                        
+
                         }
-                        logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
-                        addressPromises.push(api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder))
 
                         const shippingAddressInfo = { // sum up totals
 
@@ -194,9 +190,9 @@ function processSingleOrder(orderData, config, job, done){
                             "shippingAddress":
                                 {
                                     "countryId": shippingAddr.country_id,
-                                    "street": shippingAddr.street, 
-                                    "telephone": shippingAddr.telephone, 
-                                    "postcode": shippingAddr.postcode, 
+                                    "street": shippingAddr.street,
+                                    "telephone": shippingAddr.telephone,
+                                    "postcode": shippingAddr.postcode,
                                     "city": shippingAddr.city,
                                     "firstname": shippingAddr.firstname,
                                     "lastname": shippingAddr.lastname,
@@ -209,9 +205,9 @@ function processSingleOrder(orderData, config, job, done){
                                 "billingAddress":
                                 {
                                     "countryId": billingAddr.country_id,
-                                    "street": billingAddr.street, 
-                                    "telephone": billingAddr.telephone, 
-                                    "postcode": billingAddr.postcode, 
+                                    "street": billingAddr.street,
+                                    "telephone": billingAddr.telephone,
+                                    "postcode": billingAddr.postcode,
                                     "city": billingAddr.city,
                                     "firstname": billingAddr.firstname,
                                     "lastname": billingAddr.lastname,
@@ -225,25 +221,25 @@ function processSingleOrder(orderData, config, job, done){
                                 "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
                                 "extensionAttributes": orderData.addressInformation.shippingExtraFields
                             }
-                        
+
                         }
-                        logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
-                        addressPromises.push(api.cart.shippingInformation(null, cartId,  shippingAddressInfo, isThisAuthOrder))            
 
+                        logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
+                        api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder).then((result) => {
+                          logger.info(THREAD_ID + '< Billing address assigned', result)
+                          logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
+                          api.cart.shippingInformation(null, cartId,  shippingAddressInfo, isThisAuthOrder).then((result) => {
+                            logger.info(THREAD_ID + '< Shipping address assigned', result)
 
-                        Promise.all(addressPromises).then((results) => {
-                            logger.info(THREAD_ID + '< Addresses assigned', results)
-                            logger.debug(THREAD_ID + results)
-                            
                             if(job) job.progress(currentStep++, TOTAL_STEPS);
 
                             api.cart.order(null, cartId, {
                                 "paymentMethod":
                                 {
                                     "method":orderData.addressInformation.payment_method_code
-                                }                 
+                                }
                             }, isThisAuthOrder).then(result => {
-                                logger.info(THREAD_ID, results)
+                                logger.info(THREAD_ID, result)
                                 if(job) job.progress(currentStep++, TOTAL_STEPS);
 
                                 logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
@@ -258,40 +254,43 @@ function processSingleOrder(orderData, config, job, done){
                                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
 
                                 if(job) job.progress(currentStep++, TOTAL_STEPS);
-                                return done(null, { magentoOrderId: result, transferedAt: new Date() });                    
+                                return done(null, { magentoOrderId: result, transferedAt: new Date() });
                             }).catch(err => {
                                 logger.error('Error placing an order', err, typeof err)
                                 if (job) job.attempts(6).backoff(  {delay: 30*1000, type:'fixed'} ).save()
-                                return done(new Error('Error placing an order', err));                 
-
+                                return done(new Error('Error placing an order', err));
                             })
-                        }).catch((errors) => {
-                            logger.error('Error while adding addresses', errors)
+                          }).catch((errors) => {
+                            logger.error('Error while adding shipping address', errors)
                             if (job) job.attempts(3).backoff(  {delay: 60*1000, type:'fixed'} ).save()
-                            return done(new Error('Error while adding addresses', errors));
+                            return done(new Error('Error while adding shipping address', errors));
+                          })
+                        }).catch((errors) => {
+                            logger.error('Error while adding billing address', errors)
+                            if (job) job.attempts(3).backoff(  {delay: 60*1000, type:'fixed'} ).save()
+                            return done(new Error('Error while adding billing address', errors));
                         })
-                        
                     }).catch((errors) => {
                         logger.error('Error while synchronizing country list', errors)
                         if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
                         return done(new Error('Error while syncing country list', errors));
-                    })                    
+                    })
 
                 }).catch((errors) => {
                     logger.error('Error while adding products', errors)
                     if (job) job.attempts(3).backoff(  {delay: 30*1000, type:'fixed'} ).save()
                     return done(new Error('Error while adding products', errors));
                 })
-                
+
             })
-  
+
     }
 
     cartIdPrepare.then(processCart).catch((error) => { // cannot create a quote for specific user, so bypass by placing anonymous order
         logger.error(THREAD_ID, error)
         logger.info('< Bypassing to anonymous order')
         isThisAuthOrder = false
-        
+
         if (isNumeric(cartId)) { // we have numeric id - assigned to the user provided
             api.cart.create(null, null).then((result) => {
                 processCart(result)
@@ -302,7 +301,7 @@ function processSingleOrder(orderData, config, job, done){
     //           }).catch((err) => {
     //               logger.error(err)
     //           })
-            }).catch(error => { 
+            }).catch(error => {
                 logger.info(error)
                 return done(new Error('Error while adding products', error));
             }) // TODO: assign the guest cart with user at last?
@@ -316,18 +315,18 @@ function processSingleOrder(orderData, config, job, done){
 
 
 // RUN
- 
+
 cli.command('start', ()=>{  // default command is to run the service worker
 
     let partition_count = cli.options.partitions;
-    
+
     logger.info('Starting KUE worker for "order" message ...');
     queue.process('order', partition_count, (job,done) => {
 
         logger.info('Processing order: ' + job.data.title);
         return processSingleOrder(job.data.order, config, job, done);
-        
-        
+
+
     });
 
 
