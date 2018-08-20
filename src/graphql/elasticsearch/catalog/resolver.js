@@ -24,20 +24,20 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
 
   const parseURL = context.req.url.replace(/^\/+|\/+$/g, '');
   let urlParts = parseURL.split('/');
-  if (urlParts.length < 1) {
-      throw new Error('Please provide following parameters: /graphql/<storeId>/');
+  let esIndex  = config.elasticsearch.indices[0]
+  if (urlParts.length >= 1 && urlParts[0] != '') {
+    esIndex = config.storeViews[urlParts[0]].elasticsearch.index
   }
-  const storeId = parseInt(urlParts[0])
 
   let esResponse = await client.search({
-    index: config.elasticsearch.indices[storeId],
+    index: esIndex,
     type: config.elasticsearch.indexTypes[0],
     body: query
   });
 
   if (esResponse && esResponse.hits && esResponse.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], config.elasticsearch.indices[storeId]);
+    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
