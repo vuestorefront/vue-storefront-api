@@ -1,0 +1,15 @@
+type Query {
+    taxrule(filter: TaxRuleInput): ESResponse
+}
+
+input TaxRuleInput @doc(description: "TaxRuleInput specifies the tax rules information to search") {
+    id: FilterTypeInput @doc(description: "An ID that uniquely identifies the tax rule")
+    code: FilterTypeInput @doc(description: "The unique identifier for an tax rule. This value should be in lowercase letters without spaces.")
+    priority: FilterTypeInput @doc(description: "Priority of the tax rule")
+    position: FilterTypeInput @doc(description: "Position of the tax rule")
+    customer_tax_class_ids: FilterTypeInput @doc(description: "Cunstomer tax class ids of the tax rule")
+    product_tax_class_ids: FilterTypeInput @doc(description: "Products tax class ids of the tax rule")
+    tax_rate_ids: FilterTypeInput @doc(description: "Tax rates ids of the tax rule")
+    calculate_subtotal: FilterTypeInput @doc(description: "Calculating subtotals of the tax rule")
+    rates: FilterTypeInput @doc(description: "Rates of the tax rule")
+}

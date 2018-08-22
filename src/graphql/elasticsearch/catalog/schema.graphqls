@@ -1,0 +1,181 @@
+scalar JSON
+
+type Products @doc(description: "The Products object is the top-level object returned in a product search") {
+    items: JSON @doc(description: "An array of products that match the specified search criteria")
+    # items: [ProductInterface] // @TODO: update items to use [ProductInterface] type
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query")
+    total_count: Int @doc(description: "The number of products returned")
+    # filters: [LayerFilter] @doc(description: "Layered navigation filters array") // @TODO: add filters to response instead of aggregations
+    aggregations: JSON @doc(description: "Layered navigation filters array as aggregations")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields")
+}
+
+type ESResponse {
+  hits: JSON
+  suggest: JSON
+  aggregations: JSON
+}
+
+type Query {
+    products (
+        search: String @doc(description: "Performs a full-text search using the specified key words."),
+        filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+        sort: ProductSortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+        ): Products
+}
+
+type SearchResultPageInfo @doc(description: "SearchResultPageInfo provides navigation for the query response") {
+    page_size: Int @doc(description: "Specifies the maximum number of items to return")
+    current_page: Int @doc(description: "Specifies which page of results to return")
+}
+
+input FilterTypeInput @doc(description: "FilterTypeInput specifies which action will be performed in a query ") {
+    eq: JSON @doc(description: "Equals")
+    finset: [String] @doc(description: "Find in set. The value can contain a set of comma-separated values")
+    from: String @doc(description: "From. Must be used with 'to'")
+    gt: String @doc(description: "Greater than")
+    gte: String @doc(description: "Greater than or equal to")
+    gteq: String @doc(description: "Greater than or equal to")
+    in: [JSON] @doc(description: "In. The value can contain a set of comma-separated values")
+    like: String @doc(description: "Like. The specified value can contain % (percent signs) to allow matching of 0 or more characters")
+    lt: String @doc(description: "Less than")
+    lte: String @doc(description: "Less than or equal to")
+    lteq: String @doc(description: "Less than or equal to")
+    moreq: String @doc(description: "More than or equal to")
+    neq: JSON @doc(description: "Not equal to")
+    notnull: String @doc(description: "Not null")
+    null: String @doc(description: "Is null")
+    to: String@doc(description: "To. Must be used with 'from'")
+    nin: [String] @doc(description: "Not in. The value can contain a set of comma-separated values")
+    scope: [String] @doc(description: "describe the filter scope (default | catalog)")
+}
+
+input ProductSortInput {
+    name: SortEnum @doc(description: "The product name. Customers use this name to identify the product.")
+    sku: SortEnum @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
+    description: SortEnum @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
+    short_description: SortEnum @doc(description: "A short description of the product. Its use depends on the theme.")
+    price: SortEnum @doc(description: "The price of the item")
+    special_price: SortEnum @doc(description: "The discounted price of the product")
+    special_from_date: SortEnum @doc(description: "The beginning date that a product has a special price")
+    special_to_date: SortEnum @doc(description: "The end date that a product has a special price")
+    weight: SortEnum @doc(description: "The weight of the item, in units defined by the store")
+    manufacturer: SortEnum @doc(description: "A number representing the product's manufacturer")
+    meta_title: SortEnum @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists")
+    meta_keyword: SortEnum @doc(description: "A comma-separated list of keywords that are visible only to search engines")
+    meta_description: SortEnum @doc(description: "A brief overview of the product for search results listings, maximum 255 characters")
+    image: SortEnum @doc(description: "The relative path to the main image on the product page")
+    small_image: SortEnum @doc(description: "The relative path to the small image, which is used on catalog pages")
+    thumbnail: SortEnum @doc(description: "The relative path to the product's thumbnail image")
+    tier_price: SortEnum @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    news_from_date: SortEnum @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
+    news_to_date: SortEnum @doc(description: "The end date for new product listings")
+    custom_layout_update: SortEnum @doc(description: "XML code that is applied as a layout update to the product page")
+    options_container: SortEnum @doc(description: "If the product has multiple options, determines where they appear on the product page")
+    required_options: SortEnum @doc(description: "Indicates whether the product has required options")
+    has_options: SortEnum @doc(description: "Indicates whether additional attributes have been created for the product")
+    image_label: SortEnum @doc(description: "The label assigned to a product image")
+    small_image_label: SortEnum @doc(description: "The label assigned to a product's small image")
+    thumbnail_label: SortEnum @doc(description: "The label assigned to a product's thumbnail image")
+    created_at: SortEnum @doc(description: "Timestamp indicating when the product was created")
+    updated_at: SortEnum @doc(description: "Timestamp indicating when the product was updated")
+    country_of_manufacture: SortEnum @doc(description: "The product's country of origin")
+    custom_layout: SortEnum @doc(description: "The name of a custom layout")
+    gift_message_available: SortEnum @doc(description: "Indicates whether a gift message is available")
+}
+
+input ProductFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    visibility: FilterTypeInput @doc(description: "The product visibility. Customers use this visibility to identify the product.")
+    status: FilterTypeInput @doc(description: "The product status. Customers use this status to identify the product.")
+    name: FilterTypeInput @doc(description: "The product name. Customers use this name to identify the product.")
+    sku: FilterTypeInput @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
+    description: FilterTypeInput @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
+    short_description: FilterTypeInput @doc(description: "A short description of the product. Its use depends on the theme.")
+    price: FilterTypeInput @doc(description: "The price of an item")
+    special_price: FilterTypeInput @doc(description: "The discounted price of the product")
+    special_from_date: FilterTypeInput @doc(description: "The beginning date that a product has a special price")
+    special_to_date: FilterTypeInput @doc(description: "The end date that a product has a special price")
+    weight: FilterTypeInput @doc(description: "The weight of the item, in units defined by the store")
+    manufacturer: FilterTypeInput @doc(description: "A number representing the product's manufacturer")
+    meta_title: FilterTypeInput @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists")
+    meta_keyword: FilterTypeInput @doc(description: "A comma-separated list of keywords that are visible only to search engines")
+    meta_description: FilterTypeInput @doc(description: "A brief overview of the product for search results listings, maximum 255 characters")
+    image: FilterTypeInput @doc(description: "The relative path to the main image on the product page")
+    small_image: FilterTypeInput @doc(description: "The relative path to the small image, which is used on catalog pages")
+    thumbnail: FilterTypeInput @doc(description: "The relative path to the product's thumbnail image")
+    tier_price: FilterTypeInput @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    news_from_date: FilterTypeInput @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
+    news_to_date: FilterTypeInput @doc(description: "The end date for new product listings")
+    custom_layout_update: FilterTypeInput @doc(description: "XML code that is applied as a layout update to the product page")
+    min_price: FilterTypeInput @doc(description:"The numeric minimal price of the product. Do not include the currency code.")
+    max_price: FilterTypeInput @doc(description:"The numeric maximal price of the product. Do not include the currency code.")
+    special_price: FilterTypeInput @doc(description:"The numeric special price of the product. Do not include the currency code.")
+    category_ids: FilterTypeInput @doc(description: "Category ID the product belongs to")
+    options_container: FilterTypeInput @doc(description: "If the product has multiple options, determines where they appear on the product page")
+    required_options: FilterTypeInput @doc(description: "Indicates whether the product has required options")
+    has_options: FilterTypeInput @doc(description: "Indicates whether additional attributes have been created for the product")
+    image_label: FilterTypeInput @doc(description: "The label assigned to a product image")
+    small_image_label: FilterTypeInput @doc(description: "The label assigned to a product's small image")
+    thumbnail_label: FilterTypeInput @doc(description: "The label assigned to a product's thumbnail image")
+    created_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was created")
+    updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was updated")
+    country_of_manufacture: FilterTypeInput @doc(description: "The product's country of origin")
+    custom_layout: FilterTypeInput @doc(description: "The name of a custom layout")
+    gift_message_available: FilterTypeInput @doc(description: "Indicates whether a gift message is available")
+    price: FilterTypeInput @doc(description: "The price of an item")
+    final_price: FilterTypeInput @doc(description: "The final price of an item")
+    special_price: FilterTypeInput @doc(description: "The discounted price of the product")
+    special_from_date: FilterTypeInput @doc(description: "The beginning date that a product has a special price")
+    special_to_date: FilterTypeInput @doc(description: "The end date that a product has a special price")
+    weight: FilterTypeInput @doc(description: "The weight of the item, in units defined by the store")
+    tier_price: FilterTypeInput @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    news_from_date: FilterTypeInput @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
+    news_to_date: FilterTypeInput @doc(description: "The end date for new product listings")
+    min_price: FilterTypeInput @doc(description:"The numeric minimal price of the product. Do not include the currency code.")
+    max_price: FilterTypeInput @doc(description:"The numeric maximal price of the product. Do not include the currency code.")
+    special_price: FilterTypeInput @doc(description:"The numeric special price of the product. Do not include the currency code.")
+    created_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was created")
+    updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the product was updated")
+    erin_recommends: FilterTypeInput @doc(description: "The product erin_recommends. Customers use this erin_recommends to identify the product.")
+    size: FilterTypeInput @doc(description: "The product size. Customers use this size to identify the product.")
+    color: FilterTypeInput @doc(description: "The product color. Customers use this color to identify the product.")
+    or: ProductFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+    category: ProductFilterInput @doc(description: "The product color. Customers use this color to identify the product.")
+    category_id: FilterTypeInput @doc(description: "Category ID the product belongs to")
+    configurable_children: ProductFilterInput @doc(description: "Configurable product childrens")
+    stock: ProductFilterInput @doc(description: "The product stock. Customers use this stock to identify the product.")
+    is_in_stock: FilterTypeInput @doc(description: "Is product in stock")
+}
+
+type LayerFilter {
+    name: String @doc(description: "Layered navigation filter name")
+    request_var: String @doc(description: "Request variable name for filter query")
+    filter_items_count: Int @doc(description: "Count of filter items in filter group")
+    filter_items: [LayerFilterItemInterface] @doc(description: "Array of filter items")
+}
+
+interface LayerFilterItemInterface {
+    label: String @doc(description: "Filter label")
+    value_string: String @doc(description: "Value for filter request variable to be used in query")
+    items_count: Int @doc(description: "Count of items by filter")
+}
+
+#type LayerFilterItem implements LayerFilterItemInterface {
+#}
+
+type SortField {
+    value: String @doc(description: "Attribute code of sort field")
+    label: String @doc(description: "Label of sort field")
+}
+
+type SortFields @doc(description: "SortFields contains a default value for sort fields and all available sort fields") {
+    default: String @doc(description: "Default value of sort fields")
+    options: [SortField] @doc(description: "Available sort fields")
+}
+
+enum SortEnum {
+    ASC
+    DESC
+}
