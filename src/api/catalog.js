@@ -37,7 +37,7 @@ export default ({config, db}) => function (req, res, body) {
 
 	// Check price tiers
 	if (config.usePriceTiers) {
-		const userToken = req.body.token
+		const userToken = req.body.groupToken
 
 		// Decode token and get group id
         if (userToken && userToken.length > 10) {
@@ -46,7 +46,7 @@ export default ({config, db}) => function (req, res, body) {
 			groupId = decodeToken.group_id || groupId
 		}
 
-		delete req.body.token
+		delete req.body.groupToken
 	}
 
 	request({ // do the elasticsearch request
