@@ -12,7 +12,7 @@ class AbstractTaxProxy {
      * @param Array productList 
      * @returns Promise
      */
-    process (productList) {
+    process (productList, groupId = null) {
         throw new Error('TaxProxy::process must be implemented for specific platform')
     }
 }

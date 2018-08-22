@@ -1,6 +1,6 @@
 import resource from 'resource-router-middleware';
-import { apiStatus } from '../lib/util';
-import { Router } from 'express';
+import {apiStatus} from '../lib/util';
+import {Router} from 'express';
 import PlatformFactory from '../platform/factory'
 import jwt from 'jwt-simple'
 import { merge } from 'lodash'
@@ -11,17 +11,32 @@ const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 
-export default ({ config, db }) => {
+function addUserGroupToken(config, result) {
+    /**
+     * Add group id to token
+     */
+    if (config.usePriceTiers) {
+        const data = {
+            group_id : result.group_id,
+            id: result.id,
+            user: result.email,
+        }
+
+        result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+    }
+}
+
+export default ({config, db}) => {
 
 	let userApi = Router();
-	
+
 	const _getProxy = (req) => {
 		const platform = config.platform
 		const factory = new PlatformFactory(config, req)
-		return factory.getAdapter(platform,'user')
+		return factory.getAdapter(platform, 'user')
 	};
 
-	/** 
+	/**
 	 * POST create an user
 	 */
 	userApi.post('/create', (req, res) => {
@@ -35,13 +50,13 @@ export default ({ config, db }) => {
 			console.dir(validate.errors);
 			apiStatus(res, validate.errors, 200);
 			return;
-		}				
+		}
 
 		const userProxy = _getProxy(req)
-		
+
 		userProxy.register(req.body).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
 	})
@@ -49,40 +64,52 @@ export default ({ config, db }) => {
 	/**
 	 * POST login an user
 	 */
-	userApi.post('/login', (req, res) => {	
+	userApi.post('/login', (req, res) => {
 		const userProxy = _getProxy(req)
+
 		userProxy.login(req.body).then((result) => {
-			apiStatus(res, result, 200, { refreshToken:  jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret) });
-		}).catch(err=> {
+			/**
+			 * Second request for more user info
+			 */
+			if (config.usePriceTiers) {
+				userProxy.me(result).then((resultMe) => {
+					apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+				}).catch(err => {
+					apiStatus(res, err, 500);
+				})
+			} else {
+                apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+			}
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})				
+		})
 	});
 
 	/**
 	 * POST refresh user token
 	 */
-	userApi.post('/refresh', (req, res) => {	
+	userApi.post('/refresh', (req, res) => {
 		const userProxy = _getProxy(req)
 
-		if(!req.body || !req.body.refreshToken) {
+		if (!req.body || !req.body.refreshToken) {
 			return apiStatus(res, 'No refresh token provided', 500);
 		}
 
 		const decodedToken = jwt.decode(req.body ? req.body.refreshToken : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-		if(!decodedToken) {
+		if (!decodedToken) {
 			return apiStatus(res, 'Invalid refresh token provided', 500);
 		}
 		userProxy.login(decodedToken).then((result) => {
-			apiStatus(res, result, 200, { refreshToken:  jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret) });
-		}).catch(err=> {
+			apiStatus(res, result, 200, {refreshToken: jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})				
-	});	
+	});
 
 	/**
 	 * POST resetPassword (old, keep for backward compatibility)
 	 */
-	userApi.post('/resetPassword', (req, res) => {	
+	userApi.post('/resetPassword', (req, res) => {
 		const userProxy = _getProxy(req)
 
 		if(!req.body.email) {
@@ -93,7 +120,7 @@ export default ({ config, db }) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
-		})				
+		})
 	});
 
     /**
@@ -117,27 +144,28 @@ export default ({ config, db }) => {
     /**
 	 * GET  an user
 	 */
-	userApi.get('/me', (req, res) => {	
+	userApi.get('/me', (req, res) => {
 		const userProxy = _getProxy(req)
 		userProxy.me(req.query.token).then((result) => {
+			addUserGroupToken(config, result)
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})				
-	});	
+		})
+	});
 
 
 	/**
 	 * GET  an user order history
 	 */
-	userApi.get('/order-history', (req, res) => {	
+	userApi.get('/order-history', (req, res) => {
 		const userProxy = _getProxy(req)
 		userProxy.orderHistory(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})				
-	});	
+		})
+	});
 
 	/**
 	 * POST for updating user
@@ -148,6 +176,10 @@ export default ({ config, db }) => {
 		const userProfileSchemaExtension = require('../models/userProfile.schema.extension.json')
 		const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
+		if (req.body.customer && req.body.customer.groupToken) {
+			delete req.body.customer.groupToken
+		}
+
 		if (!validate(req.body)) {
 			console.dir(validate.errors);
 			apiStatus(res, validate.errors, 500);
@@ -155,7 +187,8 @@ export default ({ config, db }) => {
 		}
 
 		const userProxy = _getProxy(req)
-		userProxy.update({ token: req.query.token, body: req.body }).then((result) => {
+		userProxy.update({token: req.query.token, body: req.body}).then((result) => {
+			addUserGroupToken(config, result)
 			apiStatus(res, result, 200)
 		}).catch(err => {
 			apiStatus(res, err, 500)
@@ -179,7 +212,7 @@ export default ({ config, db }) => {
 	 */
 	userApi.post('/change-password', (req, res) => {
 		const userProxy = _getProxy(req)
-		userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
+		userProxy.changePassword({token: req.query.token, body: req.body}).then((result) => {
 			apiStatus(res, result, 200)
 		}).catch(err => {
 			apiStatus(res, err, 500)
