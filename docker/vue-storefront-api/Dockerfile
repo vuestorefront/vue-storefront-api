@@ -9,7 +9,7 @@ RUN apk add --no-cache curl
 
 COPY package.json ./
 
-RUN apk add --no-cache --virtual .build-deps ca-certificates wget git && \
+RUN apk add --no-cache --virtual .build-deps ca-certificates wget git curl && \
     yarn install --no-cache && \
     apk del .build-deps
 
