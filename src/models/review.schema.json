@@ -1,0 +1,41 @@
+{
+  "additionalProperties": true,
+  "required": [
+    "review"
+  ],
+  "properties": {
+    "review": {
+      "required": [
+        "entity_pk_value",
+        "title",
+        "detail",
+        "nickname",
+        "review_entity",
+        "review_status"
+      ],
+      "properties": {
+        "entity_pk_value": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "review_entity": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "integer"
+        },
+        "customer_id": {
+          "type": ["integer", "null"]
+        }
+      }
+    }
+  }
+}
