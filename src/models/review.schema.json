@@ -6,7 +6,7 @@
   "properties": {
     "review": {
       "required": [
-        "entity_pk_value",
+        "product_id",
         "title",
         "detail",
         "nickname",
@@ -14,7 +14,7 @@
         "review_status"
       ],
       "properties": {
-        "entity_pk_value": {
+        "product_id": {
           "type": "integer"
         },
         "title": {
