@@ -9,6 +9,9 @@ class ReviewProxy extends AbstractReviewProxy {
   }
 
   create (reviewData) {
+    reviewData.entity_pk_value = reviewData.product_id
+    delete reviewData.product_id
+
     return this.api.reviews.create(reviewData)
   }
 }
