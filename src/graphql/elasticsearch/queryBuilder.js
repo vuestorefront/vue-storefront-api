@@ -1,6 +1,7 @@
 import bodybuilder from 'bodybuilder';
 import getBoosts from '../../lib/boost'
 import map from 'lodash/map';
+import getMapping from './mapping'
 
 function processNestedFieldFilter(attribute, value) {
   let processedFilter = {
@@ -55,7 +56,8 @@ function applyFilters(filter, query, type) {
           if (!Array.isArray(filter.value)) {
             filter.value = [filter.value];
           }
-          query = query.filter('terms', filter.attribute, filter.value);
+          console.log('getMapping(filter.attribute) --------------------------: ', getMapping(filter.attribute))
+          query = query.filter('terms', getMapping(filter.attribute), filter.value)
         }
       } else if (filter.scope == 'catalog') {
         hasCatalogFilters = true;
@@ -81,7 +83,12 @@ function applyFilters(filter, query, type) {
             if (!Array.isArray(newValue)) {
               newValue = [newValue];
             }
-            filterQr = filterQr.andFilter('terms', catalogfilter.attribute + attrPostfix, newValue);
+            if (attrPostfix === '') {
+              console.log('getMapping(catalogfilter.attribute)--------------------------: ', getMapping(catalogfilter.attribute))
+              filterQr = filterQr.andFilter('terms', getMapping(catalogfilter.attribute), newValue)
+            } else {
+              filterQr = filterQr.andFilter('terms', catalogfilter.attribute + attrPostfix, newValue)
+            }
           }
         }
       })
@@ -98,7 +105,8 @@ function applyFilters(filter, query, type) {
       for (let attrToFilter of appliedFilters) {
         if (attrToFilter.scope == 'catalog') {
           if (attrToFilter.attribute != 'price') {
-            query = query.aggregation('terms', attrToFilter.attribute)
+            console.log('getMapping(attrToFilter.field) --------------------------: ', getMapping(attrToFilter.attribute))
+            query = query.aggregation('terms', getMapping(attrToFilter.attribute))
             query = query.aggregation('terms', attrToFilter.attribute + optionsPrfeix)
           } else {
             query = query.aggregation('terms', attrToFilter.attribute)
