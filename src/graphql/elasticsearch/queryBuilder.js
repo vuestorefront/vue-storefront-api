@@ -56,7 +56,6 @@ function applyFilters(filter, query, type) {
           if (!Array.isArray(filter.value)) {
             filter.value = [filter.value];
           }
-          console.log('getMapping(filter.attribute) --------------------------: ', getMapping(filter.attribute))
           query = query.filter('terms', getMapping(filter.attribute), filter.value)
         }
       } else if (filter.scope == 'catalog') {
@@ -84,7 +83,6 @@ function applyFilters(filter, query, type) {
               newValue = [newValue];
             }
             if (attrPostfix === '') {
-              console.log('getMapping(catalogfilter.attribute)--------------------------: ', getMapping(catalogfilter.attribute))
               filterQr = filterQr.andFilter('terms', getMapping(catalogfilter.attribute), newValue)
             } else {
               filterQr = filterQr.andFilter('terms', catalogfilter.attribute + attrPostfix, newValue)
@@ -105,7 +103,6 @@ function applyFilters(filter, query, type) {
       for (let attrToFilter of appliedFilters) {
         if (attrToFilter.scope == 'catalog') {
           if (attrToFilter.attribute != 'price') {
-            console.log('getMapping(attrToFilter.field) --------------------------: ', getMapping(attrToFilter.attribute))
             query = query.aggregation('terms', getMapping(attrToFilter.attribute))
             query = query.aggregation('terms', attrToFilter.attribute + optionsPrfeix)
           } else {
