@@ -246,10 +246,11 @@ function processSingleOrder(orderData, config, job, done){
                                 logger.debug(THREAD_ID + result)
                                 redisClient.set("order$$id$$" + orderData.order_id, JSON.stringify(
                                 {
-                                platform_order_id: result,
-                                transmited: true,
-                                transmited_at: new Date(),
-                                platform: 'magento2'
+                                    platform_order_id: result,
+                                    transmited: true,
+                                    transmited_at: new Date(),
+                                    platform: 'magento2',
+                                    order: orderData
                                 }));
                                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
 
