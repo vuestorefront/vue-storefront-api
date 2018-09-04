@@ -4,7 +4,6 @@ dist/
 npm-debug.log
 .vscode/
 .idea/
-yarn.lock
 api_start.sh
 api_test.sh
 package-lock.json
