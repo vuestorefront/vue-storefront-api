@@ -100,7 +100,7 @@
     "nodejs"
   ],
   "workspaces": [
-    "src/api/extenstions/*",
+    "src/api/extensions/*",
     "src/platform/*"
   ]
 }
