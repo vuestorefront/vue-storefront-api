@@ -25,7 +25,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
   const parseURL = context.req.url.replace(/^\/+|\/+$/g, '');
   let urlParts = parseURL.split('/');
   let esIndex  = config.elasticsearch.indices[0]
-  if (urlParts.length >= 1 && urlParts[0] != '') {
+  if (urlParts.length >= 1 && urlParts[0] != '' && urlParts[0] != '?') {
     esIndex = config.storeViews[urlParts[0]].elasticsearch.index
   }
 
