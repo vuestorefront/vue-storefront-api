@@ -1,7 +1,6 @@
-import jwt from "jwt-simple";
-
-const request = require('request');
-import ProcessorFactory from '../processor/factory'
+import jwt from 'jwt-simple';
+import request from 'request';
+import ProcessorFactory from '../processor/factory';
 
 export default ({config, db}) => function (req, res, body) {
 	let groupId = null
@@ -13,9 +12,6 @@ export default ({config, db}) => function (req, res, body) {
 	}
 
 	const urlSegments = req.url.split('/');
-
-	const _getTaxProxy = () => {
-	};
 
 	let indexName = ''
 	let entityType = ''
@@ -67,24 +63,24 @@ export default ({config, db}) => function (req, res, body) {
 			if (!resultProcessor)
 				resultProcessor = factory.getAdapter('default', indexName) // get the default processor
 
-            if (entityType === 'product') {
-                resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
-                    _resBody.hits.hits = result
-                    res.json(_resBody);
-                }).catch((err) => {
-                    console.error(err)
-                })
-            } else {
-                resultProcessor.process(_resBody.hits.hits).then((result) => {
-                    _resBody.hits.hits = result
-                    res.json(_resBody);
-                }).catch((err) => {
-                    console.error(err)
-                })
-            }
+      if (entityType === 'product') {
+        resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
+          _resBody.hits.hits = result
+          res.json(_resBody);
+        }).catch((err) => {
+          console.error(err)
+        })
+      } else {
+        resultProcessor.process(_resBody.hits.hits).then((result) => {
+          _resBody.hits.hits = result
+          res.json(_resBody);
+        }).catch((err) => {
+          console.error(err)
+        })
+      }
 
-
-		} else
+		} else {
 			res.json(_resBody);
+		}
 	});
 }

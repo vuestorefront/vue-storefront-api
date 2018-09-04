@@ -1,8 +1,8 @@
 import resource from 'resource-router-middleware';
 import { apiStatus } from '../lib/util';
-import { merge } from 'lodash'
-const Ajv = require('ajv'); // json validator
+import { merge } from 'lodash';
 
+const Ajv = require('ajv'); // json validator
 const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
@@ -51,5 +51,4 @@ export default ({ config, db }) => resource({
 		apiStatus(res, job.id, 200);
 	},
 
-	
 });

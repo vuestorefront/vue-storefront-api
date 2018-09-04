@@ -1,13 +1,6 @@
-import resource from 'resource-router-middleware';
 import { apiStatus } from '../lib/util';
 import { Router } from 'express';
-import PlatformFactory from '../platform/factory'
-
-const Ajv = require('ajv'); // json validator
-
-const kue = require('kue');
-const jwa = require('jwa');
-const hmac = jwa('HS256');
+import PlatformFactory from '../platform/factory';
 
 export default ({ config, db }) => {
 
@@ -27,9 +20,9 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.create(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
+		})
 	})
 
 	/** 
@@ -42,17 +35,15 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/update', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.body.cartItem)
-		{
+		if (!req.body.cartItem) {
 			return apiStatus(res, 'No cartItem element provided within the request body', 500)
-			
 		}
 		cartProxy.update(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})	
+		})
+	})
 
 	/** 
 	 * POST apply the coupon code
@@ -62,17 +53,15 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/apply-coupon', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.query.coupon)
-		{
+		if (!req.query.coupon) {
 			return apiStatus(res, 'No coupon code provided', 500)
-			
 		}
 		cartProxy.applyCoupon(req.query.token, req.query.cartId ? req.query.cartId : null, req.query.coupon).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})		
+		})
+	})
 
 	/** 
 	 * POST remove the coupon code
@@ -83,10 +72,10 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.deleteCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})		
+		})
+	})
 
 	/** 
 	 * GET get the applied coupon code
@@ -97,10 +86,10 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.getCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})		
+		})
+	})
 
 	/** 
 	 * POST delete the cart item
@@ -112,16 +101,15 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/delete', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.body.cartItem)
-		{
+		if (!req.body.cartItem) {
 			return apiStatus(res, 'No cartItem element provided within the request body', 500)
 		}
 		cartProxy.delete(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})	
+		})
+	})
 
 	/** 
 	 * GET pull the whole cart as it's currently se server side
@@ -132,10 +120,10 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.pull(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})		
+		})
+	})
 
 	/** 
 	 * GET totals the cart totals
@@ -146,10 +134,10 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.totals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
-	})	
+		})
+	})
 
 	/**
 	 * POST /shipping-methods - available shipping methods for a given address
@@ -159,13 +147,12 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/shipping-methods', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.body.address)
-		{
+		if (!req.body.address) {
 			return apiStatus(res, 'No address element provided within the request body', 500)
 		}
 		cartProxy.getShippingMethods(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.address).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
 	})
@@ -179,9 +166,9 @@ export default ({ config, db }) => {
 		const cartProxy = _getProxy(req)
 		cartProxy.getPaymentMethods(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
-		})			
+		})
 	})
 
 	/**
@@ -192,13 +179,12 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/shipping-information', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.body.addressInformation)
-		{
+		if (!req.body.addressInformation) {
 			return apiStatus(res, 'No address element provided within the request body', 500)
 		}
 		cartProxy.setShippingInformation(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
 	})
@@ -211,13 +197,12 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/collect-totals', (req, res) => {
 		const cartProxy = _getProxy(req)
-		if (!req.body.methods)
-		{
+		if (!req.body.methods) {
 			return apiStatus(res, 'No shipping and payment methods element provided within the request body', 500)
 		}
 		cartProxy.collectTotals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.methods).then((result) => {
 			apiStatus(res, result, 200);
-		}).catch(err=> {
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
 	})
