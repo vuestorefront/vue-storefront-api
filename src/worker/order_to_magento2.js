@@ -81,7 +81,7 @@ function processSingleOrder(orderData, config, job, done) {
   const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId): ( cartId ? new Promise((resolve, reject) => {
     resolve (cartId)
   }): api.cart.create(null))
-  
+
   logger.info(THREAD_ID + '> Cart Id', cartId)
 
   const processCart = (result) => {
@@ -150,7 +150,6 @@ function processSingleOrder(orderData, config, job, done) {
         let mappedBillingRegion = 0
 
         api.directory.countries().then((countryList) => {
-
           if (shippingAddr.region_id > 0) {
             mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
           } else {
@@ -210,7 +209,6 @@ function processSingleOrder(orderData, config, job, done) {
                 "company": billingAddr.company,
                 "vatId": billingAddr.vat_id
               },
-
               "shippingMethodCode": orderData.addressInformation.shipping_method_code,
               "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
               "extensionAttributes": orderData.addressInformation.shippingExtraFields
@@ -241,7 +239,8 @@ function processSingleOrder(orderData, config, job, done) {
                   platform_order_id: result,
                   transmited: true,
                   transmited_at: new Date(),
-                  platform: 'magento2'
+                  platform: 'magento2',
+                  order: orderData
                 }));
                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
 
@@ -313,11 +312,11 @@ cli.command('start', () => { // default command is to run the service worker
   });
 });
 
-cli.command('testAuth', ()=> {
+cli.command('testAuth', () => {
   processSingleOrder(require('../../var/testOrderAuth.json'), config, null, (err, result) => {});
 });
 
-cli.command('testAnon', ()=> {
+cli.command('testAnon', () => {
   processSingleOrder(require('../../var/testOrderAnon.json'), config, null, (err, result) => {});
 });
 
