@@ -1,9 +1,10 @@
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
+import CommandRouter from 'command-router'
 
 const config = require('config')
 const common = require('../migrations/.common')
 const es = require('../src/lib/elastic')
+
+const cli = CommandRouter()
 
 cli.option({
   name: 'indexName',

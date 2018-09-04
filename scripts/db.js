@@ -1,9 +1,10 @@
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
+import CommandRouter from 'command-router'
 
 const config = require('config')
 const common = require('../migrations/.common')
 const es = require('../src/lib/elastic')
+
+const cli = CommandRouter()
 
 cli.option({
   name: 'indexName',
@@ -12,7 +13,7 @@ cli.option({
   type: String
 })
 
-cli.command('rebuild',  () => { // TODO: add parallel processing
+cli.command('rebuild', () => { // TODO: add parallel processing
   console.log('** Hello! I am going to rebuild EXISTINT ES index to fix the schema')
   const originalIndex = cli.options.indexName
   const tempIndex = originalIndex + '_' + Math.round(+new Date()/1000)

@@ -1,8 +1,9 @@
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
+import CommandRouter from 'command-router'
 
 const config = require('config').elasticsearch
 const spawnSync = require('child_process').spawnSync
+
+const cli = CommandRouter()
 
 cli.option({
   name: 'input-file',

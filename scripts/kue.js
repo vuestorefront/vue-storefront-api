@@ -1,8 +1,9 @@
-const CommandRouter = require('command-router')
-const cli = CommandRouter()
+import CommandRouter from 'command-router'
 
 const config = require('config').redis
 const kue = require('kue')
+
+const cli = CommandRouter()
 
 cli.option({
   name: 'port',
