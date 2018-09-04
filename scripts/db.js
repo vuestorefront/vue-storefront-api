@@ -14,7 +14,7 @@ cli.option({
 })
 
 cli.command('rebuild', () => { // TODO: add parallel processing
-  console.log('** Hello! I am going to rebuild EXISTINT ES index to fix the schema')
+  console.log('** Hello! I am going to rebuild EXISTING ES index to fix the schema')
   const originalIndex = cli.options.indexName
   const tempIndex = originalIndex + '_' + Math.round(+new Date()/1000)
 
@@ -51,7 +51,7 @@ cli.command('rebuild', () => { // TODO: add parallel processing
 })
 
 cli.command('new', () => { // TODO: add parallel processing
-  console.log('** Hello! I am going to create NE ES index')
+  console.log('** Hello! I am going to create NEW ES index')
   const indexName = cli.options.indexName
   es.createIndex(common.db, indexName, function (err) {
     if (err) {
