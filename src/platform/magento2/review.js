@@ -3,7 +3,7 @@ import { multiStoreConfig } from './util'
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 class ReviewProxy extends AbstractReviewProxy {
-  constructor (config, req){
+  constructor (config, req) {
     super(config, req)
     this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
   }
