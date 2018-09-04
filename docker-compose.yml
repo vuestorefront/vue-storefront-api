@@ -1,8 +1,7 @@
-version: '3.0'
+version: '3'
 services:
   es1:
     container_name: elasticsearch
-    # image: divante/vue-storefront-elasticsearch:5.6.10
     build: docker/elasticsearch/
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
@@ -14,7 +13,6 @@ services:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m"
 
   kibana:
-    # image: divante/vue-storefront-kibana:5.6.10
     build: docker/kibana/
     volumes:
       - ./docker/kibana/config/:/usr/share/kibana/config:ro
