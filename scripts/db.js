@@ -5,7 +5,8 @@ const config = require('config')
 const common = require('../migrations/.common')
 const es = require('../src/lib/elastic')
 
-cli.option({ name: 'indexName',
+cli.option({
+  name: 'indexName',
   alias: 'i',
   default: config.elasticsearch.indices[0],
   type: String
