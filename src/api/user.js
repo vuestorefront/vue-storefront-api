@@ -1,29 +1,24 @@
-import resource from 'resource-router-middleware';
-import {apiStatus} from '../lib/util';
-import {Router} from 'express';
-import PlatformFactory from '../platform/factory'
-import jwt from 'jwt-simple'
-import { merge } from 'lodash'
+import { apiStatus } from '../lib/util';
+import { Router } from 'express';
+import PlatformFactory from '../platform/factory';
+import jwt from 'jwt-simple';
+import { merge } from 'lodash';
 
 const Ajv = require('ajv'); // json validator
 
-const kue = require('kue');
-const jwa = require('jwa');
-const hmac = jwa('HS256');
-
 function addUserGroupToken(config, result) {
-    /**
-     * Add group id to token
-     */
-    if (config.usePriceTiers) {
-        const data = {
-            group_id : result.group_id,
-            id: result.id,
-            user: result.email,
-        }
-
-        result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+  /**
+   * Add group id to token
+   */
+  if (config.usePriceTiers) {
+    const data = {
+      group_id : result.group_id,
+      id: result.id,
+      user: result.email,
     }
+
+    result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+  }
 }
 
 export default ({config, db}) => {
@@ -78,7 +73,7 @@ export default ({config, db}) => {
 					apiStatus(res, err, 500);
 				})
 			} else {
-                apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+        apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}
 		}).catch(err => {
 			apiStatus(res, err, 500);
@@ -103,7 +98,7 @@ export default ({config, db}) => {
 			apiStatus(res, result, 200, {refreshToken: jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 		}).catch(err => {
 			apiStatus(res, err, 500);
-		})				
+		})
 	});
 
 	/**
@@ -123,25 +118,24 @@ export default ({config, db}) => {
 		})
 	});
 
-    /**
-     * POST resetPassword
-     */
-    userApi.post('/reset-password', (req, res) => {
-        const userProxy = _getProxy(req)
+  /**
+   * POST resetPassword
+   */
+  userApi.post('/reset-password', (req, res) => {
+    const userProxy = _getProxy(req)
 
-        if(!req.body.email) {
-            return apiStatus(res, "Invalid e-mail provided!", 500)
-        }
+    if(!req.body.email) {
+      return apiStatus(res, "Invalid e-mail provided!", 500)
+    }
 
-        userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
-            apiStatus(res, result, 200);
-        }).catch(err=> {
-            apiStatus(res, err, 500);
-        })
-    });
+    userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
+      apiStatus(res, result, 200);
+    }).catch(err=> {
+      apiStatus(res, err, 500);
+    })
+  });
 
-
-    /**
+  /**
 	 * GET  an user
 	 */
 	userApi.get('/me', (req, res) => {
@@ -153,7 +147,6 @@ export default ({config, db}) => {
 			apiStatus(res, err, 500);
 		})
 	});
-
 
 	/**
 	 * GET  an user order history

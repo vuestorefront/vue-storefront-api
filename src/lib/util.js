@@ -21,15 +21,13 @@ export function toRes(res, status=200) {
 
 export function sgnSrc (sgnObj, item) {
 	if (config.tax.alwaysSyncPlatformPricesOver) {
-      sgnObj.id = item.id 
+		sgnObj.id = item.id 
 	} else {
 		sgnObj.sku = item.sku
 	}
 	// console.log(sgnObj)
 	return sgnObj
 }
-
-
 
 /**	Creates a api status call and sends it thru to Express Response object.
  *	@param {express.Response} res	Express HTTP Response

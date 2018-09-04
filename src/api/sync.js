@@ -1,8 +1,5 @@
 import { apiStatus } from '../lib/util';
 import { Router } from 'express';
-import PlatformFactory from '../platform/factory'
-
-const Ajv = require('ajv'); // json validator
 
 export default ({ config, db }) => {
 

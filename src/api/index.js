@@ -1,14 +1,13 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
 import order from './order';
-import img from './img';
-import catalog from './catalog'
-import user from './user'
-import stock from './stock'
-import review from './review'
-import cart from './cart'
-import product from './product'
-import sync from './sync'
+import catalog from './catalog';
+import user from './user';
+import stock from './stock';
+import review from './review';
+import cart from './cart';
+import product from './product';
+import sync from './sync';
 
 export default ({ config, db }) => {
 	let api = Router();
