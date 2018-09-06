@@ -1,8 +1,5 @@
 import { apiStatus } from '../lib/util';
 import { Router } from 'express';
-import PlatformFactory from '../platform/factory'
-
-const Ajv = require('ajv'); // json validator
 
 export default ({ config, db }) => {
 
@@ -20,7 +17,11 @@ export default ({ config, db }) => {
 		});
 		
 		redisClient.get('order$$id$$' + req.param('order_id'), function (err, reply) {
-			apiStatus(res, err ? err : JSON.parse(reply),  err ? 500 :200);
+			const orderMetaData = JSON.parse(reply)
+			if (orderMetaData) {
+				orderMetaData.order = null // for security reasons we're just clearing out the real order data as it's set by `order_2_magento2.js`
+			}
+			apiStatus(res, err ? err : orderMetaData,  err ? 500 :200);
 		})
 	})
 

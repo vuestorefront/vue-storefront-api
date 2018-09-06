@@ -56,7 +56,8 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
       configurableChild.priceTax = priceExclTax * rateFactor
       configurableChild.priceInclTax = priceExclTax + configurableChild.priceTax
 
-      let specialPriceExclTax = configurableChild.special_price
+      let specialPriceExclTax = parseFloat(configurableChild.special_price)
+
       if (sourcePriceInclTax) {
         specialPriceExclTax = configurableChild.special_price / (1 + rateFactor)
         configurableChild.special_price = specialPriceExclTax

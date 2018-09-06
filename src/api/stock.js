@@ -2,8 +2,6 @@ import { apiStatus } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 
-const Ajv = require('ajv'); // json validator
-
 export default ({ config, db }) => {
 
 	let stockApi = Router();
@@ -46,7 +44,7 @@ export default ({ config, db }) => {
 		}).catch(err=> {
 			apiStatus(res, err, 500);
 		})
-	})	
+	})
 
 	/** 
 	 * GET get stock item list by skus (comma separated)
@@ -67,8 +65,8 @@ export default ({ config, db }) => {
 			apiStatus(res, results, 200);
 		}).catch(err=> {
 			apiStatus(res, err, 500);
-		})		
-	})		
+		})
+	})
 
 	return stockApi
 }

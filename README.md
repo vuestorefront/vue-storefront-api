@@ -93,6 +93,9 @@ Executing `docker exec -it vue-storefront-api_app_1 yarn install` will also down
 
 NOTE: `npm` users will still have to install the dependencies individually in their modules.
 
+## Reviews
+To use review feature you need to install custom module for Magento 2: [Divante ReviewApi](https://github.com/DivanteLtd/magento2-review-api)
+
 License
 -------
 

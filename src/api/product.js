@@ -1,10 +1,9 @@
 import { apiStatus, sgnSrc } from '../lib/util';
 import { Router } from 'express';
-import PlatformFactory from '../platform/factory'
+import PlatformFactory from '../platform/factory';
+
 const jwa = require('jwa');
 const hmac = jwa('HS256');
-
-const Ajv = require('ajv'); // json validator
 
 export default ({ config, db }) => {
 

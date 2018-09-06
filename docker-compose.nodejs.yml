@@ -1,4 +1,4 @@
-version: '2.0'
+version: '3.0'
 services:
   app:
     # image: divante/vue-storefront-api:latest
@@ -13,6 +13,7 @@ services:
       VS_ENV: dev
     volumes:
       - './config:/var/www/config'
+      - './ecosystem.json:/var/www/ecosystem.json'
       - './migrations:/var/www/migrations'
       - './package.json:/var/www/package.json'
       - './scripts:/var/www/scripts'

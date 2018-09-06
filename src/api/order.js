@@ -1,7 +1,8 @@
 import resource from 'resource-router-middleware';
 import { apiStatus } from '../lib/util';
-const Ajv = require('ajv'); // json validator
+import { merge } from 'lodash';
 
+const Ajv = require('ajv'); // json validator
 const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
@@ -11,13 +12,15 @@ export default ({ config, db }) => resource({
 	/** Property name to store preloaded entity on `request`. */
 	id : 'order',
 
-	/** 
+	/**
 	 * POST create an order with JSON payload compliant with models/order.md
 	 */
 	create(req, res) {
 
 		const ajv = new Ajv();
-		const validate = ajv.compile(require('../models/order.schema.json'));
+		const orderSchema = require('../models/order.schema.json')
+		const orderSchemaExtension = require('../models/order.schema.extension.json')
+		const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
@@ -48,5 +51,4 @@ export default ({ config, db }) => resource({
 		apiStatus(res, job.id, 200);
 	},
 
-	
 });
