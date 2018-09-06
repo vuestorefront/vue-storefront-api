@@ -44,19 +44,19 @@ As a result, all necessary services will be launched:
 Product catalog is imported using [elasticdump](https://www.npmjs.com/package/elasticdump), which is installed automatically via project dependency. The default ElasticSearch index name is: `vue_storefront_catalog`
 
 - (A) `yarn restore`
-- (B) `docker exec -it vuestorefrontapi_app_1 yarn restore`
+- (B) `docker exec -it vue-storefront-api_app_1 yarn restore`
 
 Then, to update the structures in the database to the latest version (data migrations), do the following:
 
-- (A) `docker exec -it vuestorefrontapi_app_1 yarn migrate`
-- (B) `yarn migrate`
+- (A) `yarn migrate`
+- (B) `docker exec -it vue-storefront-api_app_1 yarn migrate`
 
 By default, the application server is started in development mode. It means that code auto reload is enabled along with ESLint, babel support.
 
 It restores JSON documents stored in `./var/catalog.json`. The opposite command - used to generate `catalog.json` file from running ElasticSearch cluster:
 
 - (A) `yarn dump`
-- (B) `docker exec -it vuestorefrontapi_app_1 yarn dump`
+- (B) `docker exec -it vue-storefront-api_app_1 yarn dump`
 
 **Access ElasticSearch data with Kibana**
 
@@ -71,7 +71,7 @@ Catalog API calls are compliant with ElasticSearch (it works like a filtering pr
 
 Elastic search endpoint: `http://localhost:8080/api/catalog/search/<INDEX_NAME>/`. You can run the following command to check if everything is up and runing (it assumes `vue_storefront_catalog` as default index name):
 
-`curl -i http://elastic:changeme@localhost:8080/api/search/vue_storefront_catalog/_search?query=*`
+`curl -i http://elastic:changeme@localhost:8080/api/catalog/vue_storefront_catalog/_search`
 
 ## Data formats
 This backend is using ElasticSearch data formats popularized by [ElasticSuite for Magento2 by Smile.fr](https://github.com/Smile-SA/elasticsuite).
@@ -89,7 +89,7 @@ To do this, define the `package.json` with your dependencies in your custom modu
 - `src/api/extensions/{your-custom-extension}/package.json` 
 - `src/platforms/{your-custom-platform}/package.json`
 
-Executing `docker exec -it vuestorefrontapi_app_1 yarn install` will also download your custom modules dependencies.
+Executing `docker exec -it vue-storefront-api_app_1 yarn install` will also download your custom modules dependencies.
 
 NOTE: `npm` users will still have to install the dependencies individually in their modules.
 
