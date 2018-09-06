@@ -4,7 +4,8 @@ ENV VS_ENV prod
 
 WORKDIR /var/www
 
-RUN apk add --no-cache imagemagick curl
+RUN apk add --no-cache imagemagick
+RUN apk add --no-cache curl
 
 COPY package.json ./
 
