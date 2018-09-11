@@ -9,6 +9,7 @@
     "port": 9200,
     "user": "elastic",
     "password": "changeme",
+    "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
       "vue_storefront_catalog_de",
