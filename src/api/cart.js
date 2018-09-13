@@ -118,6 +118,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.get('/pull', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		cartProxy.pull(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
@@ -132,6 +133,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.get('/totals', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		cartProxy.totals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
@@ -147,6 +149,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/shipping-methods', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		if (!req.body.address) {
 			return apiStatus(res, 'No address element provided within the request body', 500)
 		}
@@ -164,6 +167,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.get('/payment-methods', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		cartProxy.getPaymentMethods(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
@@ -179,6 +183,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/shipping-information', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		if (!req.body.addressInformation) {
 			return apiStatus(res, 'No address element provided within the request body', 500)
 		}
@@ -197,6 +202,7 @@ export default ({ config, db }) => {
 	 */
 	cartApi.post('/collect-totals', (req, res) => {
 		const cartProxy = _getProxy(req)
+		res.setHeader('Cache-Control', 'no-cache, no-store');
 		if (!req.body.methods) {
 			return apiStatus(res, 'No shipping and payment methods element provided within the request body', 500)
 		}
