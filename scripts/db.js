@@ -7,6 +7,10 @@ program
   .command('rebuild')
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .action((cmd) => { // TODO: add parallel processing
+    if (!cmd.indexName) {
+      console.log('indexName must be specified');
+      process.exit(1);
+    }
     console.log('** Hello! I am going to rebuild EXISTING ES index to fix the schema')
     const originalIndex = cmd.indexName
     const tempIndex = originalIndex + '_' + Math.round(+new Date()/1000)
@@ -45,8 +49,12 @@ program
 
 program
   .command('new')
-  .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
+  .option('-i|--indexName [indexName]', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .action((cmd) => { // TODO: add parallel processing
+    if (!cmd.indexName) {
+      console.log('indexName must be specified');
+      process.exit(1);
+    }
     console.log('** Hello! I am going to create NEW ES index')
     const indexName = cmd.indexName
     es.createIndex(common.db, indexName, function (err) {

@@ -3,7 +3,7 @@ const config = require('config');
 
 program
   .command('buildcache')
-  .action((cmd) => {
+  .action(() => {
     const soap = require('soap')
     const elasticsearch = require('elasticsearch');
     const esConfig = {
