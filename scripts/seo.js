@@ -10,7 +10,7 @@ program
   .option('-f|--oldFormat <oldFormat>', 'use old Magento format', true)
   .action((cmd) => { // TODO: add parallel processing
     if (!cmd.indexName) {
-      console.log('indexName must be specified');
+      console.error('error: indexName must be specified');
       process.exit(1);
     }
 

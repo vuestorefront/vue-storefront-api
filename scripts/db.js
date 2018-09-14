@@ -8,7 +8,7 @@ program
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .action((cmd) => { // TODO: add parallel processing
     if (!cmd.indexName) {
-      console.log('indexName must be specified');
+      console.error('error: indexName must be specified');
       process.exit(1);
     }
 
@@ -53,7 +53,7 @@ program
   .option('-i|--indexName [indexName]', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .action((cmd) => { // TODO: add parallel processing
     if (!cmd.indexName) {
-      console.log('indexName must be specified');
+      console.error('error: indexName must be specified');
       process.exit(1);
     }
 
