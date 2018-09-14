@@ -1,4 +1,4 @@
-version: '2'
+version: '3.0'
 services:
   es1:
     container_name: elasticsearch
