@@ -26,6 +26,10 @@ export default ({config, db}) => function (req, res, body) {
 		if (config.elasticsearch.indices.indexOf(indexName) < 0) {
 			throw new Error('Invalid / inaccessible index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/_search')
 		}
+
+		if (urlSegments[urlSegments.length - 1].indexOf('_search') !== 0) {
+			throw new Error('Please do use following URL format: /api/catalog/<index_name>/_search')
+		}
 	}
 
 	// pass the request to elasticsearch
