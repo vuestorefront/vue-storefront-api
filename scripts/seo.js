@@ -9,47 +9,52 @@ program
   .option('-s|--size <indexName>', 'size', 10000)
   .option('-f|--oldFormat <oldFormat>', 'use old Magento format', true)
   .action((cmd) => { // TODO: add parallel processing
-  console.log('** This command will output url redirects from original Magento2 format to Vue Storefront format')
-  console.log('** Please check the nginx map module options on how to use this map format: https://serverfault.com/a/441517')
-  console.log('** The urls will be mapped to the new VS Url format. Please make sure You have "products.useMagentoUrlKeys=true" in Your vue-storefront/config/local.json')
-
-  const originalIndex = cmd.indexName
-
-  es.search(common.db, {
-    index: originalIndex,
-    type: 'product',
-    size: cmd.size,
-    body: {}
-  }).then(function (resp) {
-    const hits = resp.hits.hits
-
-    for (const hit of hits) {
-      const product = hit._source
-      if (cmd.oldFormat) {
-        console.log(`/${product.url_key} /p/${decodeURIComponent(product.sku)}/${product.url_key}/${decodeURIComponent(product.sku)};`)
-      } else {
-        console.log(`/${product.url_key} /${product.url_key}/${decodeURIComponent(product.sku)};`)
-      }
+    if (!cmd.indexName) {
+      console.log('indexName must be specified');
+      process.exit(1);
     }
+
+    console.log('** This command will output url redirects from original Magento2 format to Vue Storefront format')
+    console.log('** Please check the nginx map module options on how to use this map format: https://serverfault.com/a/441517')
+    console.log('** The urls will be mapped to the new VS Url format. Please make sure You have "products.useMagentoUrlKeys=true" in Your vue-storefront/config/local.json')
+
+    const originalIndex = cmd.indexName
 
     es.search(common.db, {
       index: originalIndex,
-      type: 'category',
+      type: 'product',
       size: cmd.size,
       body: {}
     }).then(function (resp) {
       const hits = resp.hits.hits
+
       for (const hit of hits) {
-        const category = hit._source
+        const product = hit._source
         if (cmd.oldFormat) {
-          console.log(`/${category.url_path} /c/${category.url_key};`)
+          console.log(`/${product.url_key} /p/${decodeURIComponent(product.sku)}/${product.url_key}/${decodeURIComponent(product.sku)};`)
         } else {
-          console.log(`/${category.url_path} /${category.url_key};`)
+          console.log(`/${product.url_key} /${product.url_key}/${decodeURIComponent(product.sku)};`)
         }
       }
+
+      es.search(common.db, {
+        index: originalIndex,
+        type: 'category',
+        size: cmd.size,
+        body: {}
+      }).then(function (resp) {
+        const hits = resp.hits.hits
+        for (const hit of hits) {
+          const category = hit._source
+          if (cmd.oldFormat) {
+            console.log(`/${category.url_path} /c/${category.url_key};`)
+          } else {
+            console.log(`/${category.url_path} /${category.url_key};`)
+          }
+        }
+      })
     })
   })
-})
 
 program
   .on('command:*', () => {

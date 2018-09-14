@@ -11,6 +11,7 @@ program
       console.log('indexName must be specified');
       process.exit(1);
     }
+
     console.log('** Hello! I am going to rebuild EXISTING ES index to fix the schema')
     const originalIndex = cmd.indexName
     const tempIndex = originalIndex + '_' + Math.round(+new Date()/1000)
@@ -55,6 +56,7 @@ program
       console.log('indexName must be specified');
       process.exit(1);
     }
+
     console.log('** Hello! I am going to create NEW ES index')
     const indexName = cmd.indexName
     es.createIndex(common.db, indexName, function (err) {
