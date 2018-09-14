@@ -48,13 +48,7 @@ export default ({ config, db }) => asyncMiddleware(async (req, res, body) => {
   }
 
   console.log(`[URL]: ${imgUrl} - [ACTION]: ${action} - [WIDTH]: ${width} - [HEIGHT]: ${height}`);
-  
-  req.query = {
-    size: width + 'x' + height,
-    url: imgUrl
-  }
-  req.originalUrl = `/${action}?url=${encodeURIComponent(imgUrl)}&size=${width}x${height}`;
-  req.url = req.originalUrl;
+
   req.socket.setMaxListeners(config.imageable.maxListeners || 50);
 
   let buffer;
