@@ -3,7 +3,8 @@ import { downloadImage, resize, fit, identify } from '../lib/image';
 import mime from 'mime-types';
 import URL from 'url';
 
-const ACTIONS = ['crop', 'fit', 'resize', 'identify'];
+const SUPPORTED_ACTIONS = ['crop', 'fit', 'resize', 'identify'];
+const SUPPORTED_MIMETYPES = ['image/gif', 'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
 const ONE_YEAR = 31557600000;
 
 const asyncMiddleware = fn =>
@@ -19,12 +20,15 @@ export default ({ config, db }) => asyncMiddleware(async (req, res, body) => {
     return res.status(405).send('Method Not Allowed');
   }
 
+  req.socket.setMaxListeners(config.imageable.maxListeners || 50);
+
   let urlParts = req.url.split('/');
   const width = parseInt(urlParts[1]);
   const height = parseInt(urlParts[2]);
-  const action = urlParts[3];
+  const action = urlParts[3]; 
+  const imgUrl = `${config[config.platform].imgUrl}/${urlParts.slice(4).join('/')}`; // full original image url
 
-  if (urlParts.length < 4 || isNaN(width) || isNaN(height) || !ACTIONS.includes(action)) {
+  if (urlParts.length < 4 || isNaN(width) || isNaN(height) || !SUPPORTED_ACTIONS.includes(action)) {
     return res.status(400).send({
       code: 400,
       result: 'Please provide following parameters: /img/<width>/<height>/<action:crop,fit,resize,identify>/<relative_url>'
@@ -38,8 +42,6 @@ export default ({ config, db }) => asyncMiddleware(async (req, res, body) => {
     })
   }
 
-  const imgUrl = `${config[config.platform].imgUrl}/${urlParts.slice(4).join('/')}`; // full original image url
-
   if (!isImageSourceHostAllowed(imgUrl, config.imageable.whitelist)) {
     return res.status(400).send({
       code: 400,
@@ -47,9 +49,16 @@ export default ({ config, db }) => asyncMiddleware(async (req, res, body) => {
     })
   }
 
-  console.log(`[URL]: ${imgUrl} - [ACTION]: ${action} - [WIDTH]: ${width} - [HEIGHT]: ${height}`);
+  const mimeType = mime.lookup(imgUrl);
 
-  req.socket.setMaxListeners(config.imageable.maxListeners || 50);
+  if (mimeType === false || !SUPPORTED_MIMETYPES.includes(mimeType)) {
+    return res.status(400).send({
+      code: 400,
+      result: 'Unsupported file type'
+    })
+  }
+
+  console.log(`[URL]: ${imgUrl} - [ACTION]: ${action} - [WIDTH]: ${width} - [HEIGHT]: ${height}`);
 
   let buffer;
   try {
@@ -59,15 +68,6 @@ export default ({ config, db }) => asyncMiddleware(async (req, res, body) => {
       code: 400,
       result: `Unable to download the requested image ${imgUrl}`
     });
-  }
-
-  const mimeType = mime.lookup(imgUrl);
-
-  if (mimeType === false) {
-    return res.status(400).send({
-      code: 400,
-      result: 'Unsupported file type'
-    })
   }
 
   switch (action) {
