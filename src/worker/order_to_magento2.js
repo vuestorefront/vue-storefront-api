@@ -8,7 +8,10 @@ const logger = require('./log');
 const countryMapper = require('../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
-const validate = ajv.compile(require('../models/order.schema.json'));
+const merge = require('lodash/merge')
+const orderSchema = require('../models/order.schema.json')
+const orderSchemaExtension = require('../models/order.schema.extension.json')
+const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 const config = require('config')
 let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
