@@ -157,8 +157,6 @@ export function buildQuery({
   currentPage = 1,
   pageSize = 10,
   search = '',
-  includeFields = [],
-  excludeFields = [],
   type = 'product'
 }) {
   let query = bodybuilder();
@@ -166,9 +164,6 @@ export function buildQuery({
   query = applySearchQuery(search, query);
   query = applyFilters(filter, query, type);
   query = applySort(sort, query);
-
-  query._sourceInclude = includeFields;
-  query._sourceExclude = excludeFields;
 
   query = query.from((currentPage - 1) * pageSize).size(pageSize);
 
