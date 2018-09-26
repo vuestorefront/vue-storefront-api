@@ -3,12 +3,16 @@
  * Queue worker in charge of syncing the Sales order to Magento2 via REST API *
  */
 
+const program = require('commander');
 const kue = require('kue');
 const logger = require('./log');
 const countryMapper = require('../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
-const validate = ajv.compile(require('../models/order.schema.json'));
+const merge = require('lodash/merge')
+const orderSchema = require('../models/order.schema.json')
+const orderSchemaExtension = require('../models/order.schema.extension.json')
+const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 const config = require('config')
 let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
@@ -21,15 +25,6 @@ const Redis = require('redis');
 let redisClient = Redis.createClient(config.redis); // redis client
 redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
   redisClient = Redis.createClient(config.redis); // redis client
-});
-
-const CommandRouter = require('command-router');
-const cli = CommandRouter();
-
-cli.option({
-  name: 'partitions',
-  default: numCPUs,
-  type: Number
 });
 
 function isNumeric(val) {
@@ -302,22 +297,36 @@ function processSingleOrder(orderData, config, job, done) {
 }
 
 // RUN
-cli.command('start', () => { // default command is to run the service worker
-  let partition_count = cli.options.partitions;
+program
+  .command('start')
+  .option('--partitions', 'number of partitions', numCPUs)
+  .action((cmd) => { // default command is to run the service worker
+  let partition_count = cmd.partitions;
 
   logger.info('Starting KUE worker for "order" message ...');
-  queue.process('order', partition_count, (job,done) => {
+  queue.process('order', partition_count, (job, done) => {
     logger.info('Processing order: ' + job.data.title);
     return processSingleOrder(job.data.order, config, job, done);
   });
 });
 
-cli.command('testAuth', () => {
-  processSingleOrder(require('../../var/testOrderAuth.json'), config, null, (err, result) => {});
-});
+program
+  .command('testAuth')
+  .action(() => {
+    processSingleOrder(require('../../var/testOrderAuth.json'), config, null, (err, result) => {});
+  });
 
-cli.command('testAnon', () => {
-  processSingleOrder(require('../../var/testOrderAnon.json'), config, null, (err, result) => {});
-});
+program
+  .command('testAnon')
+  .action(() => {
+    processSingleOrder(require('../../var/testOrderAnon.json'), config, null, (err, result) => {});
+  });
 
-cli.parse(process.argv);
+program
+  .on('command:*', () => {
+    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+  });
+
+program
+  .parse(process.argv)
