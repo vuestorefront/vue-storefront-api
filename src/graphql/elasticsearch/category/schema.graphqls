@@ -4,7 +4,8 @@ type Query {
     filter: CategoryFilterInput @doc(description: "An array of categories that match the specified search criteria"),
     pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
     currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
-    sort: CategorySortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order.")
+    sort: CategorySortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order."),
+    _sourceInclude: [String] @doc(description: "Specifies which attribute we include in result.")
     ): ESResponse
 }
 
