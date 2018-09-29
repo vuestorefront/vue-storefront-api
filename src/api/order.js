@@ -27,6 +27,8 @@ export default ({ config, db }) => resource({
 			apiStatus(res, validate.errors, 500);
 			return;
 		}				
+		const incomingOrder = { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */
+		console.log(JSON.stringify(incomingOrder))
 
 		for (let product of req.body.products) {
 			let key = config.tax.calculateServerSide ? { priceInclTax: product.priceInclTax } : {  price: product.price }
@@ -46,9 +48,13 @@ export default ({ config, db }) => resource({
 			}
 		}
 
-		let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
-		const job = queue.createJob('order', { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */).save();
-		apiStatus(res, job.id, 200);
+		try {
+			let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
+			const job = queue.createJob('order', incomingOrder).save();
+			apiStatus(res, job.id, 200);
+		} catch (e) {
+			apiStatus(res, e, 500);
+		}
 	},
 
 });
