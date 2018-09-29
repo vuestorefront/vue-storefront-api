@@ -11,29 +11,29 @@ function stdOutErr(stdout, stderr) {
 
 program
   .command('dump')
-  .option('--input-index', 'index to dump', 'vue_storefront_catalog')
-  .option('--output-file', 'path to the output file', 'var/catalog.json')
+  .option('--input-index <inputIndex>', 'index to dump', 'vue_storefront_catalog')
+  .option('--output-file <outputFile>', 'path to the output file', 'var/catalog.json')
   .action((cmd) => {
-    const input = `http://${config.host}:${config.port}/${cmd['input-index']}`
+    const input = `http://${config.host}:${config.port}/${cmd.inputIndex}`
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
       `--input=${input}`,
-      `--output=${cmd['output-file']}`
+      `--output=${cmd.outputFile}`
     ])
     stdOutErr(child.stdout, child.stderr)
   })
 
 program
   .command('restore')
-  .option('--output-index', 'index to restore', 'vue_storefront_catalog')
-  .option('--input-file', 'path to the input file', 'var/catalog.json')
+  .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog')
+  .option('--input-file <inputFile>', 'path to the input file', 'var/catalog.json')
   .action((cmd) => {
-    const output = `http://${config.host}:${config.port}/${cmd['output-index']}`
+    const output = `http://${config.host}:${config.port}/${cmd.outputIndex}`
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
-      `--input=${cmd['input-file']}`,
+      `--input=${cmd.inputFile}`,
       `--output=${output}`
     ])
     stdOutErr(child.stdout, child.stderr)
