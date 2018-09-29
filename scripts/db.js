@@ -50,7 +50,7 @@ program
 
 program
   .command('new')
-  .option('-i|--indexName [indexName]', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
+  .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .action((cmd) => { // TODO: add parallel processing
     if (!cmd.indexName) {
       console.error('error: indexName must be specified');
