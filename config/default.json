@@ -20,7 +20,8 @@
       "category",
       "cms",
       "attribute",
-      "taxrule"
+      "taxrule",
+      "review"
     ]
   },
   "redis": {
