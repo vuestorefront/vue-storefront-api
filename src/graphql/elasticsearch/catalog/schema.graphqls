@@ -60,6 +60,7 @@ input ProductSortInput {
     description: SortEnum @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
     short_description: SortEnum @doc(description: "A short description of the product. Its use depends on the theme.")
     price: SortEnum @doc(description: "The price of the item")
+    final_price: SortEnum @doc(description: "The price of the item")
     special_price: SortEnum @doc(description: "The discounted price of the product")
     special_from_date: SortEnum @doc(description: "The beginning date that a product has a special price")
     special_to_date: SortEnum @doc(description: "The end date that a product has a special price")
