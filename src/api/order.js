@@ -50,8 +50,14 @@ export default ({ config, db }) => resource({
 
 		try {
 			let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
-			const job = queue.createJob('order', incomingOrder).save();
-			apiStatus(res, job.id, 200);
+			const job = queue.create('order', incomingOrder).save( function(err){
+				if(err) {
+					console.error(err)
+					apiStatus(res, err, 500);
+				} else {
+					apiStatus(res, job.id, 200);
+				}
+			})
 		} catch (e) {
 			apiStatus(res, e, 500);
 		}
