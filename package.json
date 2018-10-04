@@ -78,7 +78,7 @@
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
     "resource-router-middleware": "^0.6.0",
-    "sharp": "^0.20.8",
+    "sharp": "^0.21.0",
     "soap": "^0.23.0",
     "winston": "^2.4.2"
   },

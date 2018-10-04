@@ -146,25 +146,24 @@
     "namespace": "",
     "maxListeners": 512,
     "imageSizeLimit": 1024,
-    "timeouts": {
-      "convert": 5000,
-      "identify": 100,
-      "download": 1000
-    },
     "whitelist": {
       "allowedHosts": [
         ".*divante.pl",
         ".*vuestorefront.io"
-      ],
-      "trustedHosts": [
-        ".*divante.pl",
-        ".*vuestorefront.io"
       ]
     },
-    "keepDownloads": true,
-    "maxDownloadCacheSize": 1000,
-    "tmpPathRoot": "/tmp",
-    "debug": false
+    "cache": {
+      "memory": 51,
+      "files": 20,
+      "items": 100
+    },
+    "concurrency": 0,
+    "counters": {
+      "queue": 2,
+      "process": 4 
+    },
+    "simd": true,
+    "keepDownloads": true
   },
   "entities": {
       "category": {
