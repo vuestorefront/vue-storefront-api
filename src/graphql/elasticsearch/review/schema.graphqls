@@ -1,0 +1,14 @@
+type Query {
+  reviews (
+    search: String @doc(description: "Performs a full-text search using the specified key words."),
+    filter: ReviewFilterInput @doc(description: "An array of categories that match the specified search criteria"),
+    pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+    currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+    _sourceInclude: [String] @doc(description: "Specifies which attribute we include in result.")
+    ): ESResponse
+}
+
+input ReviewFilterInput @doc(description: "ReviewFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    review_status: FilterTypeInput @doc(description: "Review satus")
+    product_id: FilterTypeInput @doc(description: "An ID that uniquely identifies the parent product")
+}
