@@ -26,7 +26,7 @@ program
 
 program
   .command('restore')
-  .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog')
+  .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog_temp')
   .option('--input-file <inputFile>', 'path to the input file', 'var/catalog.json')
   .action((cmd) => {
     const output = `http://${config.host}:${config.port}/${cmd.outputIndex}`
