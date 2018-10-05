@@ -21,7 +21,6 @@ Besides a big improvement for the shopping experience, we also want to create a 
 Already included in `vue-storefront-api` Docker image (required locally, if you do not use containerization):
 - Node.js 8.x or higher
 - Yarn
-- [ImageMagick](https://www.imagemagick.org/script/index.php) (to fit, resize and crop images)
 
 ## Installation
 
