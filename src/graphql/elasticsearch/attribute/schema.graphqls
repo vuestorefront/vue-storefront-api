@@ -1,5 +1,8 @@
 type Query {
-    customAttributeMetadata(attributes: AttributeInput!): ESResponse
+    customAttributeMetadata(
+        attributes: AttributeInput!,
+        _sourceInclude: [String] @doc(description: "Specifies which attribute we include in result.")
+    ): ESResponse
 }
 
 type CustomAttributeMetadata @doc(description: "CustomAttributeMetadata defines an array of attribute_codes and entity_types") {

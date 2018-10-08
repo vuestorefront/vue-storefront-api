@@ -2,6 +2,7 @@ import bodybuilder from 'bodybuilder';
 import getBoosts from '../../lib/boost'
 import map from 'lodash/map';
 import getMapping from './mapping'
+import config from 'config'
 
 function processNestedFieldFilter(attribute, value) {
   let processedFilter = {
@@ -156,8 +157,6 @@ export function buildQuery({
   currentPage = 1,
   pageSize = 10,
   search = '',
-  includeFields = [],
-  excludeFields = [],
   type = 'product'
 }) {
   let query = bodybuilder();
@@ -166,10 +165,12 @@ export function buildQuery({
   query = applyFilters(filter, query, type);
   query = applySort(sort, query);
 
-  query._sourceInclude = includeFields;
-  query._sourceExclude = excludeFields;
-
   query = query.from((currentPage - 1) * pageSize).size(pageSize);
 
-  return query.build();
+  let builtQuery = query.build()
+  if (search != '') {
+    builtQuery['min_score'] = config.elasticsearch.min_score
+  }
+
+  return builtQuery;
 }

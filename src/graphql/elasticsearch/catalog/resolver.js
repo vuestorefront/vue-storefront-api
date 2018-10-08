@@ -5,26 +5,25 @@ import esResultsProcessor from './processor'
 
 const resolver = {
   Query: {
-    products: (_, { search, filter, sort, currentPage, pageSize }, context, rootValue) =>
-      list(filter, sort, currentPage, pageSize, search, context, rootValue)
+    products: (_, { search, filter, sort, currentPage, pageSize, _sourceInclude, _sourceExclude }, context, rootValue) =>
+      list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude)
   }
 };
 
-async function list(filter, sort, currentPage, pageSize, search, context, rootValue) {
+async function list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
   let query = buildQuery({
     filter: filter,
     sort: sort,
     currentPage: currentPage,
     pageSize: pageSize,
     search: search,
-    includeFields: config.entities.productListWithChildren.includeFields,
-    excludeFields: config.entities.productListWithChildren.excludeFields,
     type: 'product'
   });
 
   const parseURL = context.req.url.replace(/^\/+|\/+$/g, '');
   let urlParts = parseURL.split('/');
   let esIndex  = config.elasticsearch.indices[0]
+
   if (urlParts.length >= 1 && urlParts[0] != '' && urlParts[0] != '?') {
     esIndex = config.storeViews[urlParts[0]].elasticsearch.index
   }
@@ -32,7 +31,9 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
   let esResponse = await client.search({
     index: esIndex,
     type: config.elasticsearch.indexTypes[0],
-    body: query
+    body: query,
+    _sourceInclude,
+    _sourceExclude
   });
 
   if (esResponse && esResponse.hits && esResponse.hits.hits) {
