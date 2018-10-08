@@ -1,12 +1,13 @@
 import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
+import { getIndexName } from '../mapping'
 
-async function taxrule(filter) {
+async function taxrule(filter, context, rootValue) {
   let query = buildQuery({ filter, pageSize: 150, type: 'taxrule' });
 
   const response = await client.search({
-    index: config.elasticsearch.indices[0],
+    index: getIndexName(context.req.url),
     type: config.elasticsearch.indexTypes[4],
     body: query
   });
@@ -16,7 +17,7 @@ async function taxrule(filter) {
 
 const resolver = {
   Query: {
-    taxrule: (_, { filter }) => taxrule(filter)
+    taxrule: (_, { filter }, context, rootValue) => taxrule(filter, context, rootValue)
   }
 };
 
