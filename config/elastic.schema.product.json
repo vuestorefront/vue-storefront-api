@@ -33,6 +33,10 @@
            "type": "date",           
            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
         },
+       "news_to_date": {
+           "type": "date",
+           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        },
        "description": {"type": "text"},
        "name": {"type": "text"},
        "configurable_children": {
