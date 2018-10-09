@@ -117,7 +117,8 @@
   "registeredExtensions": [
     "mailchimp-subscribe",
     "example-magento-api",
-    "cms-data"
+    "cms-data",
+    "mail-service"
   ],
   "extensions": {
     "mailchimp": {
@@ -160,7 +161,7 @@
     "concurrency": 0,
     "counters": {
       "queue": 2,
-      "process": 4 
+      "process": 4
     },
     "simd": true,
     "keepDownloads": true
