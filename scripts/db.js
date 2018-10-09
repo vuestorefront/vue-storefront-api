@@ -65,6 +65,7 @@ program
       }
 
       console.log('Done! Bye!')
+      process.exit(0)
     })
   })
 
