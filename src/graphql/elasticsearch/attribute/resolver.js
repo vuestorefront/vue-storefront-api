@@ -1,8 +1,9 @@
 import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
+import { getIndexName } from '../mapping'
 
-async function listAttributes(attributes, _sourceInclude) {
+async function listAttributes(attributes, context, rootValue, _sourceInclude) {
   let query = buildQuery({ filter: attributes, pageSize: 150, type: 'attribute' });
 
   if (_sourceInclude == undefined) {
@@ -10,7 +11,7 @@ async function listAttributes(attributes, _sourceInclude) {
   }
 
   const response = await client.search({
-    index: config.elasticsearch.indices[0],
+    index: getIndexName(context.req.url),
     type: config.elasticsearch.indexTypes[3],
     body: query,
     _sourceInclude
@@ -21,7 +22,7 @@ async function listAttributes(attributes, _sourceInclude) {
 
 const resolver = {
   Query: {
-    customAttributeMetadata: (_, { attributes, _sourceInclude }) => listAttributes(attributes, _sourceInclude)
+    customAttributeMetadata: (_, { attributes, _sourceInclude }, context, rootValue) => listAttributes(attributes, context, rootValue, _sourceInclude)
   }
 };
 
