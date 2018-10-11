@@ -125,6 +125,13 @@
       "listId": "e06875a7e1",
       "apiKey": "a9a3318ea7d30f5c5596bd4a78ae0985-us3",
       "apiUrl": "https://us3.api.mailchimp.com/3.0"
+    },
+    "mailService": {
+      "host": "",
+      "port": null,
+      "secure": true,
+      "user": "",
+      "pass": ""
     }
   },
   "magento2": {
