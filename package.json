@@ -11,7 +11,7 @@
     "db": "node scripts/db.js",
     "seo": "node scripts/seo.js",
     "mage2vs": "node scripts/mage2vs.js",
-    "restore": "node scripts/elastic.js restore --output-index=vue_storefront_catalog_temp",
+    "restore": "node scripts/elastic.js restore",
     "restore_it": "npm run restore -- --input-file=var/catalog_it.json --output-index=vue_storefront_catalog_it && npm run db rebuild -- --indexName=vue_storefront_catalog_it",
     "restore_de": "npm run restore -- --input-file=var/catalog_de.json --output-index=vue_storefront_catalog_de && npm run db rebuild -- --indexName=vue_storefront_catalog_de",
     "restore2main": "npm run restore -- --output-index=vue_storefront_catalog",
