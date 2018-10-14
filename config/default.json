@@ -127,11 +127,15 @@
       "apiUrl": "https://us3.api.mailchimp.com/3.0"
     },
     "mailService": {
-      "host": "",
-      "port": null,
-      "secure": true,
-      "user": "",
-      "pass": ""
+      "transport": {
+        "host": "",
+        "port": null,
+        "secure": true,
+        "user": "",
+        "pass": ""
+      },
+      "targetAddressWhitelist": ["contributors@vuestorefront.io"],
+      "secretString": "__THIS_IS_SO_SECRET__"
     }
   },
   "magento2": {
