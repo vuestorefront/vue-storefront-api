@@ -127,8 +127,8 @@
     }
   },
   "magento2": {
-    "url": "http://magento2.demo-1.xyz.com",
-    "imgUrl": "http://localhost:8080/media/catalog/product",
+    "url": "http://demo-magento2.vuestorefront.io/",
+    "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
     "magentoUserName": "",
     "magentoUserPassword": "",
