@@ -95,6 +95,43 @@ NOTE: `npm` users will still have to install the dependencies individually in th
 ## Reviews
 To use review feature you need to install custom module for Magento 2: [Divante ReviewApi](https://github.com/DivanteLtd/magento2-review-api)
 
+## Running initial Magento2 import
+
+Magento2 data import is now integrated into `vue-storefront-api` for simplicity. It's still managed by the [mage2vuestorefront](https://github.com/DivanteLtd/mage2vuestorefront) - added as a dependency to `vue-storefront-api`.
+
+After setting the `config.magento2.api` section using Yours Magento2 oauth credentials:
+
+```json
+  "magento2": {
+    "url": "http://magento2.demo-1.xyz.com",
+    "imgUrl": "http://localhost:8080/media/catalog/product",
+    "assetPath": "/../var/magento2-sample-data/pub/media",
+    "magentoUserName": "",
+    "magentoUserPassword": "",
+    "httpUserName": "",
+    "httpUserPassword": "",
+    "api": {
+      "url": "http://demo-magento2.vuestorefront.io/rest",
+      "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
+      "consumerSecret": "u9q4fcobv7vfx9td80oupa6uhexc27rb",
+      "accessToken": "040xx3qy7s0j28o3q0exrfop579cy20m",
+      "accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
+    }
+  },
+```
+
+You can run the following command to execute the full import:
+
+```bash
+ yarn mage2vs import
+ ```
+
+ ... or in multistore setup You can run the same command with specified `store-code` parameter
+`
+``bash
+ yarn mage2vs import --store-code=de
+ ```
+
 License
 -------
 
