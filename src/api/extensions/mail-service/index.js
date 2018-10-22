@@ -1,6 +1,5 @@
 import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
-import config from 'config'
 import EmailCheck from 'email-check'
 import jwt from 'jwt-simple'
 import NodeMailer from 'nodemailer'
@@ -25,6 +24,10 @@ module.exports = ({ config }) => {
     if (!userData.token || userData.token !== token) {
       apiStatus(res, 'Email is not authorized!', 500)
     }
+    const { host, port, secure, user, pass } = config.extensions.mailService.transport
+    if (!host || !port || !user || !pass) {
+      apiStatus(res, 'No transport is defined for mail service!', 500)
+    }
     if (!userData.sourceAddress) {
       apiStatus(res, 'Source email address is not provided!', 500)
       return
@@ -33,10 +36,11 @@ module.exports = ({ config }) => {
       apiStatus(res, 'Target email address is not provided!', 500)
       return
     }
-    if (!userData.confirmation
-      && !config.extensions.mailService.targetAddressWhitelist.includes(userData.targetAddress)
-    ) {
-      apiStatus(res, 'Target email address is not from the whitelist!', 500)
+    // Check if email address we're sending to is from the white list from config
+    const whiteList = config.extensions.mailService.targetAddressWhitelist
+    const email = userData.confirmation ? userData.sourceAddress : userData.targetAddress
+    if (!whiteList.includes(email)) {
+      apiStatus(res, `Target email address (${email}) is not from the whitelist!`, 500)
       return
     }
 
@@ -52,12 +56,12 @@ module.exports = ({ config }) => {
     .then(response => {
       if (response) {
         let transporter = NodeMailer.createTransport({
-          host: config.extensions.mailService.transport.host,
-          port: config.extensions.mailService.transport.port,
-          secure: config.extensions.mailService.transport.secure,
+          host,
+          port,
+          secure,
           auth: {
-            user: config.extensions.mailService.transport.user,
-            pass: config.extensions.mailService.transport.pass
+            user,
+            pass
           }
         })
         const mailOptions = {

@@ -128,11 +128,11 @@
     },
     "mailService": {
       "transport": {
-        "host": "",
-        "port": null,
+        "host": "smtp.gmail.com",
+        "port": 465,
         "secure": true,
-        "user": "",
-        "pass": ""
+        "user": "vuestorefront",
+        "pass": "vuestorefront.io"
       },
       "targetAddressWhitelist": ["contributors@vuestorefront.io"],
       "secretString": "__THIS_IS_SO_SECRET__"
