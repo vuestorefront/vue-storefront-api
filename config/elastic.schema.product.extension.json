@@ -3,6 +3,8 @@
        "position": {"type": "integer"},
        "tax_class_id": {"type": "integer"},
        "required_options": {"type": "integer"},
-       "has_options": {"type": "integer"}       
+       "has_options": {"type": "integer"} ,
+       "Size_options": {"type": "keyword"},
+       "Color_options": {"type": "keyword"}
     }
 }
