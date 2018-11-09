@@ -19,17 +19,37 @@ export default ({ config, db }) =>
     }
 
     req.socket.setMaxListeners(config.imageable.maxListeners || 50);
+    
+    let width
+    let height
+    let action
+    let imgUrl
 
-    let urlParts = req.url.split('/');
-    const width = parseInt(urlParts[1]);
-    const height = parseInt(urlParts[2]);
-    const action = urlParts[3];
-    const imgUrl = `${config[config.platform].imgUrl}/${urlParts.slice(4).join('/')}`; // full original image url
+    if (req.query.url) { // url provided as the query param
+      imgUrl = decodeURIComponent(req.query.url)
+      width = parseInt(req.query.width)
+      height = parseInt(req.query.height)
+      action = req.query.action
+    } else {
+      let urlParts = req.url.split('/');
+      width = parseInt(urlParts[1]);
+      height = parseInt(urlParts[2]);
+      action = urlParts[3];
+      imgUrl = `${config[config.platform].imgUrl}/${urlParts.slice(4).join('/')}`; // full original image url
+  
+      if (urlParts.length < 4) {
+        return res.status(400).send({
+          code: 400,
+          result: 'Please provide following parameters: /img/<width>/<height>/<action:fit,resize,identify>/<relative_url>'
+        });
+      }
+    }
 
-    if (urlParts.length < 4 || isNaN(width) || isNaN(height) || !SUPPORTED_ACTIONS.includes(action)) {
+
+    if (isNaN(width) || isNaN(height) || !SUPPORTED_ACTIONS.includes(action)) {
       return res.status(400).send({
         code: 400,
-        result: 'Please provide following parameters: /img/<width>/<height>/<action:fit,resize,identify>/<relative_url>'
+        result: 'Please provide following parameters: /img/<width>/<height>/<action:fit,resize,identify>/<relative_url> OR ?url=&width=&height=&action='
       });
     }
 
