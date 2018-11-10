@@ -54,7 +54,7 @@
     "ajv": "^6.4.0",
     "body-parser": "^1.18.2",
     "bodybuilder": "2.2.13",
-    "commander": "^2.18.0",
+    "commander": "^2.19.0",
     "compression": "^1.7.2",
     "config": "^1.30.0",
     "cors": "^2.8.4",
