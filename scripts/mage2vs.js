@@ -55,6 +55,8 @@ program
       MAGENTO_ACCESS_TOKEN: apiConfig.accessToken,
       MAGENTO_ACCESS_TOKEN_SECRET: apiConfig.accessTokenSecret,
       MAGENTO_URL: apiConfig.url,
+      REDIS_HOST: config.redis.host,
+      REDIS_PORT: config.redis.port,
       INDEX_NAME: config.elasticsearch.indices[0]
     }
 
