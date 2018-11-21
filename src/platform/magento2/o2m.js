@@ -30,7 +30,6 @@ function isNumeric(val) {
  * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
  */
 function processSingleOrder(orderData, config, job, done, logger = console) {
-
   const TOTAL_STEPS = 4;
   const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
   let currentStep = 1;
@@ -228,7 +227,7 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
 
                 if(job) job.progress(currentStep++, TOTAL_STEPS);
-                return done(null, { magentoOrderId: result, transferedAt: new Date() });
+                return done(null, { magentoOrderId: result, backendOrderId: result, transferedAt: new Date() });
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
                 if (job) job.attempts(6).backoff({ delay: 30*1000, type:'fixed' }).save()

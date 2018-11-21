@@ -76,8 +76,7 @@ export default ({ config, db }) => resource({
 			orderProxy.create(req.body).then((result) => {
 				apiStatus(res, result, 200);
 			}).catch(err => {
-				console.error(err)
-				apiStatus(res, err, 500);
+				apiStatus(res, err.toString(), 500);
 			})
 		}
 	},

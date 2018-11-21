@@ -15,6 +15,7 @@ class OrderProxy extends AbstractOrderProxy {
       return new Promise ((resolve, reject) => {
         try {
             processSingleOrder(orderData, inst.config, null, (error, result) => {
+                console.log(error)
                 if (error) reject (error)
                 resolve (result)
             })
