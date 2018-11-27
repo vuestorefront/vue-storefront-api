@@ -93,7 +93,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.16.0",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.7"
   },
   "bugs": {
     "url": "https://github.com/DivanteLtd/vue-storefront-api/issues"
