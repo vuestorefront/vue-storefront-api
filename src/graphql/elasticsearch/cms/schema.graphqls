@@ -1,0 +1,63 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    cmsPages (
+        filter: CmsInput @doc(description: "An array of options for search criteria")
+    ): CmsPage @doc(description: "The CMS page query returns information about a CMS page")
+    cmsBlocks (
+        filter: CmsInput @doc(description: "An array of options for search criteria")
+    ): CmsBlocks @doc(description: "The CMS block query returns information about CMS blocks")
+    cmsHierarchies (
+        filter: CmsInput @doc(description: "An array of options for search criteria")
+    ): CmsHierarchies @doc(description: "The CMS block query returns information about CMS blocks")
+}
+
+input CmsInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    id: FilterTypeInput @doc(description: "Id of the CMS entity")
+    identifier: FilterTypeInput @doc(description: "Identifiers of the CMS entity")
+    store_id: FilterTypeInput @doc(description: "Store Id of the CMS entity")
+}
+
+type CmsPage @doc(description: "CMS pages information") {
+    items: [CmsPages] @doc(description: "An array of CMS pages")
+}
+
+type CmsPages @doc(description: "CMS page defines all CMS page information") {
+    page_id: Int @doc(description: "Id of CMS page")
+    title: String @doc(description: "CMS page title")
+    identifier: String @doc(description: "URL key of CMS page")
+    content: String @doc(description: "CMS page content")
+    content_heading: String @doc(description: "CMS page content heading")
+    meta_description: String @doc(description: "CMS page meta description")
+    meta_keywords: String @doc(description: "CMS page meta keywords")
+    store_id: Int @doc(description: "Store Id of CMS page")
+}
+
+type CmsBlocks @doc(description: "CMS blocks information") {
+    items: [CmsBlock] @doc(description: "An array of CMS blocks")
+}
+
+type CmsBlock @doc(description: "CMS block defines all CMS block information") {
+    identifier: String @doc(description: "CMS block identifier")
+    title: String @doc(description: "CMS block title")
+    content: String @doc(description: "CMS block content")
+    creation_time: String @doc(description: "Timestamp indicating when the CMS block was created")
+    store_id: Int @doc(description: "Store Id of CMS block")
+}
+
+type CmsHierarchies @doc(description: "CMS hierarchies information") {
+    items: [CmsHierarchy] @doc(description: "An array of CMS hierarchies")
+}
+
+type CmsHierarchy {
+    node_id: Int @doc(description: "Node Id of the CMS hierarchy")
+    parent_node_id: Int @doc(description: "Parent node Id of the CMS hierarchy node")
+    page_id: Int @doc(description: "Id of the CMS page")
+    identifier: String @doc(description: "Identifier of the CMS hierarchy node")
+    label: String @doc(description: "Label of CMS hierarchy node")
+    level: Int @doc(description: "Level of CMS hierarchy node")
+    request_url: String @doc(description: "Request URL of CMS hierarchy node")
+    xpath: String @doc(description: "XPATH of CMS hierarchy node")
+    store_id: Int @doc(description: "Store Id of CMS hierarchy node")
+}
