@@ -131,6 +131,14 @@ You can run the following command to execute the full import:
 ``bash
  yarn mage2vs import --store-code=de
  ```
+ 
+## Executing delta indexer
+
+You can run the following command to execute delta indexer for a storeview:
+
+```
+yarn mage2vs productsdelta --store-code=de
+```
 
 License
 -------
