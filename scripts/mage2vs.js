@@ -45,6 +45,12 @@ function exec(cmd, args, opts) {
 program
   .command('productsdelta')
   .option('--store-code <storeCode>', 'storeCode in multistore setup', null)
+  .option('--adapter <adapter>', 'name of the adapter', 'magento')
+  .option('--partitions <partitions>', 'number of partitions', 1)
+  .option('--partitionSize <partitionSize>', 'size of the partitions', 200)
+  .option('--initQueue <initQueue>', 'use the queue', true)
+  .option('--skus <skus>', 'comma delimited list of SKUs to fetch fresh informations from', '')
+  .option('--removeNonExistent <removeNonExistent>', 'remove non existent products', false)
   .action((cmd) => {
     const apiConfig = multiStoreConfig(config.magento2.api, cmd.storeCode)
     let magentoConfig = {
@@ -80,7 +86,13 @@ program
     exec('node', [
       '--harmony',
       'node_modules/mage2vuestorefront/src/cli.js',
-      'productsdelta'
+      'productsdelta',
+      '--adapter=' + cmd.adapter,
+      '--partitions=' + cmd.partitions,
+      '--partitionSize=' + cmd.partitionSize,
+      '--initQueue=' + cmd.initQueue,
+      '--skus=' + cmd.skus,
+      '--removeNonExistent=' + cmd.removeNonExistent
     ], { env: env, shell: true }).then((res) => {
 
     })
