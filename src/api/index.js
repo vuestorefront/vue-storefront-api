@@ -43,16 +43,22 @@ export default ({ config, db }) => {
 
 	/** Register the custom extensions */
 	for(let ext of config.registeredExtensions) {
+    let entryPoint
 
 		try {
-			let entryPoint = require('./extensions/' + ext)
-			if (entryPoint) {
-				api.use('/ext/' + ext, entryPoint({ config, db }))
-				console.log('Extension ' + ext + ' registered under /ext/' + ext +' base URL')
-			}
+			entryPoint = require('./extensions/' + ext)
 		} catch (err) {
-			console.error(err)
-		}
+      try {
+        entryPoint = require(ext)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    if (entryPoint) {
+      api.use('/ext/' + ext, entryPoint({ config, db }))
+      console.log('Extension ' + ext + ' registered under /ext/' + ext +' base URL')
+    }
 	}
 
 	return api;

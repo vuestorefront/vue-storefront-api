@@ -4,6 +4,9 @@
     "port": 8080,
     "searchEngine": "elasticsearch"
   },
+  "orders": {
+    "useServerQueue": false
+  },
   "elasticsearch": {
     "host": "localhost",
     "port": 9200,

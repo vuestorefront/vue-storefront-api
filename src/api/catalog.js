@@ -2,6 +2,25 @@ import jwt from 'jwt-simple';
 import request from 'request';
 import ProcessorFactory from '../processor/factory';
 
+function _updateQueryStringParameter(uri, key, value) {
+  var re = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
+  if (uri.match(re)) {
+		if (value) {
+			return uri.replace(re, '$1' + key + "=" + value + '$2');
+		} else {
+			return uri.replace(re, '$1' + '$2');
+		}
+  } else {
+    var hash =  '';
+    if( uri.indexOf('#') !== -1 ){
+        hash = uri.replace(/.*#/, '#');
+        uri = uri.replace(/#.*/, '');
+    }
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";    
+    return uri + separator + key + "=" + value + hash;
+  }
+}
+
 export default ({config, db}) => function (req, res, body) {
 	let groupId = null
 
@@ -9,6 +28,16 @@ export default ({config, db}) => function (req, res, body) {
 	// Other metods - like PUT, DELETE etc. should be available only for authorized users or not available at all)
 	if (!(req.method == 'GET' || req.method == 'POST' || req.method == 'OPTIONS')) {
 		throw new Error('ERROR: ' + req.method + ' request method is not supported.')
+	}
+
+	let requestBody = {}
+	if (req.method === 'GET') {
+		if (req.query.request) { // this is in fact optional
+			requestBody = JSON.parse(decodeURIComponent(req.query.request))
+			console.log(requestBody)
+		}
+	} else {
+		requestBody = req.body
 	}
 
 	const urlSegments = req.url.split('/');
@@ -33,11 +62,11 @@ export default ({config, db}) => function (req, res, body) {
 	}
 
 	// pass the request to elasticsearch
-	let url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + req.url;
+	let url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
 
 	// Check price tiers
 	if (config.usePriceTiers) {
-		const userToken = req.body.groupToken
+		const userToken = requestBody.groupToken
 
 		// Decode token and get group id
         if (userToken && userToken.length > 10) {
@@ -46,13 +75,13 @@ export default ({config, db}) => function (req, res, body) {
 			groupId = decodeToken.group_id || groupId
 		}
 
-		delete req.body.groupToken
+		delete requestBody.groupToken
 	}
 
 	request({ // do the elasticsearch request
 		uri: url,
 		method: req.method,
-		body: req.body,
+		body: requestBody,
 		json: true,
 		auth: {
 			user: config.elasticsearch.user,

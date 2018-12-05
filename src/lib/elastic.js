@@ -124,6 +124,8 @@ function putMappings(db, indexName, next) {
   let productSchema = loadSchema('product');
   let taxruleSchema = loadSchema('taxrule');
   let attributeSchema = loadSchema('attribute');
+  let pageSchema = loadSchema('page');
+  let blockSchema = loadSchema('block');
 
   db.indices.putMapping({
     index: indexName,
@@ -145,7 +147,21 @@ function putMappings(db, indexName, next) {
         body: attributeSchema
       }).then(res3 => {
         console.dir(res3, { depth: null, colors: true })
-        next()
+        db.indices.putMapping({
+          index: indexName,
+          type: "cms_page",
+          body: pageSchema
+        }).then(res4 => {
+          console.dir(res4, { depth: null, colors: true })        
+          db.indices.putMapping({
+            index: indexName,
+            type: "cms_block",
+            body: blockSchema
+          }).then(res5 => {
+            console.dir(res5, { depth: null, colors: true })            
+            next()
+          })
+        })
       }).catch(err3 => {
         throw new Error(err3)
       })
