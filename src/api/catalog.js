@@ -16,7 +16,7 @@ function _updateQueryStringParameter(uri, key, value) {
         hash = uri.replace(/.*#/, '#');
         uri = uri.replace(/#.*/, '');
     }
-    var separator = uri.indexOf('?') !== -1 ? "&" : "?";    
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
     return uri + separator + key + "=" + value + hash;
   }
 }
@@ -62,7 +62,11 @@ export default ({config, db}) => function (req, res, body) {
 	}
 
 	// pass the request to elasticsearch
-	let url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+	let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+
+	if (!url.startsWith('http')) {
+		url = 'http://' + url
+	}
 
 	// Check price tiers
 	if (config.usePriceTiers) {
