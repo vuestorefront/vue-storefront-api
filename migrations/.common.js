@@ -5,10 +5,7 @@ let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }))
 
 let es = require('elasticsearch')
 const esConfig = {
-  host: {
-    host: config.elasticsearch.host,
-    port: config.elasticsearch.port
-  },
+  host: config.elasticsearch.host + ':' + config.elasticsearch.port,
   log: 'debug',
   apiVersion: '5.5',
   requestTimeout: 1000 * 60 * 60,
