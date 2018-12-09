@@ -14,7 +14,11 @@ program
   .option('--input-index <inputIndex>', 'index to dump', 'vue_storefront_catalog')
   .option('--output-file <outputFile>', 'path to the output file', 'var/catalog.json')
   .action((cmd) => {
-    const input = `http://${config.host}:${config.port}/${cmd.inputIndex}`
+    let input = `${config.host}:${config.port}/${cmd.inputIndex}`
+    
+    if (!input.startsWith('http')) {
+      input = 'http://' + input
+    }
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
@@ -29,7 +33,11 @@ program
   .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog_temp')
   .option('--input-file <inputFile>', 'path to the input file', 'var/catalog.json')
   .action((cmd) => {
-    const output = `http://${config.host}:${config.port}/${cmd.outputIndex}`
+    let output = `${config.host}:${config.port}/${cmd.outputIndex}`
+    
+    if (!output.startsWith('http')) {
+      output = 'http://' + output
+    }
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
