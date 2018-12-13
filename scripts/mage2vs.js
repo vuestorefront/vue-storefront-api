@@ -28,8 +28,6 @@ function getMagentoDefaultConfig(storeCode) {
     MAGENTO_CONSUMER_SECRET: apiConfig.consumerSecret,
     MAGENTO_ACCESS_TOKEN: apiConfig.accessToken,
     MAGENTO_ACCESS_TOKEN_SECRET: apiConfig.accessTokenSecret,
-    MAGENTO_STORE_ID: 1,
-    INDEX_META_PATH: '.lastIndex.json',
     MAGENTO_URL: apiConfig.url,
     REDIS_HOST: config.redis.host,
     REDIS_PORT: config.redis.port,
@@ -71,6 +69,8 @@ program
   .option('--removeNonExistent <removeNonExistent>', 'remove non existent products', false)
   .action((cmd) => {
     let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
+    magentoConfig.MAGENTO_STORE_ID = 1
+    magentoConfig.INDEX_META_PATH = '.lastIndex.json'
 
     if (cmd.storeCode) {
       const storeView = config.storeViews[cmd.storeCode]
