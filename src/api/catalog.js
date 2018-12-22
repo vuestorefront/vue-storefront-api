@@ -91,10 +91,10 @@ export default ({config, db}) => function (req, res, body) {
 		if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
 
 			const factory = new ProcessorFactory(config)
-			let resultProcessor = factory.getAdapter(entityType, indexName)
+			let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
 
 			if (!resultProcessor)
-				resultProcessor = factory.getAdapter('default', indexName) // get the default processor
+				resultProcessor = factory.getAdapter('default', indexName, req, res) // get the default processor
 
       if (entityType === 'product') {
         resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
