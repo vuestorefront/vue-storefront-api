@@ -16,7 +16,7 @@ function _updateQueryStringParameter(uri, key, value) {
         hash = uri.replace(/.*#/, '#');
         uri = uri.replace(/#.*/, '');
     }
-    var separator = uri.indexOf('?') !== -1 ? "&" : "?";    
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
     return uri + separator + key + "=" + value + hash;
   }
 }
@@ -62,7 +62,11 @@ export default ({config, db}) => function (req, res, body) {
 	}
 
 	// pass the request to elasticsearch
-	let url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+	let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+
+	if (!url.startsWith('http')) {
+		url = 'http://' + url
+	}
 
 	// Check price tiers
 	if (config.usePriceTiers) {
@@ -77,24 +81,31 @@ export default ({config, db}) => function (req, res, body) {
 
 		delete requestBody.groupToken
 	}
+  
+  let auth = null;
+  
+  // Only pass auth if configured
+  if(config.elasticsearch.user || config.elasticsearch.password) {
+    auth = {
+			user: config.elasticsearch.user,
+			pass: config.elasticsearch.password
+		};
+  }
 
 	request({ // do the elasticsearch request
 		uri: url,
 		method: req.method,
 		body: requestBody,
 		json: true,
-		auth: {
-			user: config.elasticsearch.user,
-			pass: config.elasticsearch.password
-		},
+		auth: auth,
 	}, function (_err, _res, _resBody) { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
 		if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
 
 			const factory = new ProcessorFactory(config)
-			let resultProcessor = factory.getAdapter(entityType, indexName)
+			let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
 
 			if (!resultProcessor)
-				resultProcessor = factory.getAdapter('default', indexName) // get the default processor
+				resultProcessor = factory.getAdapter('default', indexName, req, res) // get the default processor
 
       if (entityType === 'product') {
         resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {

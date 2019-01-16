@@ -15,7 +15,7 @@ class ProcessorFactory {
     this.config = app_config;
   }
 
-   getAdapter(entityType, indexName){
+   getAdapter(entityType, indexName, req, res){
 
     const moduleName = './' + entityType
 
@@ -29,7 +29,7 @@ class ProcessorFactory {
       console.log('No additional data adapter for ' + entityType)
       return null
     } else {
-      let adapter_instance = new adapter_class(this.config, entityType, indexName);
+      let adapter_instance = new adapter_class(this.config, entityType, indexName, req, res);
 
       if ((typeof adapter_instance.isValidFor == 'function') && !adapter_instance.isValidFor(entityType))
         throw new Error('Not valid adapter class or adapter is not valid for ' + entityType);
