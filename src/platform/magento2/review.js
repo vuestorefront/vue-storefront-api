@@ -1,4 +1,4 @@
-import AbstractReviewProxy from '../abstract/user'
+import AbstractReviewProxy from '../abstract/review'
 import { multiStoreConfig } from './util'
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
