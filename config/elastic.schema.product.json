@@ -2,6 +2,7 @@
    "properties": {
        "sku": {"type": "keyword"},
        "url_key": {"type": "keyword"},
+       "slug": {"type": "keyword"},
        "size": {"type": "integer"},
        "size_options": {"type": "integer"},
        "price": {"type": "float"},
