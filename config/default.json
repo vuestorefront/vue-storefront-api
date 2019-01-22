@@ -7,6 +7,9 @@
   "orders": {
     "useServerQueue": false
   },
+  "catalog": {
+    "excludeDisabledProducts": false
+  },
   "elasticsearch": {
     "host": "localhost",
     "port": 9200,
