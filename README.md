@@ -127,8 +127,8 @@ You can run the following command to execute the full import:
  ```
 
  ... or in multistore setup You can run the same command with specified `store-code` parameter
-`
-``bash
+
+```bash
  yarn mage2vs import --store-code=de
  ```
  
