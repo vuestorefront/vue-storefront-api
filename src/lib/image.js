@@ -26,7 +26,11 @@ export async function resize (buffer, width, height) {
     const transformer = sharp(buffer);
 
     if (width || height) {
-      transformer.resize(width, height).max().withoutEnlargement();
+      const options = {
+        withoutEnlargement: true,
+        fit: sharp.fit.inside
+      }
+      transformer.resize(width, height, options)
     }
 
     return transformer.toBuffer();
