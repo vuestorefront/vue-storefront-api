@@ -24,6 +24,7 @@ function getMagentoDefaultConfig(storeCode) {
   return {
     TIME_TO_EXIT: 2000,
     PRODUCTS_SPECIAL_PRICES: true,
+    PRODUCTS_EXCLUDE_DISABLED: config.catalog.excludeDisabledProducts,
     MAGENTO_CONSUMER_KEY: apiConfig.consumerKey,
     MAGENTO_CONSUMER_SECRET: apiConfig.consumerSecret,
     MAGENTO_ACCESS_TOKEN: apiConfig.accessToken,
