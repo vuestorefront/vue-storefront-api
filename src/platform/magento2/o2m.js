@@ -132,10 +132,12 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
         let mappedBillingRegion = 0
 
         api.directory.countries().then((countryList) => {
-          if (shippingAddr.region_id > 0) {
-            mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
-          } else {
-            mappedShippingRegion = countryMapper.mapCountryRegion(countryList, shippingAddr.country_id, shippingAddr.region_code ? shippingAddr.region_code : shippingAddr.region)
+          if (typeof shippingAddr !== 'undefined' && shippingAddr !== null) {
+            if (shippingAddr.region_id > 0) {
+              mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
+            } else {
+              mappedShippingRegion = countryMapper.mapCountryRegion(countryList, shippingAddr.country_id, shippingAddr.region_code ? shippingAddr.region_code : shippingAddr.region)
+            }
           }
 
           if (billingAddr.region_id > 0) {
@@ -163,20 +165,6 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
 
           const shippingAddressInfo = { // sum up totals
             "addressInformation": {
-              "shippingAddress": {
-                "countryId": shippingAddr.country_id,
-                "street": shippingAddr.street,
-                "telephone": shippingAddr.telephone,
-                "postcode": shippingAddr.postcode,
-                "city": shippingAddr.city,
-                "firstname": shippingAddr.firstname,
-                "lastname": shippingAddr.lastname,
-                "email": shippingAddr.email,
-                "regionId": mappedShippingRegion.regionId,
-                "regionCode": mappedShippingRegion.regionCode,
-                "company": shippingAddr.company
-              },
-
               "billingAddress": {
                 "countryId": billingAddr.country_id,
                 "street": billingAddr.street,
@@ -195,6 +183,24 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
               "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
               "extensionAttributes": orderData.addressInformation.shippingExtraFields
             }
+          }
+
+          if (typeof shippingAddr !== 'undefined' && shippingAddr !== null) {
+            shippingAddressInfo["addressInformation"]["shippingAddress"] = {
+              "countryId": shippingAddr.country_id,
+              "street": shippingAddr.street,
+              "telephone": shippingAddr.telephone,
+              "postcode": shippingAddr.postcode,
+              "city": shippingAddr.city,
+              "firstname": shippingAddr.firstname,
+              "lastname": shippingAddr.lastname,
+              "email": shippingAddr.email,
+              "regionId": mappedShippingRegion.regionId,
+              "regionCode": mappedShippingRegion.regionCode,
+              "company": shippingAddr.company
+            }
+          } else {
+            shippingAddressInfo["addressInformation"]["shippingAddress"] = shippingAddressInfo["addressInformation"]["billingAddress"]
           }
 
           logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
