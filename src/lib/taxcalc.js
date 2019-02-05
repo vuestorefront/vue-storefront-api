@@ -3,6 +3,10 @@ function isSpecialPriceActive(fromDate, toDate) {
   fromDate = new Date(fromDate) || false
   toDate = new Date(toDate) || false
 
+  if (!fromDate && !toDate) {
+    return true
+  }
+  
   if (fromDate && toDate) {
     return fromDate < now && toDate > now
   }
