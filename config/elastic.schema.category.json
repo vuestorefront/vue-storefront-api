@@ -1,0 +1,16 @@
+{
+   "properties": {
+       "url_key": {"type": "keyword"},
+       "is_active": {"type": "boolean"},
+       "product_count": {"type": "integer"},
+       "parent_id": {"type": "integer"},
+       "created_at": { 
+           "type": "date",           
+           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        },
+       "updated_at": { 
+           "type": "date",           
+           "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        }
+    }
+}

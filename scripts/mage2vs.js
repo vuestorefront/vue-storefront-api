@@ -30,6 +30,7 @@ function getMagentoDefaultConfig(storeCode) {
     SKIP_ATTRIBUTES: false,
     SKIP_TAXRULE: false,
     SKIP_PRODUCTS: false,
+    PRODUCTS_EXCLUDE_DISABLED: config.catalog.excludeDisabledProducts,
     MAGENTO_CONSUMER_KEY: apiConfig.consumerKey,
     MAGENTO_CONSUMER_SECRET: apiConfig.consumerSecret,
     MAGENTO_ACCESS_TOKEN: apiConfig.accessToken,

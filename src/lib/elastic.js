@@ -122,6 +122,7 @@ function loadSchema(entityType) {
 
 function putMappings(db, indexName, next) {
   let productSchema = loadSchema('product');
+  let categorySchema = loadSchema('category');
   let taxruleSchema = loadSchema('taxrule');
   let attributeSchema = loadSchema('attribute');
   let pageSchema = loadSchema('page');
@@ -158,8 +159,15 @@ function putMappings(db, indexName, next) {
             type: "cms_block",
             body: blockSchema
           }).then(res5 => {
-            console.dir(res5, { depth: null, colors: true })            
-            next()
+            console.dir(res5, { depth: null, colors: true })   
+            db.indices.putMapping({
+              index: indexName,
+              type: "category",
+              body: categorySchema
+            }).then(res6 => {
+              console.dir(res6, { depth: null, colors: true })
+              next()
+            })
           })
         })
       }).catch(err3 => {
