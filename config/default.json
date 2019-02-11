@@ -29,7 +29,8 @@
       "attribute",
       "taxrule",
       "review"
-    ]
+    ],
+    "apiVersion": "5.6"
   },
   "redis": {
     "host": "localhost",

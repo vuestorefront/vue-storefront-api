@@ -7,7 +7,7 @@ let es = require('elasticsearch')
 const esConfig = {
   host: config.elasticsearch.host + ':' + config.elasticsearch.port,
   log: 'debug',
-  apiVersion: '5.5',
+  apiVersion: config.elasticsearch.apiVersion,
   requestTimeout: 1000 * 60 * 60,
   keepAlive: false
 }
