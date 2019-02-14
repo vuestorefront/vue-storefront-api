@@ -11,6 +11,16 @@ class StockProxy extends AbstractUserProxy {
   check (sku) {
     return this.api.stockItems.list(sku)
   }
+
+  // MSI
+  getSalableQty (sku, stockId) {
+    return this.api.stockItems.getSalableQty(sku, stockId)
+  }
+
+  // MSI
+  isSalable (sku, stockId) {
+    return this.api.stockItems.isSalable(sku, stockId)
+  }
 }
 
 module.exports = StockProxy
