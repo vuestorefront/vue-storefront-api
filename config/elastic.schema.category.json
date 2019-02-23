@@ -1,6 +1,8 @@
 {
    "properties": {
        "url_key": {"type": "keyword"},
+       "url_path": {"type": "keyword"},
+       "slug": {"type": "keyword"},
        "is_active": {"type": "boolean"},
        "product_count": {"type": "integer"},
        "parent_id": {"type": "integer"},
