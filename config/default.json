@@ -162,6 +162,21 @@
       "accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
     }
   },
+  "magento1": {
+    "url": "http://magento-demo.local",
+    "imgUrl": "http://magento-demo.local/media/catalog/product",
+    "magentoUserName": "",
+    "magentoUserPassword": "",
+    "httpUserName": "",
+    "httpUserPassword": "",
+    "api": {
+      "url": "http://magento-demo.local/vsbridge",
+      "consumerKey": "",
+      "consumerSecret": "",
+      "accessToken": "",
+      "accessTokenSecret": ""
+    }
+  },
   "imageable": {
     "namespace": "",
     "maxListeners": 512,
