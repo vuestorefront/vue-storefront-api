@@ -129,6 +129,7 @@ program
         process.exit(-1)
       } else {
         magentoConfig.INDEX_NAME = storeView.elasticsearch.index;
+        magentoConfig.MAGENTO_STORE_ID = storeView.storeId;
       }
     }
 
