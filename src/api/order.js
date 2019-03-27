@@ -24,9 +24,9 @@ export default ({ config, db }) => resource({
 	 * POST create an order with JSON payload compliant with models/order.md
 	 */
 	create(req, res) {
-		
-
 		const ajv = new Ajv();
+		require('ajv-keywords')(ajv, 'regexp');
+
 		const orderSchema = require('../models/order.schema.json')
 		const orderSchemaExtension = require('../models/order.schema.extension.json')
 		const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
@@ -35,7 +35,7 @@ export default ({ config, db }) => resource({
 			console.dir(validate.errors);
 			apiStatus(res, validate.errors, 500);
 			return;
-		}				
+		}
 		const incomingOrder = { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */
 		console.log(JSON.stringify(incomingOrder))
 
