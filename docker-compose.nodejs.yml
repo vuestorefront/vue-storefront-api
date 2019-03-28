@@ -16,6 +16,7 @@ services:
       - './ecosystem.json:/var/www/ecosystem.json'
       - './migrations:/var/www/migrations'
       - './package.json:/var/www/package.json'
+      - './babel.config.js:/var/www/babel.config.js'
       - './scripts:/var/www/scripts'
       - './src:/var/www/src'
       - './var:/var/www/var'
