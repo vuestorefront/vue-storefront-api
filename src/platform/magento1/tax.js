@@ -63,6 +63,7 @@ class TaxProxy extends AbstractTaxProxy {
       if (this._config.tax.calculateServerSide) {
         const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
           host: {
+            protocol: this._config.elasticsearch.protocol,
             host: this._config.elasticsearch.host,
             port: this._config.elasticsearch.port
           },
@@ -70,7 +71,7 @@ class TaxProxy extends AbstractTaxProxy {
           apiVersion: this._config.elasticsearch.apiVersion,
           requestTimeout: 5000
         }
-        if (this._config.elasticsearch.user) {
+        if (this._config.elasticsearch.user && this._config.elasticsearch.user.length > 0) {
           esConfig.httpAuth = this._config.elasticsearch.user + ':' + this._config.elasticsearch.password
         }
         

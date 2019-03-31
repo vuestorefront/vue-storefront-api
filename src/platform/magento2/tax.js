@@ -61,13 +61,20 @@ class TaxProxy extends AbstractTaxProxy {
       inst.applyTierPrices(productList, groupId)
 
       if (this._config.tax.calculateServerSide) {
+        let port = this._config.elasticsearch.port
+        if (!port || port.length < 2) {
+            port = ''
+        } else {
+            port = `:${port}`
+        }
+        let host = `${this._config.elasticsearch.protocol}://${this._config.elasticsearch.host}${port}`
         const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-          host: this._config.elasticsearch.host + ':' + this._config.elasticsearch.port,
+          host,
           log: 'debug',
           apiVersion: this._config.elasticsearch.apiVersion,
           requestTimeout: 5000
         }
-        if (this._config.elasticsearch.user) {
+        if (this._config.elasticsearch.user && this._config.elasticsearch.user.length > 0) {
           esConfig.httpAuth = this._config.elasticsearch.user + ':' + this._config.elasticsearch.password
         }
         

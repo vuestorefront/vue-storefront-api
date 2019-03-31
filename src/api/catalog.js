@@ -62,7 +62,13 @@ export default ({config, db}) => function (req, res, body) {
 	}
 
 	// pass the request to elasticsearch
-	let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+	let port = config.elasticsearch.port
+	if (!port || port.length < 2) {
+		port = ''
+	} else {
+		port = `:${port}`
+	}
+	let url = `${config.elasticsearch.protocol}://${config.elasticsearch.host}${port}${(req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)}`
 
 	if (!url.startsWith('http')) {
 		url = 'http://' + url
@@ -85,7 +91,7 @@ export default ({config, db}) => function (req, res, body) {
   let auth = null;
   
   // Only pass auth if configured
-  if(config.elasticsearch.user || config.elasticsearch.password) {
+  if(config.elasticsearch.user && config.elasticsearch.user.length > 0) {
     auth = {
 			user: config.elasticsearch.user,
 			pass: config.elasticsearch.password

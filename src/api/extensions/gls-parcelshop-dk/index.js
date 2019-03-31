@@ -22,7 +22,23 @@ module.exports = ({config, db}) => {
         returnData.droppoints = []
 
         // pass the request to elasticsearch
-        const url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + '/gls_parcelshop_dk/droppoint/_search';
+        let port = config.elasticsearch.port
+        if (!port || port.length < 2) {
+            port = ''
+        } else {
+            port = `:${port}`
+        }
+        let url = `${config.elasticsearch.protocol}://${config.elasticsearch.host}${port}/gls_parcelshop_dk/droppoint/_search`
+
+        let auth = null;
+  
+        // Only pass auth if configured
+        if(config.elasticsearch.user && config.elasticsearch.user.length > 0) {
+            auth = {
+                    user: config.elasticsearch.user,
+                    pass: config.elasticsearch.password
+                };
+        }
 
         request({ // do the elasticsearch request
             uri: url,
@@ -37,10 +53,7 @@ module.exports = ({config, db}) => {
                 }
             },
             json: true,
-            auth: {
-                user: config.elasticsearch.user,
-                pass: config.elasticsearch.password
-            },
+            auth,
         }, function (_err, _res, _resBody) {
             if (_resBody && _resBody.hits && _resBody.hits.hits) {
                 let latitude = 0;

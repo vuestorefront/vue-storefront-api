@@ -21,8 +21,14 @@ function multiStoreConfig(apiConfig, storeCode) {
 
 function getMagentoDefaultConfig(storeCode) {
   const apiConfig = multiStoreConfig(config.magento2.api, storeCode)
+  let port = config.elasticsearch.port
+	if (!port || port.length < 2) {
+		port = ''
+	} else {
+		port = `:${port}`
+	}
   return {
-    TIME_TO_EXIT: 2000,
+    TIME_TO_EXIT: 30000,
     PRODUCTS_SPECIAL_PRICES: true,
     SKIP_REVIEWS: false,
     SKIP_CATEGORIES: false,
@@ -39,7 +45,7 @@ function getMagentoDefaultConfig(storeCode) {
     REDIS_HOST: config.redis.host,
     REDIS_PORT: config.redis.port,
     INDEX_NAME: config.elasticsearch.indices[0],
-    DATABASE_URL: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`
+    DATABASE_URL: `${config.elasticsearch.protocol}://${config.elasticsearch.host}${port}`
   }
 }
 
@@ -88,6 +94,7 @@ program
         magentoConfig.INDEX_NAME = storeView.elasticsearch.index
         magentoConfig.INDEX_META_PATH = '.lastIndex-' + cmd.storeCode + '.json'
         magentoConfig.MAGENTO_STORE_ID = storeView.storeId
+        magentoConfig.STORE_CODE = cmd.storeCode
       }
     }
 
@@ -130,6 +137,7 @@ program
       } else {
         magentoConfig.INDEX_NAME = storeView.elasticsearch.index;
         magentoConfig.MAGENTO_STORE_ID = storeView.storeId;
+        magentoConfig.STORE_CODE = cmd.storeCode
       }
     }
 

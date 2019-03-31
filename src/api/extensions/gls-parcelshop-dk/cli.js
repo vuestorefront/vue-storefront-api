@@ -17,6 +17,7 @@ cli.command('buildcache', () => {
     const elasticsearch = require('elasticsearch');
     const esConfig = {
         host: {
+          protocol: config.elasticsearch.protocol,
           host: config.elasticsearch.host,
           port: config.elasticsearch.port
         },
@@ -25,7 +26,7 @@ cli.command('buildcache', () => {
         requestTimeout: 1000 * 60 * 60,
         keepAlive: false
       }
-      if (config.elasticsearch.user) {
+      if (config.elasticsearch.user && config.elasticsearch.user.length > 0) {
         esConfig.httpAuth = config.elasticsearch.user + ':' +  config.elasticsearch.password
       }
     const esClient = new elasticsearch.Client(esConfig);
