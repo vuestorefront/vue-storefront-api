@@ -1,9 +1,9 @@
-import AbstractUserProxy from '../abstract/user';
+import AbstractStockProxy from '../abstract/stock';
 import { multiStoreConfig } from './util';
-import { Magento1Client } from './module/index';
 
-class StockProxy extends AbstractUserProxy {
+class StockProxy extends AbstractStockProxy {
   constructor (config, req){
+    const Magento1Client = require('magento1-vsbridge-client').Magento1Client;
     super(config, req)
     this.api = Magento1Client(multiStoreConfig(config.magento1.api, req));
   }
