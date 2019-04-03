@@ -33,11 +33,12 @@
   "eslintConfig": {
     "extends": "eslint:recommended",
     "parserOptions": {
-      "ecmaVersion": 7,
+      "ecmaVersion": 8,
       "sourceType": "module"
     },
     "env": {
-      "node": true
+      "node": true,
+      "es6": true
     },
     "rules": {
       "no-console": 0,
