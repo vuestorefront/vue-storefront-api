@@ -12,7 +12,7 @@ class TaxProxy extends AbstractTaxProxy {
     this._sourcePriceInclTax = sourcePriceInclTax
 
     if (this._config.storeViews && this._config.storeViews.multistore) {
-      for (let storeCode of this._config.storeViews){
+      for (let storeCode in this._config.storeViews){
         const store = this._config.storeViews[storeCode]
 
         if (typeof store === 'object') {
