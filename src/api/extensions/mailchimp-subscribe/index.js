@@ -1,10 +1,35 @@
-import { apiStatus } from '../../../lib/util';
-import { Router } from 'express';
+import { apiStatus } from '../../../lib/util'
+import { Router } from 'express'
 
 module.exports = ({ config, db }) => {
 
 	let mcApi = Router();
-	
+
+  /**
+   * Retrieve user status
+   */
+  mcApi.get('/subscribe', (req, res) => {
+
+    let email = req.query.email
+    if(!email) {
+      apiStatus(res, 'Invalid e-mail provided!', 500)
+      return
+    }
+    let md5 = require('md5')
+    let request = require('request');
+    request({
+      url: config.extensions.mailchimp.apiUrl + '/lists/' + config.extensions.mailchimp.listId + '/members/' + md5(email.toLowerCase()),
+      method: 'GET',
+      json: true,
+      headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey }
+    }, function (error, response, body) {
+      if (error) {
+        apiStatus(res, error, 500)
+      } else {
+        apiStatus(res, body, 200)
+      }
+    })
+  })
 
 	/** 
 	 * POST create an user
@@ -58,6 +83,7 @@ module.exports = ({ config, db }) => {
 				apiStatus(res, body, 200)
 			}
 		})
-	})	
-	return mcApi
+	})
+
+  return mcApi
 }

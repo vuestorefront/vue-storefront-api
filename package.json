@@ -75,6 +75,7 @@
     "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
     "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
+    "md5": "^2.2.1",
     "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.6.2",
     "mime-types": "^2.1.18",
