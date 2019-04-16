@@ -33,7 +33,15 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
 
   if (esResponse && esResponse.hits && esResponse.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], esIndex);
+
+    let _req = {
+      query: {
+        _source_exclude: _sourceExclude,
+        _source_include: _sourceInclude,
+      }
+    }
+
+    esResponse.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
