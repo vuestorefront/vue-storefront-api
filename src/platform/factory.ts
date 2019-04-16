@@ -8,7 +8,7 @@ class PlatformFactory {
   request: Request
   config: IConfig
 
-  constructor(app_config, req = null) {
+  constructor(app_config: IConfig, req: Request|null = null) {
     this.config = app_config;
     this.request = req
   }

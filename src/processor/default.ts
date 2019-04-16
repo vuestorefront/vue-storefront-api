@@ -11,7 +11,7 @@ class HmacProcessor {
   _req: Request
   _res: Response
 
-  constructor(config:any, entityType:any, indexName:any, req:Request, res:Response){
+  constructor(config: IConfig, entityType: any, indexName: any, req: Request, res: Response){
     this._config = config
     this._entityType = entityType
     this._indexName = indexName
