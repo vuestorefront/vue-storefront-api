@@ -94,14 +94,14 @@ export default ({config, db}) => {
 			if (!decodedToken) {
 				return apiStatus(res, 'Invalid refresh token provided', 500);
 			}
+			userProxy.login(decodedToken).then((result) => {
+				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+			}).catch(err => {
+				apiStatus(res, err, 500);
+			})			
 		} catch (err) {
 			return apiStatus(res, err.message, 500);
 		}
-		userProxy.login(decodedToken).then((result) => {
-			apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-		}).catch(err => {
-			apiStatus(res, err, 500);
-		})
 	});
 
 	/**
