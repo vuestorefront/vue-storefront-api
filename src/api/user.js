@@ -1,4 +1,4 @@
-import { apiStatus } from '../lib/util';
+import { apiStatus, encryptToken, decryptToken } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 import jwt from 'jwt-simple';
@@ -68,12 +68,12 @@ export default ({config, db}) => {
 			 */
 			if (config.usePriceTiers) {
 				userProxy.me(result).then((resultMe) => {
-					apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+					apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 				}).catch(err => {
 					apiStatus(res, err, 500);
 				})
 			} else {
-        apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+        apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}
 		}).catch(err => {
 			apiStatus(res, err, 500);
@@ -89,13 +89,16 @@ export default ({config, db}) => {
 		if (!req.body || !req.body.refreshToken) {
 			return apiStatus(res, 'No refresh token provided', 500);
 		}
-
-		const decodedToken = jwt.decode(req.body ? req.body.refreshToken : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-		if (!decodedToken) {
-			return apiStatus(res, 'Invalid refresh token provided', 500);
+		try {
+			const decodedToken = jwt.decode(req.body ? decryptToken(req.body.refreshToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret) : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+			if (!decodedToken) {
+				return apiStatus(res, 'Invalid refresh token provided', 500);
+			}
+		} catch (err) {
+			return apiStatus(res, err.message, 500);
 		}
 		userProxy.login(decodedToken).then((result) => {
-			apiStatus(res, result, 200, {refreshToken: jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+			apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
