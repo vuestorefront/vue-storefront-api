@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Babel from 6 to 7 - @lukeromanowicz
 - Support unicode characters in order requests - @lukeromanowicz (#201)
 - TravisCI configured for building and linting - @lukeromanowicz (#204)
+- Use Redis database from configuration in mage2vs - @Cyclonecode (#211)
 
 ## [1.9.0-rc.1] - 2019.03.04
 - Changed location of magento1 platform js client. Moved from `src/platform/magento1/module` to [magento1-vsbridge-client](https://github.com/DivanteLtd/magento1-vsbridge-client) - @mtarld (#195)
