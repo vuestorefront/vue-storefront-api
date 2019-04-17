@@ -1,4 +1,7 @@
 import config from 'config';
+import crypto from 'crypto';
+const algorithm = 'aes-256-ctr';
+
 /**	Creates a callback that proxies node callback style arguments to an Express Response object.
  *	@param {express.Response} res	Express HTTP Response
  *	@param {number} [status=200]	Status code to send on success
@@ -41,4 +44,18 @@ export function apiStatus(res, result = 'OK', code = 200, meta = null) {
 	}
 	res.status(code).json(apiResult);
 	return result;
+}
+
+export function encryptToken(textToken, secret) {
+	const cipher = crypto.createCipher(algorithm, secret)
+	let crypted = cipher.update(textToken, 'utf8',  'hex')
+	crypted += cipher.final('hex');
+	return crypted;
+}
+
+export function decryptToken(textToken, secret) {
+	const decipher = crypto.createDecipher(algorithm, secret)
+	let dec = decipher.update(textToken, 'hex', 'utf8')
+	dec += decipher.final('utf8');
+	return dec;	
 }
