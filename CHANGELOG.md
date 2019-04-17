@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.9.0-rc.1] - 2019.03.04
 - Changed location of magento1 platform js client. Moved from `src/platform/magento1/module` to [magento1-vsbridge-client](https://github.com/DivanteLtd/magento1-vsbridge-client) - @mtarld (#195)
 
+## [1.8.4] - 2019.04.17
+- Use encrypted token for user authentication - @pkarw
+
 ## [1.8.3] - 2019.03.05
 - Use store id from configuration in `mage2vs import` - @boehsermoe (#179)
 
