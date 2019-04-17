@@ -5,8 +5,8 @@
   "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec \"babel-node src --presets env,stage-0\"",
-    "build": "babel src -s -D -d dist --presets env,stage-0",
+    "dev": "nodemon -w src --exec \"babel-node src\"",
+    "build": "babel src -s -D -d dist",
     "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "node scripts/db.js",
     "seo": "node scripts/seo.js",
@@ -33,11 +33,12 @@
   "eslintConfig": {
     "extends": "eslint:recommended",
     "parserOptions": {
-      "ecmaVersion": 7,
+      "ecmaVersion": 8,
       "sourceType": "module"
     },
     "env": {
-      "node": true
+      "node": true,
+      "es6": true
     },
     "rules": {
       "no-console": 0,
@@ -52,6 +53,7 @@
   "license": "MIT",
   "dependencies": {
     "ajv": "^6.4.0",
+    "ajv-keywords": "^3.4.0",
     "body-parser": "^1.18.2",
     "bodybuilder": "2.2.13",
     "commander": "^2.19.0",
@@ -88,12 +90,11 @@
     "winston": "^2.4.2"
   },
   "devDependencies": {
-    "@babel/polyfill": "^7.2.5",
     "apollo-server-express": "^1.3.6",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.2",
     "eslint": "^4.16.0",
     "nodemon": "^1.18.7"
   },
