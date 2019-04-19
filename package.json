@@ -6,7 +6,7 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"ts-node src\"",
-    "build": "tsc",
+    "build": "tsc --build",
     "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "node scripts/db.js",
     "seo": "node scripts/seo.js",
