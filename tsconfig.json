@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "strict": false,
+    "allowJs": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": false,
+    "outDir": "dist",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "lib": ["es7"]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
