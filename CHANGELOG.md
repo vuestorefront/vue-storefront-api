@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Typescript support - @ResuBaka (#210)
 
+### Fixed
+- Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
+
 ## [1.9.0-rc.2] - unreleased
 - Update Babel from 6 to 7 - @lukeromanowicz
 - Support unicode characters in order requests - @lukeromanowicz (#201)
