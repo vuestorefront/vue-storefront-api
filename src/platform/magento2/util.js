@@ -26,5 +26,6 @@ export function multiStoreConfig(apiConfig, req) {
             console.error('Unavailable store code', storeCode)
         }
     }
+
     return confCopy
 }
