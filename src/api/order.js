@@ -24,7 +24,7 @@ export default ({ config, db }) => resource({
 	 * POST create an order with JSON payload compliant with models/order.md
 	 */
 	create(req, res) {
-		
+
 
 		const ajv = new Ajv();
 		const orderSchema = require('../models/order.schema.json')
@@ -33,9 +33,9 @@ export default ({ config, db }) => resource({
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
-			apiStatus(res, validate.errors, 500);
+			apiStatus(res, validate.errors, 400);
 			return;
-		}				
+		}
 		const incomingOrder = { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */
 		console.log(JSON.stringify(incomingOrder))
 
@@ -47,7 +47,7 @@ export default ({ config, db }) => resource({
 				key.sku = product.sku
 			}
 			// console.log(key)
-			
+
 			if (!config.tax.usePlatformTotals) {
 				if (!hmac.verify(key, product.sgn, config.objHashSecret)) {
 					console.error('Invalid hash for ' + product.sku + ': ' + product.sgn)
