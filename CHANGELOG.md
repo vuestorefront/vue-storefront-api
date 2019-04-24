@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.9.0] - UNRELEASED
 - Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220) 
+- `src/models/order.schema.json` was moved to `src/models/order.schema.js` to support regex transformation - @lukeromanowicz (#201)
 
 ## [1.9.0-rc.2] - 2019.04.17
 - Update Babel from 6 to 7 - @lukeromanowicz
