@@ -20,6 +20,7 @@ services:
       - './scripts:/var/www/scripts'
       - './src:/var/www/src'
       - './var:/var/www/var'
+      - './tsconfig.json:/var/www/tsconfig.json'
     tmpfs:
       - /var/www/dist
     ports:
