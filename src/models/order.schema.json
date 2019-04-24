@@ -21,11 +21,11 @@
         {
           "required": [ "sku", "price", "qty" ],
           "properties": {
-            "sku": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },
+            "sku": { "type": "string", "minLength": 1, "regexp": "/[\\p{L}\\d_]+/u" },
             "qty": { "type" : "number", "minimum": 1 },
-            "name": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z0-9_]+" },
+            "name": { "type": "string", "minLength": 1, "regexp": "/[\\p{L}\\d_]+/u" },
             "price": { "type" : "number", "minimum": 1 },
-            "product_type": { "type": "string", "minLength": 1,  "pattern": "[a-zA-Z]+" }
+            "product_type": { "type": "string", "minLength": 1, "regexp": "/[\\p{L}]+/u" }
           }
         }
       ]
@@ -46,10 +46,18 @@
             },
             "company": { "type": "string" },
             "telephone": { "type": "string" },
-            "postcode": { "type": "string", "minLength": 3,  "pattern": "[a-zA-Z0-9_]+" },
-            "city": { "type": "string", "pattern": "[a-zA-Z]+" },
-            "firstname": { "type": "string", "pattern": "[a-zA-Z]+", "description": "First name" },
-            "lastname": { "type": "string", "pattern": "[a-zA-Z]+" },
+            "postcode": { "type": "string", "minLength": 3, "regexp": "/[\\p{L}\\d_]+/u"},
+            "city": { "type": "string", "regexp": "/[\\p{L}]+/u" },
+            "firstname": {
+              "type": "string",
+              "regexp": "/[\\p{L}]+/u",
+              "description": "First name"
+            },
+            "lastname": {
+              "type": "string",
+              "regexp": "/[\\p{L}]+/u",
+              "description": "Last name"
+            },
             "email": { "type": "string", "pattern": "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" },
             "region_code":{ "type": "string" },
             "sameAsBilling": { "type": "number"}
@@ -68,10 +76,18 @@
               },
               "company": { "type": "string" },
               "telephone": { "type": "string" },
-              "postcode": { "type": "string", "minLength": 3,  "pattern": "[a-zA-Z0-9_]+" },
-              "city": { "type": "string", "pattern": "[a-zA-Z]+" },
-              "firstname": { "type": "string", "pattern": "[a-zA-Z]+" },
-              "lastname": { "type": "string", "pattern": "[a-zA-Z]+" },
+              "postcode": { "type": "string", "minLength": 3, "regexp": "/[\\p{L}\\d_]+/u"},
+              "city": { "type": "string", "regexp": "/[\\p{L}]+/u" },
+              "firstname": {
+                "type": "string",
+                "regexp": "/[\\p{L}]+/u",
+                "description": "First name"
+              },
+              "lastname": {
+                "type": "string",
+                "regexp": "/[\\p{L}]+/u",
+                "description": "Last name"
+              },
               "email": { "type": "string", "pattern": "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" },
               "region_code":{ "type": "string" },
               "sameAsBilling": { "type": "number"}
