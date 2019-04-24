@@ -28,7 +28,7 @@ export default ({ config, db }) => resource({
 		const ajv = new Ajv();
 		require('ajv-keywords')(ajv, 'regexp');
 
-		const orderSchema = require('../models/order.schema.json')
+		const orderSchema = require('../models/order.schema.js')
 		const orderSchemaExtension = require('../models/order.schema.extension.json')
 		const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
