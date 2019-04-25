@@ -4,61 +4,27 @@ import PlatformFactory from '../platform/factory'
 
 export default ({ config, db }) => {
 
-	let stockApi = Router();
+	let api = Router();
 
 	const _getProxy = (req) => {
 		const platform = config.platform
 		const factory = new PlatformFactory(config, req)
-		return factory.getAdapter(platform,'stock')
+		return factory.getAdapter(platform, 'stock')
+	};
+
+	const _getStoreView = (storeId) => {
+		const filtered = config.availableStores.map((store) => {
+			return config.storeViews[store]
+		}).filter((store) => {
+			return store.storeId === parseInt(storeId)
+		})
+		return filtered[0]
 	};
 
 	/**
-	 * GET get stock item
-	 */
-	stockApi.get('/check/:sku', (req, res) => {
-
-		const stockProxy = _getProxy(req)
-
-		if (!req.params.sku) {
-			return apiStatus(res, 'sku parameter is required', 500);
-		}
-
-		// FIXME use stock from config
-		//
-		// Proposal: in "storeViews" node of config file add a node like this:
-		//
-		// "msi": {
-		// 	"stockId": 2
-		// },
-		//
-		// So that if the node is present it means that MSI is enabled and only if it is enabled we should call
-		// the additional MSI APIs
-		const stockId = 2;
-
-		stockProxy.check(req.params.sku).then((result) => {
-			return result;
-		}).then((result) => {
-			// TODO if MSI not enabled, don't call the following additional APIs but return apiStatus(res, result, 200)
-			stockProxy.getSalableQty(req.params.sku, stockId ).then((salableQty) => {
-				result.qty = salableQty;
-				return result;
-			}).then((result) => {
-				stockProxy.isSalable(req.params.sku, stockId ).then((isSalable) => {
-					result.is_in_stock = isSalable;
-					apiStatus(res, result, 200);
-				})
-			})
-		}).catch(err=> {
-			apiStatus(res, err, 500);
-		})
-	})
-
-	/**
 	 * GET get stock item - 2nd version with the query url parameter
-	 *
-	 * FIXME avoid code replication - see above method
 	 */
-	stockApi.get('/check/:sku', (req, res) => {
+	api.get('/check', (req, res) => {
 
 		const stockProxy = _getProxy(req)
 
@@ -66,32 +32,29 @@ export default ({ config, db }) => {
 			return apiStatus(res, 'sku parameter is required', 500);
 		}
 
-		// FIXME use stock from config
-		//
-		// Proposal: in "storeViews" node of config file add a node like this:
-		//
-		// "msi": {
-		// 	"stockId": 2
-		// },
-		//
-		// So that if the node is present it means that MSI is enabled and only if it is enabled we should call
-		// the additional MSI APIs
-		const stockId = 2;
-
-		stockProxy.check(req.params.sku).then((result) => {
+		stockProxy.check(req.query.sku).then((result) => {
 			return result;
 		}).then((result) => {
-			// TODO if MSI not enabled, don't call the following additional APIs but return apiStatus(res, result, 200)
-			stockProxy.getSalableQty(req.params.sku, stockId ).then((salableQty) => {
-				result.qty = salableQty;
-				return result;
-			}).then((result) => {
-				stockProxy.isSalable(req.params.sku, stockId ).then((isSalable) => {
-					result.is_in_stock = isSalable;
-					apiStatus(res, result, 200);
+			if (config.storeViews.multiSourceInventory) {
+				if (!req.query.storeId) {
+					return apiStatus(res, 'storeId parameter is required', 500);
+				}
+				const storeView = _getStoreView(req.query.storeId)
+				const stockId = storeView.msi.stockId
+
+				stockProxy.getSalableQty(req.query.sku, stockId).then((salableQty) => {
+					result.qty = salableQty;
+					return result;
+				}).then((result) => {
+					stockProxy.isSalable(req.query.sku, stockId).then((isSalable) => {
+						result.is_in_stock = isSalable;
+						apiStatus(res, result, 200);
+					})
 				})
-			})
-		}).catch(err=> {
+			} else {
+				apiStatus(res, result, 200);
+			}
+		}).catch(err => {
 			apiStatus(res, err, 500);
 		})
 	})
@@ -99,7 +62,7 @@ export default ({ config, db }) => {
 	/**
 	 * GET get stock item list by skus (comma separated)
 	 */
-	stockApi.get('/list', (req, res) => {
+	api.get('/list', (req, res) => {
 
 		const stockProxy = _getProxy(req)
 
@@ -118,5 +81,5 @@ export default ({ config, db }) => {
 		})
 	})
 
-	return stockApi
+	return api
 }

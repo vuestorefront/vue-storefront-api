@@ -6,6 +6,7 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets env,stage-0\"",
+    "dev:inspect": "nodemon -w src --exec \"babel-node --inspect src --presets env,stage-0\"",
     "build": "babel src -s -D -d dist --presets env,stage-0",
     "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "node scripts/db.js",
