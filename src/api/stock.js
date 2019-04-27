@@ -12,14 +12,33 @@ export default ({ config, db }) => {
 		return factory.getAdapter(platform, 'stock')
 	};
 
-	const _getStoreView = (storeId) => {
-		const filtered = config.availableStores.map((store) => {
-			return config.storeViews[store]
-		}).filter((store) => {
-			return store.storeId === parseInt(storeId)
-		})
-		return filtered[0]
+	const _getStockId = (storeCode) => {
+		let storeView = config.storeViews[storeCode]
+		return storeView ? storeView.msi.stockId : config.defaultStockId
 	};
+
+	/**
+	 * GET get stock item
+	 */
+	api.get('/check/:sku', (req, res) => {
+
+	    const stockProxy = _getProxy(req)
+
+		if (!req.params.sku) {
+			return apiStatus(res, 'sku parameter is required', 500);
+		}
+
+		stockProxy.check({
+			sku: req.params.sku,
+			stockId: config.storeView.msi ? _getStockId(req.query.storeCode) : ''
+		}).then((result) => {
+			return result;
+		}).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err => {
+			apiStatus(res, err, 500);
+		})
+	})
 
 	/**
 	 * GET get stock item - 2nd version with the query url parameter
@@ -32,28 +51,13 @@ export default ({ config, db }) => {
 			return apiStatus(res, 'sku parameter is required', 500);
 		}
 
-		stockProxy.check(req.query.sku).then((result) => {
+		stockProxy.check({
+			sku: req.query.sku,
+			stockId: config.storeView.msi ? _getStockId(req.query.storeCode) : ''
+		}).then((result) => {
 			return result;
 		}).then((result) => {
-			if (config.storeViews.multiSourceInventory) {
-				if (!req.query.storeId) {
-					return apiStatus(res, 'storeId parameter is required', 500);
-				}
-				const storeView = _getStoreView(req.query.storeId)
-				const stockId = storeView.msi.stockId
-
-				stockProxy.getSalableQty(req.query.sku, stockId).then((salableQty) => {
-					result.qty = salableQty;
-					return result;
-				}).then((result) => {
-					stockProxy.isSalable(req.query.sku, stockId).then((isSalable) => {
-						result.is_in_stock = isSalable;
-						apiStatus(res, result, 200);
-					})
-				})
-			} else {
-				apiStatus(res, result, 200);
-			}
+			apiStatus(res, result, 200);
 		}).catch(err => {
 			apiStatus(res, err, 500);
 		})

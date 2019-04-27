@@ -42,8 +42,9 @@
     "it",
     "en"
   ],
+  "defaultStockId": 1,
   "storeViews": {
-    "multiSourceInventory": true,
+    "msi": true,
     "multistore": true,
     "mapStoreUrlsFor": [
       "de",

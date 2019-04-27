@@ -8,18 +8,21 @@ class StockProxy extends AbstractUserProxy {
     this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
   }
 
-  check (sku) {
-    return this.api.stockItems.list(sku)
-  }
-
-  // MSI
-  getSalableQty (sku, stockId) {
-    return this.api.stockItems.getSalableQty(sku, stockId)
-  }
-
-  // MSI
-  isSalable (sku, stockId) {
-    return this.api.stockItems.isSalable(sku, stockId)
+  check ({sku, stockId}) {
+    if (stockId === '') {
+      return this.api.stockItems.list(sku)
+    } else {
+      // MSI
+      return this.api.stockItems.getSalableQty(sku, stockId).then((salableQty) => {
+        result.qty = salableQty;
+        return result;
+      }).then((result) => {
+        return this.api.stockItems.isSalable(sku, stockId).then((isSalable) => {
+          result.is_in_stock = isSalable;
+          return result;
+        })
+      })
+    }
   }
 }
 
