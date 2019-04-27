@@ -55,8 +55,6 @@ export default ({ config, db }) => {
 			sku: req.query.sku,
 			stockId: config.storeViews.msi ? _getStockId(req.query.storeCode) : ''
 		}).then((result) => {
-			return result;
-		}).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
 			apiStatus(res, err, 500);
