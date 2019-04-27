@@ -30,7 +30,7 @@ export default ({ config, db }) => {
 
 		stockProxy.check({
 			sku: req.params.sku,
-			stockId: config.storeView.msi ? _getStockId(req.query.storeCode) : ''
+			stockId: config.storeViews.msi ? _getStockId(req.query.storeCode) : ''
 		}).then((result) => {
 			return result;
 		}).then((result) => {
@@ -53,7 +53,7 @@ export default ({ config, db }) => {
 
 		stockProxy.check({
 			sku: req.query.sku,
-			stockId: config.storeView.msi ? _getStockId(req.query.storeCode) : ''
+			stockId: config.storeViews.msi ? _getStockId(req.query.storeCode) : ''
 		}).then((result) => {
 			return result;
 		}).then((result) => {
