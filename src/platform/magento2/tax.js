@@ -13,7 +13,7 @@ class TaxProxy extends AbstractTaxProxy {
 
     if (this._config.storeViews && this._config.storeViews.multistore) {
       for (let storeCode in this._config.storeViews){
-        let store = this._config.storeViews[storeCode]
+        const store = this._config.storeViews[storeCode]
         if (typeof store === 'object') {
           if (store.elasticsearch && store.elasticsearch.index) { // workaround to map stores
             if (store.elasticsearch.index === indexName) {
@@ -56,7 +56,7 @@ class TaxProxy extends AbstractTaxProxy {
   }
 
   process (productList, groupId = null) {
-    let inst = this
+    const inst = this
     return new Promise ((resolve, reject) => {
       inst.applyTierPrices(productList, groupId)
 
@@ -64,7 +64,7 @@ class TaxProxy extends AbstractTaxProxy {
         const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
           host: this._config.elasticsearch.host + ':' + this._config.elasticsearch.port,
           log: 'debug',
-          apiVersion: '5.5',
+          apiVersion: this._config.elasticsearch.apiVersion,
           requestTimeout: 5000
         }
         if (this._config.elasticsearch.user) {
