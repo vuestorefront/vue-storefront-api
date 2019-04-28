@@ -42,9 +42,11 @@
     "it",
     "en"
   ],
-  "defaultStockId": 1,
+  "msi": {
+    "enabled": true,
+    "defaultStockId": 1
+  },
   "storeViews": {
-    "msi": true,
     "multistore": true,
     "mapStoreUrlsFor": [
       "de",

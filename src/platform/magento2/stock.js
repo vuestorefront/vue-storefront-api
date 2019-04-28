@@ -10,12 +10,12 @@ class StockProxy extends AbstractUserProxy {
 
   check ({sku, stockId}) {
     return this.api.stockItems.list(sku).then((result) => {
-      if (this._config.storeViews.msi) {
-        return this.api.stockItems.getSalableQty(sku, 1).then((salableQty) => {
+      if (this._config.msi.enabled) {
+        return this.api.stockItems.getSalableQty(sku, stockId).then((salableQty) => {
           result.qty = salableQty;
           return result;
         }).then((result) => {
-          return this.api.stockItems.isSalable(sku, 1).then((isSalable) => {
+          return this.api.stockItems.isSalable(sku, stockId).then((isSalable) => {
             result.is_in_stock = isSalable;
             return result
           })
