@@ -39,8 +39,7 @@
   "kue": {},
   "availableStores": [
     "de",
-    "it",
-    "en"
+    "it"
   ],
   "msi": {
     "enabled": true,
@@ -52,16 +51,6 @@
       "de",
       "it"
     ],
-    "en": {
-      "storeCode": "en",
-      "disabled": false,
-      "storeId": 1,
-      "name": "Default Store",
-      "url": "/",
-      "msi": {
-        "stockId": 2
-      }
-    },
     "de": {
       "storeCode": "de",
       "disabled": false,
