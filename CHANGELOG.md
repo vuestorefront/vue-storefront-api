@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Typescript support - @ResuBaka (#210)
+- Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
