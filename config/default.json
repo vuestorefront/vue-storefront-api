@@ -42,6 +42,10 @@
     "de",
     "it"
   ],
+  "msi": {
+    "enabled": true,
+    "defaultStockId": 1
+  },
   "storeViews": {
     "multistore": true,
     "mapStoreUrlsFor": [
@@ -50,7 +54,7 @@
     ],
     "de": {
       "storeCode": "de",
-      "disabled": true,
+      "disabled": false,
       "storeId": 3,
       "name": "German Store",
       "url": "/de",
@@ -58,11 +62,14 @@
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_de"
       },
+      "msi": {
+        "stockId": 2
+      },
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+		    "sourcePriceIncludesTax": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -77,13 +84,16 @@
     },
     "it": {
       "storeCode": "it",
-      "disabled": true,
+      "disabled": false,
       "storeId": 4,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_it"
+      },
+      "msi": {
+        "stockId": 2
       },
       "tax": {
         "defaultCountry": "IT",
