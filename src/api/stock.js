@@ -66,13 +66,14 @@ export default ({ config, db }) => {
 
 		const stockProxy = _getProxy(req)
 
-		if (!req.query.skus)
+		if (!req.query.skus) {
 			return apiStatus(res, 'skus parameter is required', 500);
+		}
 
 		const skuArray = req.query.skus.split(',')
 		const promisesList = []
 		for (const sku of skuArray) {
-			promisesList.push(stockProxy.check(sku))
+			promisesList.push(stockProxy.check({sku: sku, stockId: config.msi.enabled ? _getStockId(req.query.storeCode): null}))
 		}
 		Promise.all(promisesList).then((results) => {
 			apiStatus(res, results, 200);
