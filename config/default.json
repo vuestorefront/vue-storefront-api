@@ -18,9 +18,12 @@
     "password": "changeme",
     "min_score": 0.01,
     "indices": [
-      "vue_storefront_catalog",
-      "vue_storefront_catalog_de",
-      "vue_storefront_catalog_it"
+      "vue_storefront_catalog_attribute",
+      "vue_storefront_catalog_cms",
+      "vue_storefront_catalog_product",
+      "vue_storefront_catalog_category",
+      "vue_storefront_catalog_taxrule",
+      "vue_storefront_catalog_review"
     ],
     "indexTypes": [
       "product",
