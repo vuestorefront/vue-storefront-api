@@ -70,7 +70,7 @@
     "jwt-simple": "^0.5.1",
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
-    "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
+    "mage2vuestorefront": "git+https://github.com/janmyszkier/mage2vuestorefront.git",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
     "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.6.2",

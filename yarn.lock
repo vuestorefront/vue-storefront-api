@@ -1960,7 +1960,7 @@ elasticsearch-deletebyquery@^1.6.0:
   resolved "https://registry.yarnpkg.com/elasticsearch-deletebyquery/-/elasticsearch-deletebyquery-1.6.0.tgz#a2c879aa2ad3b88b218f269a8083989cd1d1838a"
   integrity sha1-osh5qirTuIshjyaagIOYnNHRg4o=
 
-elasticsearch@^15.2.0, elasticsearch@^15.4.1:
+elasticsearch@^15.2.0:
   version "15.4.1"
   resolved "https://registry.yarnpkg.com/elasticsearch/-/elasticsearch-15.4.1.tgz#28b54de22fea74003e57395e035926fe7b63b8dd"
   integrity sha512-IL46Sv9krCKtpvlI37/vQVQrWx6QeT1OJhfWW6L3fIXzR1Vv5utO+DHYz8AosUI6vlkxShoq+y6sUIBhTF1OIg==
