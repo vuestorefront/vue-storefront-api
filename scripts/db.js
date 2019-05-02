@@ -12,40 +12,46 @@ program
       process.exit(1);
     }
 
-    console.log('** Hello! I am going to rebuild EXISTING ES index to fix the schema')
-    const originalIndex = cmd.indexName
-    const tempIndex = originalIndex + '_' + Math.round(+new Date()/1000)
-  
-    console.log(`** Creating temporary index ${tempIndex}`)
-    es.createIndex(common.db, tempIndex, function(err) {
-      if (err) {
-        console.log(err)
-      }
-  
-      console.log(`** Putting the mappings on top of ${tempIndex}`)
-      es.putMappings(common.db, tempIndex, function(err) {
-  
-        console.log(`** We will reindex ${originalIndex} with the current schema`)
-        es.reIndex(common.db, originalIndex, tempIndex, function (err) {
-          if (err) {
-            console.log(err)
-          }
-          
-          console.log('** Removing the original index')
-          es.deleteIndex(common.db, originalIndex, function (err) {
+    for (var indexTypeIterator in config.elasticsearch.indexTypes) {
+        var collectionName = config.elasticsearch.indexTypes[indexTypeIterator]
+        console.log(config.elasticsearch.indexTypes);
+        console.log('** Hello! I am going to rebuild EXISTING ES index to fix the schema')
+        const originalIndex = cmd.indexName + '_' + collectionName;
+        const tempIndex = originalIndex + '_' + Math.round(+new Date() / 1000)
+
+        console.log(`** Creating temporary index ${tempIndex}`)
+        es.createIndex(common.db, tempIndex, function (err) {
             if (err) {
-              console.log(err)
+                console.log('ERROR')
+                console.log(err)
             }
-  
-            console.log('** Creating alias')
-            es.putAlias(common.db, tempIndex, originalIndex, function (err) {
-              console.log('Done! Bye!')
-              process.exit(0)
-            })
-          })
+
+            console.log(`** [IGNORED] Putting the mappings on top of ${tempIndex}`)
+
+
+                console.log(`** We will reindex ${originalIndex} with the current schema`)
+                es.reIndex(common.db, originalIndex, tempIndex, function (err) {
+                    if (err) {
+                        console.log(err)
+                    }
+
+                    console.log('** Removing the original index')
+                    es.deleteIndex(common.db, originalIndex, function (err) {
+                        if (err) {
+                            console.log(err)
+                        }
+
+                        console.log('** Creating alias')
+                        es.putAlias(common.db, tempIndex, originalIndex, function (err) {
+
+                        })
+                    })
+                })
+
         })
-      })
-    })
+        console.log('Done! Bye!')
+        process.exit(0)
+    }
   })
 
 program

@@ -60,18 +60,29 @@ function reIndex(db, fromIndexName, toIndexName, next) {
 }
 
 function createIndex(db, indexName, next) {
-  let indexSchema = loadSchema('index');
+
+  let pieces = indexName.split('_');
+  let indexFileName = pieces[pieces.length-1];
+  if(isNaN(indexFileName)){
+    /* for normal index */
+    let indexSchema = loadSchema(indexFileName);
+  } else{
+    /* for timestamped index */
+    let indexFileName = pieces[pieces.length-2];
+    let indexSchema = loadSchema(indexFileName);
+  }
 
   const step2 = () => {
 
     db.indices.delete({
-      "index": indexName
+      "params": {
+        "index": indexName
+      }
     }).then(res1 => {
       console.dir(res1, { depth: null, colors: true })
       db.indices.create(
       {
         "index": indexName,
-        "body": indexSchema
       }).then(res2 => {
         console.dir(res2, { depth: null, colors: true })
         next()
@@ -83,7 +94,6 @@ function createIndex(db, indexName, next) {
       db.indices.create(
       {
         "index": indexName,
-        "body": indexSchema
       }).then(res2 => {
         console.dir(res2, { depth: null, colors: true })
         next()

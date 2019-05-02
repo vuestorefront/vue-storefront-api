@@ -13,6 +13,7 @@ services:
       VS_ENV: dev
     volumes:
       - './config:/var/www/config'
+      - './node_modules:/var/www/node_modules'
       - './ecosystem.json:/var/www/ecosystem.json'
       - './migrations:/var/www/migrations'
       - './package.json:/var/www/package.json'
