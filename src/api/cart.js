@@ -200,13 +200,13 @@ export default ({ config, db }) => {
 	 *   req.query.cartId - cart ID if user is logged in, cart token if not
 	 *   req.body.shippingMethod - shipping and payment methods object
 	 */
-	cartApi.post('/collect-totals', (req, res) => {
+	cartApi.put('/collect-totals', (req, res) => {
 		const cartProxy = _getProxy(req)
 		res.setHeader('Cache-Control', 'no-cache, no-store');
-		if (!req.body.methods) {
+		if (!req.body) {
 			return apiStatus(res, 'No shipping and payment methods element provided within the request body', 500)
 		}
-		cartProxy.collectTotals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.methods).then((result) => {
+		cartProxy.collectTotals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
 			apiStatus(res, err, 500);
