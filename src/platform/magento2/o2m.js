@@ -12,7 +12,7 @@ const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const ajv = new Ajv(); // validator
 const merge = require('lodash/merge')
-const orderSchema = require('../../models/order.schema.json')
+const orderSchema = require('../../models/order.schema.js')
 const orderSchemaExtension = require('../../models/order.schema.extension.json')
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
