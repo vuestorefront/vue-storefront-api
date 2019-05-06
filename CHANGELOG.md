@@ -8,11 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Typescript support - @ResuBaka (#210)
+- Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
 
-## [1.9.0-rc.2] - unreleased
+## [1.9.0] - UNRELEASED
+- Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220) 
+- `src/models/order.schema.json` was moved to `src/models/order.schema.js` to support regex transformation - @lukeromanowicz (#201)
+
+## [1.9.0-rc.2] - 2019.04.17
 - Update Babel from 6 to 7 - @lukeromanowicz
 - Support unicode characters in order requests - @lukeromanowicz (#201)
 - TravisCI configured for building and linting - @lukeromanowicz (#204)
