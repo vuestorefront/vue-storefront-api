@@ -11,3 +11,4 @@ src/config.json
 config/local.json
 var/magento2-sample-data/
 .migrate
+docker/elasticsearch/data/

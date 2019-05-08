@@ -5,7 +5,7 @@ services:
     build: docker/elasticsearch/
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - 'esdat1:/usr/share/elasticsearch/data'
+      - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'
