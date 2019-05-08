@@ -120,6 +120,8 @@ program
   .option('--skip-attributes <skipAttributes>', 'skip import of attributes', false)
   .option('--skip-taxrule <skipTaxrule>', 'skip import of taxrule', false)
   .option('--skip-products <skipProducts>', 'skip import of products', false)
+  .option('--skip-pages <skipPages>', 'skip import of cms pages', false)
+  .option('--skip-blocks <skipBlocks>', 'skip import of cms blocks', false)
   .action((cmd) => {
     let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
 
@@ -152,19 +154,23 @@ program
     if (cmd.skipProducts) {
       magentoConfig.SKIP_PRODUCTS = true;
     }
+    if (cmd.skipPages) {
+      magentoConfig.SKIP_PAGES = true;
+    }
+    if (cmd.skipBlocks) {
+      magentoConfig.SKIP_BLOCKS = true;
+    }
 
     const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
     console.log('=== The mage2vuestorefront full reindex is about to start. Using the following Magento2 config ===', magentoConfig)
 
     let createDbPromise = function() {
-
       console.log(' == CREATING NEW DATABASE ==')
       return exec('node', [
         'scripts/db.js',
         'new',
         `--indexName=${env.INDEX_NAME}`
       ], { env: env, shell: true })
-
     }
 
     let importReviewsPromise = function() {
@@ -257,6 +263,34 @@ program
       }
     }
 
+    let importCmsPagesPromise = function() {
+      if (magentoConfig.SKIP_PAGES ) {
+        return Promise.resolve();
+      }
+      else {
+        console.log(' == CMS PAGES IMPORTER ==');
+        return exec('node', [
+          '--harmony',
+          'node_modules/mage2vuestorefront/src/cli.js',
+          'pages'
+        ], {env: env, shell: true})
+      }
+    }
+
+    let importCmsBlocksPromise = function() {
+      if (magentoConfig.SKIP_BLOCKS ) {
+        return Promise.resolve();
+      }
+      else {
+        console.log(' == CMS BLOCKS IMPORTER ==');
+        return exec('node', [
+          '--harmony',
+          'node_modules/mage2vuestorefront/src/cli.js',
+          'blocks'
+        ], {env: env, shell: true})
+      }
+    }
+
     let reindexPromise = function() {
       console.log(' == REINDEXING DATABASE ==')
       return exec('node', [
@@ -266,16 +300,20 @@ program
       ], {env: env, shell: true})
     }
 
-    createDbPromise().then( () => {
-      importReviewsPromise().then( () => {
-        importCategoriesPromise().then( () => {
-          importProductcategoriesPromise().then( () => {
+    createDbPromise().then(() => {
+      importReviewsPromise().then(() => {
+        importCategoriesPromise().then(() => {
+          importProductcategoriesPromise().then(() => {
             importAttributesPromise().then(() => {
               importTaxrulePromise().then(() => {
                 importProductsPromise().then (() => {
-                  reindexPromise().then( () => {
+                  reindexPromise().then(() => {
+                    importCmsPagesPromise().then(() => {
+                      importCmsBlocksPromise().then(() => {
                         console.log('Done! Bye Bye!')
                         process.exit(0)
+                      })
+                    })
                   })
                 })
               })
@@ -285,7 +323,6 @@ program
       })
     })
   });
-
 
 program
   .on('command:*', () => {
