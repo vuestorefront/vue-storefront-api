@@ -15,16 +15,17 @@ var files = fs.readdirSync(configDir).filter(function(file) {
   return path.extname(file) === '.json'
 })
 
+
 module.exports.up = next => {
   files.forEach(function(file) {
-    var path = path.join(configDir, file)
+    var filePath = path.join(configDir, file)
 
     try {
-      console.log(`Searching for deprecated parameters in file '${path}'...`)
-      let config = JSON.parse(fs.readFileSync(path))
+      console.log(`Searching for deprecated parameters in file '${filePath}'...`)
+      let config = JSON.parse(fs.readFileSync(filePath))
 
       if ("esHost" in config) {
-        console.log("Parameter 'esHost' found - rewriting...", path)
+        console.log("Parameter 'esHost' found - rewriting...", filePath)
         let esHostPort = config.esHost.split(':')
         _set(config, 'elasticsearch.host', esHostPort[0])
         _set(config, 'elasticsearch.port', esHostPort[1])
@@ -37,8 +38,8 @@ module.exports.up = next => {
         delete config.esIndexes
       }
 
-      fs.writeFileSync(path, JSON.stringify(config, null, 2))
-      console.log(`File '${path}' updated.`)
+      fs.writeFileSync(filePath, JSON.stringify(config, null, 2))
+      console.log(`File '${filePath}' updated.`)
     } catch (e) {
       throw e
     }

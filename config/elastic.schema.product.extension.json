@@ -5,6 +5,7 @@
        "required_options": {"type": "integer"},
        "has_options": {"type": "integer"} ,
        "Size_options": {"type": "keyword"},
-       "Color_options": {"type": "keyword"}
-    }
+       "Color_options": {"type": "keyword"},
+       "gender": {"type":  "integer"}
+   }
 }
