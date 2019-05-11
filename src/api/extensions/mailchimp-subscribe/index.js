@@ -12,7 +12,7 @@ module.exports = ({ config, db }) => {
    */
   mcApi.get('/subscribe', (req, res) => {
 
-    let email = req.query.email
+    const email = req.query.email
     if(!email) {
       apiStatus(res, 'Invalid e-mail provided!', 500)
       return
