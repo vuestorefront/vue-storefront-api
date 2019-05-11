@@ -4,12 +4,12 @@ const hmac = jwa('HS256');
 import { sgnSrc } from '../lib/util'
 
 class ProductProcessor {
-  constructor(config, entityType, indexName, req, res){
+  constructor(config, entityType, indexName, req, res) {
     this._config = config
     this._entityType = entityType
     this._indexName = indexName
     this._req = req
-    this._res = res    
+    this._res = res
   }
 
   process (items, groupId = null) {
@@ -49,7 +49,7 @@ class ProductProcessor {
               return subItem
             })
           }
-          
+
           return item
         }).bind(this))
 
