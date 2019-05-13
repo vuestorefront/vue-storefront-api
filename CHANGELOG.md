@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
-- fixed moving of graphql files to the dist folder (#242)
+- fixed moving of graphql files to the dist folder @ResuBaka (#242)
+- fixed moving of schema files to the dist folder @ResuBaka (#244)
 
 ## [1.9.1] - 2019.05.10
 - Mount ElasticSearch data to `docker/elasticsearch/data` directory - @dimasch, @lukeromanowicz (#237, #241)

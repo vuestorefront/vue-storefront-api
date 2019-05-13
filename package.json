@@ -7,9 +7,10 @@
   "scripts": {
     "dev": "nodemon -w src --exec \"ts-node src\"",
     "dev:inspect": "nodemon -w src --exec \"ts-node --inspect src\"",
-    "build": "npm run -s build:code && npm run -s build:copy:graphql",
+    "build": "npm run -s build:code && npm run -s build:copy:graphql && npm run -s build:copy:schema",
     "build:code": "tsc --build",
     "build:copy:graphql": "cpx src/**/*.graphqls dist",
+    "build:copy:schema": "cpx 'src/**/*.schema*.json' dist",
     "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "node scripts/db.js",
     "seo": "node scripts/seo.js",
