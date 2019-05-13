@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.10.0-rc.1] - UNRELEASED
 
 ### Added
-- Typescript support - @ResuBaka (#210)
+- Typescript support - @ResuBaka (#210, #242)
 - Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
+- fixed moving of graphql files to the dist folder (#242)
 
 ## [1.9.0] - 2019.05.06
 - Changed location of magento1 platform js client. Moved from `src/platform/magento1/module` to [magento1-vsbridge-client](https://github.com/DivanteLtd/magento1-vsbridge-client) - @mtarld (#195)
