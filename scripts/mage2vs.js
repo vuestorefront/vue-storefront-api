@@ -36,6 +36,7 @@ function getMagentoDefaultConfig(storeCode) {
     MAGENTO_ACCESS_TOKEN: apiConfig.accessToken,
     MAGENTO_ACCESS_TOKEN_SECRET: apiConfig.accessTokenSecret,
     MAGENTO_URL: apiConfig.url,
+    MAGENTO_MSI_STOCK_ID: config.msi.defaultStockId,
     REDIS_HOST: config.redis.host,
     REDIS_PORT: config.redis.port,
     REDIS_DB: config.redis.db,
@@ -89,6 +90,7 @@ program
         magentoConfig.INDEX_NAME = storeView.elasticsearch.index
         magentoConfig.INDEX_META_PATH = '.lastIndex-' + cmd.storeCode + '.json'
         magentoConfig.MAGENTO_STORE_ID = storeView.storeId
+        magentoConfig.MAGENTO_MSI_STOCK_ID = storeView.msi.stockId
       }
     }
 
