@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.2] - 2019.05.20
+- Fix failing o2m when parsing order schema - @lukeromanowicz (#248)
+
 ## [1.9.1] - 2019.05.10
 - Mount ElasticSearch data to `docker/elasticsearch/data` directory - @dimasch, @lukeromanowicz (#237, #241)
 - Fix product schema and importer in migration process - @lukeromanowicz (#239)
