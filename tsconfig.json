@@ -4,6 +4,7 @@
     "strict": false,
     "allowJs": true,
     "importHelpers": true,
+    "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

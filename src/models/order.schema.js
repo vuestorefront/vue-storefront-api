@@ -1,4 +1,4 @@
-export default {
+exports.default = {
   additionalProperties: false,
   required: [
     'products',

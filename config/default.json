@@ -175,6 +175,7 @@
   "magento1": {
     "url": "http://magento-demo.local",
     "imgUrl": "http://magento-demo.local/media/catalog/product",
+    "assetPath": "",
     "magentoUserName": "",
     "magentoUserPassword": "",
     "httpUserName": "",
