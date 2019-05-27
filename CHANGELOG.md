@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
 - Added import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
 - Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
+- introduce orderNumber to order creation endpoint - @Flyingmana (#251)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
