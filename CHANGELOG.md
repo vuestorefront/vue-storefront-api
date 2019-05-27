@@ -4,21 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.1] - 2019.05.08
-- Added import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
-- Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
-
 ## [1.10.0-rc.1] - UNRELEASED
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
 - Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
+- Added import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
+- Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
 - fixed moving of graphql files to the dist folder @ResuBaka (#242)
 - fixed moving of schema files to the dist folder @ResuBaka (#244)
 - fixed missing assetPath config for magento1  @ResuBaka (#245)
+
+## [1.9.3] - 2019.05.27
+- Change min postal code length in user profile to 3 so it's sames as in orders - @lukeromanowicz (#253)
 
 ## [1.9.2] - 2019.05.20
 - Fix failing o2m when parsing order schema - @lukeromanowicz (#248)
