@@ -5,20 +5,21 @@ import jwt from 'jwt-simple';
 import { merge } from 'lodash';
 
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 
 function addUserGroupToken(config, result) {
-  /**
-   * Add group id to token
-   */
-  if (config.usePriceTiers) {
-    const data = {
-      group_id : result.group_id,
-      id: result.id,
-      user: result.email,
-    }
+	/**
+	 * Add group id to token
+	 */
+	if (config.usePriceTiers) {
+		const data = {
+			group_id : result.group_id,
+			id: result.id,
+			user: result.email,
+		}
 
-    result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-  }
+		result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+	}
 }
 
 export default ({config, db}) => {
@@ -38,7 +39,10 @@ export default ({config, db}) => {
 
 		const ajv = new Ajv();
 		const userRegisterSchema = require('../models/userRegister.schema.json')
-		const userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json')
+		let userRegisterSchemaExtension = {};
+		if(fs.existsSync('../models/userRegister.schema.extension.json')) {
+			userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
 
 		if (!validate(req.body)) { // schema validation of upcoming order
@@ -73,7 +77,7 @@ export default ({config, db}) => {
 					apiStatus(res, err, 500);
 				})
 			} else {
-        apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}
 		}).catch(err => {
 			apiStatus(res, err, 500);
@@ -92,7 +96,7 @@ export default ({config, db}) => {
 		try {
 			const decodedToken = jwt.decode(req.body ? decryptToken(req.body.refreshToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret) : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
 
-      if (!decodedToken) {
+			if (!decodedToken) {
 				return apiStatus(res, 'Invalid refresh token provided', 500);
 			}
 
@@ -123,24 +127,24 @@ export default ({config, db}) => {
 		})
 	});
 
-  /**
-   * POST resetPassword
-   */
-  userApi.post('/reset-password', (req, res) => {
-    const userProxy = _getProxy(req)
+	/**
+	 * POST resetPassword
+	 */
+	userApi.post('/reset-password', (req, res) => {
+		const userProxy = _getProxy(req)
 
-    if(!req.body.email) {
-      return apiStatus(res, "Invalid e-mail provided!", 500)
-    }
+		if(!req.body.email) {
+			return apiStatus(res, "Invalid e-mail provided!", 500)
+		}
 
-    userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
-      apiStatus(res, result, 200);
-    }).catch(err=> {
-      apiStatus(res, err, 500);
-    })
-  });
+		userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
+			apiStatus(res, result, 200);
+		}).catch(err=> {
+			apiStatus(res, err, 500);
+		})
+	});
 
-  /**
+	/**
 	 * GET  an user
 	 */
 	userApi.get('/me', (req, res) => {
@@ -171,7 +175,10 @@ export default ({config, db}) => {
 	userApi.post('/me', (req, res) => {
 		const ajv = new Ajv();
 		const userProfileSchema = require('../models/userProfile.schema.json')
-		const userProfileSchemaExtension = require('../models/userProfile.schema.extension.json')
+		let userProfileSchemaExtension = {};
+		if(fs.existsSync('../models/userProfile.schema.extension.json')) {
+			userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
 		if (req.body.customer && req.body.customer.groupToken) {
