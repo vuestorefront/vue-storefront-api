@@ -11,5 +11,6 @@ src/config.json
 config/local.json
 var/magento2-sample-data/
 .migrate
+*.iml
 /docker/elasticsearch/data/
 !/docker/elasticsearch/data/.gitkeep
