@@ -5,6 +5,7 @@ import jwt from 'jwt-simple';
 import { merge } from 'lodash';
 
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 
 function addUserGroupToken(config, result) {
   /**
@@ -38,7 +39,10 @@ export default ({config, db}) => {
 
 		const ajv = new Ajv();
 		const userRegisterSchema = require('../models/userRegister.schema.json')
-		const userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json')
+		let userRegisterSchemaExtension = {};
+		if(fs.existsSync('../models/userRegister.schema.extension.json')) {
+			userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
 
 		if (!validate(req.body)) { // schema validation of upcoming order
@@ -171,7 +175,10 @@ export default ({config, db}) => {
 	userApi.post('/me', (req, res) => {
 		const ajv = new Ajv();
 		const userProfileSchema = require('../models/userProfile.schema.json')
-		const userProfileSchemaExtension = require('../models/userProfile.schema.extension.json')
+		let userProfileSchemaExtension = {};
+		if(fs.existsSync('../models/userProfile.schema.extension.json')) {
+			userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
 		if (req.body.customer && req.body.customer.groupToken) {
