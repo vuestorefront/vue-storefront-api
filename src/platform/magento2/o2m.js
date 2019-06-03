@@ -15,7 +15,7 @@ const ajv = new Ajv(); // validator
 const merge = require('lodash/merge')
 const orderSchema = require('../../models/order.schema.js')
 let orderSchemaExtension = {}
-if(fs.existsSync('../models/userRegister.schema.extension.json')) {
+if(fs.existsSync('../../models/order.schema.extension.json')) {
   orderSchemaExtension = require('../../models/order.schema.extension.json')
 }
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
