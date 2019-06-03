@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed moving of graphql files to the dist folder @ResuBaka (#242)
 - fixed moving of schema files to the dist folder @ResuBaka (#244)
 - fixed missing assetPath config for magento1  @ResuBaka (#245)
+- fixed new payload for magento1 stock check endpoint (#261)
 
 ## [1.9.3] - 2019.05.27
 - Change min postal code length in user profile to 3 so it's sames as in orders - @lukeromanowicz (#253)
