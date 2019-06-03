@@ -10,10 +10,14 @@ redisClient.on('error', function (err) { // workaround for https://github.com/No
 });
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 const ajv = new Ajv(); // validator
 const merge = require('lodash/merge')
 const orderSchema = require('../../models/order.schema.js')
-const orderSchemaExtension = require('../../models/order.schema.extension.json')
+let orderSchemaExtension = {}
+if(fs.existsSync('../../models/order.schema.extension.json')) {
+  orderSchemaExtension = require('../../models/order.schema.extension.json')
+}
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 function isNumeric(val) {
