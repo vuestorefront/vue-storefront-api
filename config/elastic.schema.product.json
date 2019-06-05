@@ -2,6 +2,7 @@
    "properties": {
        "sku": {"type": "keyword"},
        "url_key": {"type": "keyword"},
+       "url_path": {"type": "keyword"},
        "slug": {"type": "keyword"},
        "size": {"type": "integer"},
        "size_options": {"type": "integer"},
@@ -72,6 +73,9 @@
        "eco_collection": {"type": "integer"},
        "eco_collection_options": {"type": "integer"},
        "erin_recommends": {"type": "integer"},
-       "tax_class_id": {"type": "integer"}
+       "tax_class_id": {"type": "integer"},
+       "gender": {"type": "integer"},
+       "material": {"type": "integer"},
+       "category_gear": {"type": "integer"}
     }
 }

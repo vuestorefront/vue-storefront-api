@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import PlatformFactory from '../platform/factory';
 
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
@@ -24,18 +25,22 @@ export default ({ config, db }) => resource({
 	 * POST create an order with JSON payload compliant with models/order.md
 	 */
 	create(req, res) {
-		
 
 		const ajv = new Ajv();
-		const orderSchema = require('../models/order.schema.json')
-		const orderSchemaExtension = require('../models/order.schema.extension.json')
+		require('ajv-keywords')(ajv, 'regexp');
+
+		const orderSchema = require('../models/order.schema.js')
+		let orderSchemaExtension = {}
+		if(fs.existsSync('../models/order.schema.extension.json')) {
+			orderSchemaExtension = require('../models/order.schema.extension.json')
+		}
 		const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 		if (!validate(req.body)) { // schema validation of upcoming order
 			console.dir(validate.errors);
-			apiStatus(res, validate.errors, 500);
+			apiStatus(res, validate.errors, 400);
 			return;
-		}				
+		}
 		const incomingOrder = { title: 'Incoming order received on ' + new Date() + ' / ' + req.ip, ip: req.ip, agent: req.headers['user-agent'], receivedAt: new Date(), order: req.body  }/* parsed using bodyParser.json middleware */
 		console.log(JSON.stringify(incomingOrder))
 
@@ -47,7 +52,7 @@ export default ({ config, db }) => resource({
 				key.sku = product.sku
 			}
 			// console.log(key)
-			
+
 			if (!config.tax.usePlatformTotals) {
 				if (!hmac.verify(key, product.sgn, config.objHashSecret)) {
 					console.error('Invalid hash for ' + product.sku + ': ' + product.sgn)

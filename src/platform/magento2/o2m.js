@@ -8,12 +8,19 @@ let redisClient = Redis.createClient(config.redis); // redis client
 redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
   redisClient = Redis.createClient(config.redis); // redis client
 });
+if (config.redis.auth) {
+  redisClient.auth(config.redis.auth);
+}
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 const ajv = new Ajv(); // validator
 const merge = require('lodash/merge')
-const orderSchema = require('../../models/order.schema.json')
-const orderSchemaExtension = require('../../models/order.schema.extension.json')
+const orderSchema = require('../../models/order.schema.js')
+let orderSchemaExtension = {}
+if(fs.existsSync('../../models/order.schema.extension.json')) {
+  orderSchemaExtension = require('../../models/order.schema.extension.json')
+}
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 function isNumeric(val) {
@@ -132,10 +139,12 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
         let mappedBillingRegion = 0
 
         api.directory.countries().then((countryList) => {
-          if (shippingAddr.region_id > 0) {
-            mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
-          } else {
-            mappedShippingRegion = countryMapper.mapCountryRegion(countryList, shippingAddr.country_id, shippingAddr.region_code ? shippingAddr.region_code : shippingAddr.region)
+          if (typeof shippingAddr !== 'undefined' && shippingAddr !== null) {
+            if (shippingAddr.region_id > 0) {
+              mappedShippingRegion = { regionId: shippingAddr.region_id, regionCode: shippingAddr.region_code }
+            } else {
+              mappedShippingRegion = countryMapper.mapCountryRegion(countryList, shippingAddr.country_id, shippingAddr.region_code ? shippingAddr.region_code : shippingAddr.region)
+            }
           }
 
           if (billingAddr.region_id > 0) {
@@ -163,20 +172,6 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
 
           const shippingAddressInfo = { // sum up totals
             "addressInformation": {
-              "shippingAddress": {
-                "countryId": shippingAddr.country_id,
-                "street": shippingAddr.street,
-                "telephone": shippingAddr.telephone,
-                "postcode": shippingAddr.postcode,
-                "city": shippingAddr.city,
-                "firstname": shippingAddr.firstname,
-                "lastname": shippingAddr.lastname,
-                "email": shippingAddr.email,
-                "regionId": mappedShippingRegion.regionId,
-                "regionCode": mappedShippingRegion.regionCode,
-                "company": shippingAddr.company
-              },
-
               "billingAddress": {
                 "countryId": billingAddr.country_id,
                 "street": billingAddr.street,
@@ -195,6 +190,24 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
               "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
               "extensionAttributes": orderData.addressInformation.shippingExtraFields
             }
+          }
+
+          if (typeof shippingAddr !== 'undefined' && shippingAddr !== null) {
+            shippingAddressInfo["addressInformation"]["shippingAddress"] = {
+              "countryId": shippingAddr.country_id,
+              "street": shippingAddr.street,
+              "telephone": shippingAddr.telephone,
+              "postcode": shippingAddr.postcode,
+              "city": shippingAddr.city,
+              "firstname": shippingAddr.firstname,
+              "lastname": shippingAddr.lastname,
+              "email": shippingAddr.email,
+              "regionId": mappedShippingRegion.regionId,
+              "regionCode": mappedShippingRegion.regionCode,
+              "company": shippingAddr.company
+            }
+          } else {
+            shippingAddressInfo["addressInformation"]["shippingAddress"] = shippingAddressInfo["addressInformation"]["billingAddress"]
           }
 
           logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
@@ -225,9 +238,15 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
                   order: orderData
                 }));
                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
-
-                if(job) job.progress(currentStep++, TOTAL_STEPS);
-                return done(null, { magentoOrderId: result, backendOrderId: result, transferedAt: new Date() });
+                let orderIncrementId = null;
+                api.orders.incrementIdById(result).then(result => {
+                  orderIncrementId = result.increment_id
+                }).catch( err => {
+                  logger.warn('could not fetch increment_id for Order', err, typeof err)
+                }).finally(() => {
+                  if(job) job.progress(currentStep++, TOTAL_STEPS);
+                  return done(null, { magentoOrderId: result, orderNumber: orderIncrementId, backendOrderId: result, transferedAt: new Date() });
+                })
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
                 if (job) job.attempts(6).backoff({ delay: 30*1000, type:'fixed' }).save()

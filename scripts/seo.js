@@ -3,12 +3,16 @@ const config = require('config')
 const common = require('../migrations/.common')
 const es = require('../src/lib/elastic')
 
+const fs = require('fs')
+const path = require('path')
+
 program
   .command('redirects')
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
   .option('-f|--oldFormat <oldFormat>', 'use the old format', true)
   .option('-s|--size <size>', 'size', 10000)
-  .action((cmd) => {
+  .option('-d|--dest <dest>', 'dest', './')
+  .action(async (cmd) => {
     if (!cmd.indexName) {
       console.error('error: indexName must be specified');
       process.exit(1);
@@ -18,24 +22,28 @@ program
     console.log('** Please check the nginx map module options on how to use this map format: https://serverfault.com/a/441517')
     console.log('** The urls will be mapped to the new VS Url format. Please make sure You have "products.useMagentoUrlKeys=true" in Your vue-storefront/config/local.json')
 
-    es.search(common.db, {
-      index: cmd.indexName,
-      type: 'product',
-      size: cmd.size,
-      body: {}
-    }).then(function (resp) {
-      const hits = resp.hits.hits
+    try {
+      const redirects = []
 
-      for (const hit of hits) {
-        const product = hit._source
-        if (cmd.oldFormat) {
-          console.log(`/${product.url_key} /p/${decodeURIComponent(product.sku)}/${product.url_key}/${decodeURIComponent(product.sku)};`)
-        } else {
-          console.log(`/${product.url_key} /${product.url_key}/${decodeURIComponent(product.sku)};`)
+      await es.search(common.db, {
+        index: cmd.indexName,
+        type: 'product',
+        size: cmd.size,
+        body: {}
+      }).then(function (resp) {
+        const hits = resp.hits.hits
+
+        for (const hit of hits) {
+          const product = hit._source
+          if (cmd.oldFormat) {
+            redirects.push(`/${product.url_key} /p/${decodeURIComponent(product.sku)}/${product.url_key}/${decodeURIComponent(product.sku)};`)
+          } else {
+            redirects.push(`/${product.url_key} /${product.url_key}/${decodeURIComponent(product.sku)};`)
+          }
         }
-      }
+      })
 
-      es.search(common.db, {
+      await es.search(common.db, {
         index: cmd.indexName,
         type: 'category',
         size: cmd.size,
@@ -45,13 +53,22 @@ program
         for (const hit of hits) {
           const category = hit._source
           if (cmd.oldFormat) {
-            console.log(`/${category.url_path} /c/${category.url_key};`)
+            redirects.push(`/${category.url_path} /c/${category.url_key};`)
           } else {
-            console.log(`/${category.url_path} /${category.url_key};`)
+            redirects.push(`/${category.url_path} /${category.url_key};`)
           }
         }
       })
-    })
+
+      fs.writeFileSync(
+        path.join(path.resolve(cmd.dest), `${cmd.indexName}-redirects`),
+        redirects.join('\n')
+      )
+      process.exit(0)
+    } catch (error) {
+      console.error(error)
+      process.exit(1)
+    }
   })
 
 program

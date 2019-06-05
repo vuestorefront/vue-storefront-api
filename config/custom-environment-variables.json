@@ -10,6 +10,7 @@
   "redis": {
     "host": "REDIS_HOST",
     "port": "REDIS_PORT",
-    "db": "REDIS_DB"
+    "db": "REDIS_DB",
+    "auth": "REDIS_AUTH"
   }
 }

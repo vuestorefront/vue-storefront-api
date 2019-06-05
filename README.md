@@ -127,9 +127,15 @@ You can run the following command to execute the full import:
  ```
 
  ... or in multistore setup You can run the same command with specified `store-code` parameter
-`
-``bash
+
+```bash
  yarn mage2vs import --store-code=de
+ ```
+
+ Import of CMS blocks and pages is also performed by the full import. If the CMS API extension ((SnowdogApps/magento2-cms-api)[https://github.com/SnowdogApps/magento2-cms-api]) was not installed in magento 2, it's recommended to skip the CMS import commands.
+
+```bash
+ yarn mage2vs import --skip-blocks --skip-pages
  ```
  
 ## Executing delta indexer

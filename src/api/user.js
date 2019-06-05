@@ -1,10 +1,11 @@
-import { apiStatus } from '../lib/util';
+import { apiStatus, encryptToken, decryptToken } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 import jwt from 'jwt-simple';
 import { merge } from 'lodash';
 
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 
 function addUserGroupToken(config, result) {
   /**
@@ -38,7 +39,10 @@ export default ({config, db}) => {
 
 		const ajv = new Ajv();
 		const userRegisterSchema = require('../models/userRegister.schema.json')
-		const userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json')
+		let userRegisterSchemaExtension = {};
+		if(fs.existsSync('../models/userRegister.schema.extension.json')) {
+			userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
 
 		if (!validate(req.body)) { // schema validation of upcoming order
@@ -68,12 +72,12 @@ export default ({config, db}) => {
 			 */
 			if (config.usePriceTiers) {
 				userProxy.me(result).then((resultMe) => {
-					apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+					apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 				}).catch(err => {
 					apiStatus(res, err, 500);
 				})
 			} else {
-        apiStatus(res, result, 200, {refreshToken: jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+        apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}
 		}).catch(err => {
 			apiStatus(res, err, 500);
@@ -89,16 +93,21 @@ export default ({config, db}) => {
 		if (!req.body || !req.body.refreshToken) {
 			return apiStatus(res, 'No refresh token provided', 500);
 		}
+		try {
+			const decodedToken = jwt.decode(req.body ? decryptToken(req.body.refreshToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret) : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
 
-		const decodedToken = jwt.decode(req.body ? req.body.refreshToken : '', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-		if (!decodedToken) {
-			return apiStatus(res, 'Invalid refresh token provided', 500);
+      if (!decodedToken) {
+				return apiStatus(res, 'Invalid refresh token provided', 500);
+			}
+
+			userProxy.login(decodedToken).then((result) => {
+				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+			}).catch(err => {
+				apiStatus(res, err, 500);
+			})
+		} catch (err) {
+			return apiStatus(res, err.message, 500);
 		}
-		userProxy.login(decodedToken).then((result) => {
-			apiStatus(res, result, 200, {refreshToken: jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-		}).catch(err => {
-			apiStatus(res, err, 500);
-		})
 	});
 
 	/**
@@ -166,7 +175,10 @@ export default ({config, db}) => {
 	userApi.post('/me', (req, res) => {
 		const ajv = new Ajv();
 		const userProfileSchema = require('../models/userProfile.schema.json')
-		const userProfileSchemaExtension = require('../models/userProfile.schema.extension.json')
+		let userProfileSchemaExtension = {};
+		if(fs.existsSync('../models/userProfile.schema.extension.json')) {
+			userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
+		}
 		const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
 		if (req.body.customer && req.body.customer.groupToken) {

@@ -7,6 +7,9 @@
   "orders": {
     "useServerQueue": false
   },
+  "catalog": {
+    "excludeDisabledProducts": false
+  },
   "elasticsearch": {
     "host": "localhost",
     "port": 9200,
@@ -26,18 +29,24 @@
       "attribute",
       "taxrule",
       "review"
-    ]
+    ],
+    "apiVersion": "5.6"
   },
   "redis": {
     "host": "localhost",
     "port": 6379,
-    "db": 0
+    "db": 0,
+    "auth": false
   },
   "kue": {},
   "availableStores": [
     "de",
     "it"
   ],
+  "msi": {
+    "enabled": false,
+    "defaultStockId": 1
+  },
   "storeViews": {
     "multistore": true,
     "mapStoreUrlsFor": [
@@ -46,7 +55,7 @@
     ],
     "de": {
       "storeCode": "de",
-      "disabled": true,
+      "disabled": false,
       "storeId": 3,
       "name": "German Store",
       "url": "/de",
@@ -54,11 +63,14 @@
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_de"
       },
+      "msi": {
+        "stockId": 2
+      },
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+		    "sourcePriceIncludesTax": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -73,13 +85,16 @@
     },
     "it": {
       "storeCode": "it",
-      "disabled": true,
+      "disabled": false,
       "storeId": 4,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_it"
+      },
+      "msi": {
+        "stockId": 2
       },
       "tax": {
         "defaultCountry": "IT",
@@ -156,6 +171,22 @@
       "consumerSecret": "u9q4fcobv7vfx9td80oupa6uhexc27rb",
       "accessToken": "040xx3qy7s0j28o3q0exrfop579cy20m",
       "accessTokenSecret": "7qunl3p505rubmr7u1ijt7odyialnih9"
+    }
+  },
+  "magento1": {
+    "url": "http://magento-demo.local",
+    "imgUrl": "http://magento-demo.local/media/catalog/product",
+    "assetPath": "",
+    "magentoUserName": "",
+    "magentoUserPassword": "",
+    "httpUserName": "",
+    "httpUserPassword": "",
+    "api": {
+      "url": "http://magento-demo.local/vsbridge",
+      "consumerKey": "",
+      "consumerSecret": "",
+      "accessToken": "",
+      "accessTokenSecret": ""
     }
   },
   "imageable": {

@@ -1,8 +1,12 @@
 function isSpecialPriceActive(fromDate, toDate) {
   const now = new Date()
-  fromDate = new Date(fromDate) || false
-  toDate = new Date(toDate) || false
+  fromDate = fromDate ? new Date(fromDate) : false
+  toDate = toDate ? new Date(toDate) : false
 
+  if (!fromDate && !toDate) {
+    return true
+  }
+  
   if (fromDate && toDate) {
     return fromDate < now && toDate > now
   }
