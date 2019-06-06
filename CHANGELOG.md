@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
 - introduce orderNumber to order creation endpoint - @Flyingmana (#251)
 - Added optional Redis Auth functionality. @rain2o (#267)
+- Extensions have ability to modify Elasticsearch results. @grimasod (#269)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
