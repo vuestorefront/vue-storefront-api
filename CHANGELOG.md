@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - introduce orderNumber to order creation endpoint - @Flyingmana (#251)
 - Added optional Redis Auth functionality. @rain2o (#267)
 - Extensions have ability to modify Elasticsearch results. @grimasod (#269)
-- Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E (#272)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
@@ -22,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed moving of schema files to the dist folder @ResuBaka (#244)
 - fixed missing assetPath config for magento1  @ResuBaka (#245)
 - fixed new payload for magento1 stock check endpoint (#261)
+- Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E (#272)
 
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)
