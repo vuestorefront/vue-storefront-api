@@ -6,7 +6,7 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"ts-node src\"",
-    "dev:inspect": "nodemon -w src --exec \"ts-node --inspect src\"",
+    "debug": "node --inspect -r ts-node/register src",
     "build": "npm run -s build:code && npm run -s build:copy:graphql && npm run -s build:copy:schema",
     "build:code": "tsc --build",
     "build:copy:graphql": "cpx src/**/*.graphqls dist",
