@@ -11,12 +11,13 @@ install:
 
 jobs:
   include:
-    - stage: Build
+    - &build
+      stage: Build
       script:
-        - yarn lint
-        - yarn build
-      node_js: "8"
-    - script:
-        - yarn lint
-        - yarn build
-      node_js: "10"
+      - yarn lint
+      - yarn build
+      node_js: '10'
+
+    - <<: *build
+      node_js: '8'
+
