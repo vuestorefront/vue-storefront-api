@@ -19,8 +19,15 @@ export function multiStoreConfig(apiConfig, req) {
     {
         if (config.magento2['api_' + storeCode]) {
             confCopy = Object.assign({}, config.magento2['api_' + storeCode]) // we're to use the specific api configuration - maybe even separate magento instance
-        }        
-        confCopy.url = confCopy.url + '/' + storeCode
+        }
+
+        if (config.platform === 'magento1') {
+            if (new RegExp("(/" + config.availableStores.join("|") + "/)", "gm").exec(confCopy.url) === null) {
+                confCopy.url = (confCopy.url).replace(/(vsbridge)/gm, `${storeCode}/$1`);
+            }
+        } else {
+            confCopy.url = confCopy.url + '/' + storeCode
+        }
     } else {
         if (storeCode) {
             console.error('Unavailable store code', storeCode)
