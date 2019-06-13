@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed missing assetPath config for magento1  @ResuBaka (#245)
 - fixed new payload for magento1 stock check endpoint (#261)
 - Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
+- Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E (#272)
+- Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
 
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)
