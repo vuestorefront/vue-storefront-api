@@ -9,22 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
 - Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
-- Added import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
-- Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
-- introduce orderNumber to order creation endpoint - @Flyingmana (#251)
-- Added optional Redis Auth functionality. @rain2o (#267)
+- Import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
+- Information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
+- Introduce orderNumber to order creation endpoint - @Flyingmana (#251)
+- Optional Redis Auth functionality. @rain2o (#267)
 - Extensions have ability to modify Elasticsearch results. @grimasod (#269)
 - Refactored Travis build config @Tjitse-E (#273)
 - Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
-- fixed moving of graphql files to the dist folder @ResuBaka (#242)
-- fixed moving of schema files to the dist folder @ResuBaka (#244)
-- fixed missing assetPath config for magento1  @ResuBaka (#245)
-- fixed new payload for magento1 stock check endpoint (#261)
-- Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
-- Fix `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E (#272)
+- Moving of graphql files to the dist folder @ResuBaka (#242)
+- Moving of schema files to the dist folder @ResuBaka (#244)
+- Missing assetPath config for magento1  @ResuBaka (#245)
+- New payload for magento1 stock check endpoint (#261)
+- `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
 - Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
 
 ## [1.9.4] - 2019.06.03
