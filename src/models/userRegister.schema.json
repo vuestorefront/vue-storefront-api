@@ -23,6 +23,62 @@
                 "lastname": {
                     "type": "string",
                     "pattern": "[a-zA-Z]+"
+                },
+                "addresses": {
+                    "maxItems": 2,
+                    "items": {
+                        "required": [
+                            "firstname",
+                            "lastname",
+                            "street",
+                            "city",
+                            "country_id",
+                            "postcode"
+                        ],
+                        "properties": {
+                            "firstname": {
+                                "type": "string",
+                                "pattern": "[a-zA-Z]+"
+                            },
+                            "lastname": {
+                                "type": "string",
+                                "pattern": "[a-zA-Z]+"
+                            },
+                            "street": {
+                                "minItems": 2,
+                                "items": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "city": {
+                                "type": "string"
+                            },
+                            "region": {
+                                "required": ["region"],
+                                "properties": {
+                                    "region": {
+                                        "type": ["string", "null"]
+                                    }
+                                }
+                            },
+                            "country_id": {
+                                "type": "string",
+                                "minLength": 2,
+                                "pattern": "[A-Z]+"
+                            },
+                            "postcode": {
+                                "type": "string",
+                                "minLength": 3
+                            },
+                            "telephone": {
+                                "type": "string"
+                            },
+                            "default_shipping": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
                 }
             }
         },
