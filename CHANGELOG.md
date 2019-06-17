@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.0-rc.1] - UNRELEASED
+## [1.10.0-rc.1] - 2019.06.17
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New payload for magento1 stock check endpoint (#261)
 - `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
 - Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
+
+## [1.9.5] - 2019.06.17
+- Dependencies security update against js-yaml flaws.
 
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)
