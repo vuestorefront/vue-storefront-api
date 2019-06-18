@@ -1,6 +1,6 @@
 {
   "name": "vue-storefront-api",
-  "version": "1.9.3",
+  "version": "1.10.0-rc1",
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
