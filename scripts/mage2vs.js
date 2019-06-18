@@ -40,6 +40,7 @@ function getMagentoDefaultConfig(storeCode) {
     REDIS_HOST: config.redis.host,
     REDIS_PORT: config.redis.port,
     REDIS_DB: config.redis.db,
+    REDIS_AUTH: config.redis.auth,
     INDEX_NAME: config.elasticsearch.indices[0],
     DATABASE_URL: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`
   }
@@ -91,6 +92,9 @@ program
         magentoConfig.INDEX_META_PATH = '.lastIndex-' + cmd.storeCode + '.json'
         magentoConfig.MAGENTO_STORE_ID = storeView.storeId
         magentoConfig.MAGENTO_MSI_STOCK_ID = storeView.msi.stockId
+        if (storeView.i18n && storeView.i18n.currencyCode) {
+          magentoConfig.MAGENTO_CURRENCY_CODE = storeView.i18n.currencyCode;
+        }
       }
     }
 
@@ -135,6 +139,9 @@ program
       } else {
         magentoConfig.INDEX_NAME = storeView.elasticsearch.index;
         magentoConfig.MAGENTO_STORE_ID = storeView.storeId;
+        if (storeView.i18n && storeView.i18n.currencyCode) {
+          magentoConfig.MAGENTO_CURRENCY_CODE = storeView.i18n.currencyCode;
+        }
       }
     }
 

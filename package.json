@@ -1,12 +1,12 @@
 {
   "name": "vue-storefront-api",
-  "version": "1.9.0",
+  "version": "1.10.0-rc1",
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec \"ts-node src\"",
-    "dev:inspect": "nodemon -w src --exec \"ts-node --inspect src\"",
+    "dev": "nodemon",
+    "dev:inspect": "nodemon --exec \"node --inspect -r ts-node/register src\"",
     "build": "npm run -s build:code && npm run -s build:copy:graphql && npm run -s build:copy:schema",
     "build:code": "tsc --build",
     "build:copy:graphql": "cpx src/**/*.graphqls dist",
@@ -79,6 +79,7 @@
     "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
     "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
+    "md5": "^2.2.1",
     "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.6.2",
     "mime-types": "^2.1.18",

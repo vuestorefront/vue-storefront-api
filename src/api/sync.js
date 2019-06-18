@@ -15,6 +15,9 @@ export default ({ config, db }) => {
 		redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
 			redisClient = Redis.createClient(config.redis); // redis client
 		});
+		if (config.redis.auth) {
+			redisClient.auth(config.redis.auth);
+		}
 		
 		redisClient.get('order$$id$$' + req.param('order_id'), function (err, reply) {
 			const orderMetaData = JSON.parse(reply)

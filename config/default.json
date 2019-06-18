@@ -35,7 +35,8 @@
   "redis": {
     "host": "localhost",
     "port": 6379,
-    "db": 0
+    "db": 0,
+    "auth": false
   },
   "kue": {},
   "availableStores": [
@@ -136,7 +137,8 @@
     "mailchimp-subscribe",
     "example-magento-api",
     "cms-data",
-    "mail-service"
+    "mail-service",
+    "example-processor"
   ],
   "extensions": {
     "mailchimp": {
@@ -154,6 +156,11 @@
       },
       "targetAddressWhitelist": ["contributors@vuestorefront.io"],
       "secretString": "__THIS_IS_SO_SECRET__"
+    },
+    "example-processor": {
+      "resultProcessors": {
+        "product": "my-product-processor"
+      }
     }
   },
   "magento2": {

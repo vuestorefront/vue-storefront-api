@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import PlatformFactory from '../platform/factory';
 
 const Ajv = require('ajv'); // json validator
+const fs = require('fs');
 const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
@@ -29,7 +30,10 @@ export default ({ config, db }) => resource({
 		require('ajv-keywords')(ajv, 'regexp');
 
 		const orderSchema = require('../models/order.schema.js')
-		const orderSchemaExtension = require('../models/order.schema.extension.json')
+		let orderSchemaExtension = {}
+		if(fs.existsSync('../models/order.schema.extension.json')) {
+			orderSchemaExtension = require('../models/order.schema.extension.json')
+		}
 		const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
 		if (!validate(req.body)) { // schema validation of upcoming order

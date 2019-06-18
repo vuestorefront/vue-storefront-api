@@ -4,21 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.1] - 2019.05.08
-- Added import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
-- Added information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
-
 ## [1.10.0-rc.1] - UNRELEASED
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
 - Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
+- Import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
+- Information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
+- Introduce orderNumber to order creation endpoint - @Flyingmana (#251)
+- Optional Redis Auth functionality. @rain2o (#267)
+- Extensions have ability to modify Elasticsearch results. @grimasod (#269)
+- Refactored Travis build config @Tjitse-E (#273)
+- Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
-- fixed moving of graphql files to the dist folder @ResuBaka (#242)
-- fixed moving of schema files to the dist folder @ResuBaka (#244)
-- fixed missing assetPath config for magento1  @ResuBaka (#245)
+- Moving of graphql files to the dist folder @ResuBaka (#242)
+- Moving of schema files to the dist folder @ResuBaka (#244)
+- Missing assetPath config for magento1  @ResuBaka (#245)
+- New payload for magento1 stock check endpoint (#261)
+- `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
+- Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
+
+## [1.9.4] - 2019.06.03
+- Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)
+
+## [1.9.3] - 2019.05.27
+- Change min postal code length in user profile to 3 so it's sames as in orders - @lukeromanowicz (#253)
 
 ## [1.9.2] - 2019.05.20
 - Fix failing o2m when parsing order schema - @lukeromanowicz (#248)
