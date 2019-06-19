@@ -17,6 +17,8 @@ services:
       - './migrations:/var/www/migrations'
       - './package.json:/var/www/package.json'
       - './babel.config.js:/var/www/babel.config.js'
+      - './tsconfig.json:/var/www/tsconfig.json'
+      - './nodemon.json:/var/www/nodemon.json'
       - './scripts:/var/www/scripts'
       - './src:/var/www/src'
       - './var:/var/www/var'
