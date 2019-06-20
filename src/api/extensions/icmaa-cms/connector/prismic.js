@@ -16,14 +16,22 @@ class PrismicConnector {
       query.push( Prismic.Predicates.at('my.' + type + '.uid', uid) )
     }
     
-    let options = {
-      lang: (lang === undefined || lang === 'all') ? '*' : lang
-    }
-
     try {
       let api = await this.api();
-      return await api.query(query, options)
-        .then(response => response)
+      return await api.query(query, { lang: '*' })
+        .then(response => {
+          let result = false
+          
+          if (lang !== undefined) {
+            result = response.results.find(result => result.lang === lang)
+          }
+
+          if (!result) {
+            result = response.results.find(result => result.lang === config.extensions.icmaaCms.prismic.fallbackLanguage)
+          }
+
+          return result.data || {}
+         })
         .catch(error => error)
     } catch (error) {
       return error

@@ -15,7 +15,8 @@ This API extension get data from headless cms of choice.
        "service": "prismic",
        "prismic": {
          "apiEndpoint": "https://YOUR-ENDPOINT.cdn.prismic.io/api/v2",
-         "apiToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+         "apiToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+         "fallbackLanguage": "de-de"
        }
     }
   },
