@@ -11,6 +11,7 @@ services:
     env_file: docker/vue-storefront-api/default.env
     environment:
       VS_ENV: dev
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
     volumes:
       - './config:/var/www/config'
       - './ecosystem.json:/var/www/ecosystem.json'
