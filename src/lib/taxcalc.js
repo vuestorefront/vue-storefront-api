@@ -22,8 +22,22 @@ function isSpecialPriceActive(fromDate, toDate) {
 
 export function updateProductPrices (product, rate, sourcePriceInclTax = false) {
   const rate_factor = parseFloat(rate.rate) / 100
+  product.final_price = parseFloat(product.final_price)
   product.price = parseFloat(product.price)
   product.special_price = parseFloat(product.special_price)
+
+  if (product.final_price) {
+    if (product.final_price < product.price) { // compare the prices with the product final price if provided; final prices is used in case of active catalog promo rules for example
+      if (product.final_price < product.special_price) { // for VS - special_price is any price lowered than regular price (`price`); in Magento there is a separate mechanism for setting the `special_prices`
+        product.price = product.special_price // if the `final_price` is lower than the original `special_price` - it means some catalog rules were applied over it
+      }
+      product.special_to_date = null
+      product.special_from_date = null
+      product.special_price = product.final_price
+    } else {
+      product.price = product.final_price
+    }
+  }
 
   let price_excl_tax = product.price
   if (sourcePriceInclTax) {
@@ -84,6 +98,20 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
       }
       configurableChild.price = parseFloat(configurableChild.price)
       configurableChild.special_price = parseFloat(configurableChild.special_price)
+      configurableChild.final_price = parseFloat(configurableChild.final_price)
+
+      if (configurableChild.final_price) {
+        if (configurableChild.final_price < configurableChild.price) { // compare the prices with the product final price if provided; final prices is used in case of active catalog promo rules for example
+          if (configurableChild.final_price < configurableChild.special_price) { // for VS - special_price is any price lowered than regular price (`price`); in Magento there is a separate mechanism for setting the `special_prices`
+          configurableChild.price = configurableChild.special_price // if the `final_price` is lower than the original `special_price` - it means some catalog rules were applied over it
+          }
+          configurableChild.special_to_date = null
+          configurableChild.special_from_date = null
+          configurableChild.special_price = product.final_price
+        } else {
+          configurableChild.price = configurableChild.final_price
+        }
+      }
 
       let price_excl_tax = configurableChild.price
       if (sourcePriceInclTax) {
@@ -106,7 +134,7 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
 
       /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
       configurableChild.priceTax = configurableChild.price_tax
-      configurableChild.prceInclTax = configurableChild.price_incl_tax
+      configurableChild.priceInclTax = configurableChild.price_incl_tax
       configurableChild.specialPriceTax = configurableChild.special_price_tax
       configurableChild.specialPriceInclTax = configurableChild.special_price_incl_tax
       /** END */
@@ -169,18 +197,12 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
           updateProductPrices(product, rate, sourcePriceInclTax)
           rateFound = true
-          console.debug('Tax rate ' + rate.code + ' = ' + rate.rate + '% found for ' + taxCountry + ' / ' + taxRegion)
           break
         }
       }
-    } else {
-      console.debug('No such tax class id: ' + product.tax_class_id)
     }
-  } else  {
-    console.debug('No  tax class set for: ' + product.sku)
   }
   if (!rateFound) {
-    console.log('No such tax class id: ' + product.tax_class_id + ' or rate not found for ' + taxCountry + ' / ' + taxRegion)
     updateProductPrices(product, {rate: 0})
 
     product.price_incl_tax = product.price
