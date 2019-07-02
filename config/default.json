@@ -71,7 +71,8 @@
         "defaultRegion": "",
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
-		    "sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false,
+		    "finalPriceIncludesTax": false        
       },
       "i18n": {
         "fullCountryName": "Germany",

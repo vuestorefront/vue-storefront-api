@@ -20,10 +20,17 @@ function isSpecialPriceActive (fromDate, toDate) {
   }
 }
 
-export function updateProductPrices (product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false) {
+export function updateProductPrices (product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true) {
   const rate_factor = parseFloat(rate.rate) / 100
-  product.final_price_incl_tax = parseFloat(product.final_price) // final price does include tax
-  product.final_price = product.final_price_incl_tax / (1 + rate_factor)
+  if (finalPriceInclTax) {
+    product.final_price_incl_tax = parseFloat(product.final_price) // final price does include tax
+    product.final_price = product.final_price_incl_tax / (1 + rate_factor)
+    product.final_price_tax = product.final_price_incl_tax - product.final_price
+  } else {
+    product.final_price = parseFloat(product.final_price) // final price does include tax
+    product.final_price_tax = product.final_price * rate_factor
+    product.final_price_incl_tax = product.final_price + product.final_price_tax
+  }
   product.price = parseFloat(product.price)
   product.special_price = parseFloat(product.special_price)
 
@@ -199,7 +206,8 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false, 
   }
 }
 
-export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false) {
+export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true) {
+  console.log('FPINT', finalPriceInclTax)
   let rateFound = false
   if (product.tax_class_id > 0) {
     let taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
