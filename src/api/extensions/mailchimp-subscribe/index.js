@@ -23,7 +23,7 @@ module.exports = ({ config, db }) => {
 			method: 'POST',
 			headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey },
 			json: true,
-			body: { email_address: userData.email, status: 'subscribed' }
+			body: { email_address: userData.email, status: config.extensions.mailchimp.userStatus }
 		}, function (error, response, body) {
 			if (error) {
 				apiStatus(res, error, 500)
