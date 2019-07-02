@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extensions have ability to modify Elasticsearch results. @grimasod (#269)
 - Refactored Travis build config @Tjitse-E (#273)
 - Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
+- Support self signed certificates - @lukeromanowicz (#287)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
