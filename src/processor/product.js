@@ -18,7 +18,7 @@ class ProductProcessor {
     const processorChain = []
 
     const platform = this._config.platform
-    const factory = new PlatformFactory(this._config)
+    const factory = new PlatformFactory(this._config, this._req)
     const taxCountry = this._config.tax.defaultCountry
     const taxProcessor = factory.getAdapter(platform, 'tax', this._indexName, taxCountry)
     const configExtensions = 'extensions' in this._config // check 'extensions' defined in config
@@ -31,7 +31,7 @@ class ProductProcessor {
         const extProcessorPath = '../api/extensions/' + ext + '/processors'
         try {
           // attempt to instanitate an adapter class, defined in /src/api/extensions/[ext]/processor/[resultProcessors.product].js
-          const extProcessor = factory.getAdapter(extProcessorPath, this._config.extensions[ext].resultProcessors.product)
+          const extProcessor = factory.getAdapter(extProcessorPath, this._config.extensions[ext].resultProcessors.product, this._indexName)
           // if the adapter instance is successfully created, add it to the processor chain
           processorChain.push(extProcessor.process(items))
         } catch (err) {

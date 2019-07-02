@@ -1,12 +1,12 @@
 {
   "name": "vue-storefront-api",
-  "version": "1.9.3",
+  "version": "1.10.0-rc1",
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec \"ts-node src\"",
-    "dev:inspect": "nodemon -w src --exec \"ts-node --inspect src\"",
+    "dev": "nodemon",
+    "dev:inspect": "nodemon --exec \"node --inspect -r ts-node/register src\"",
     "build": "npm run -s build:code && npm run -s build:copy:graphql && npm run -s build:copy:schema",
     "build:code": "tsc --build",
     "build:copy:graphql": "cpx src/**/*.graphqls dist",
