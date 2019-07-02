@@ -228,12 +228,14 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
     product.special_price_incl_tax = 0
     product.special_price_tax = 0
 
-    /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
-    product.priceInclTax = product.price
-    product.priceTax = 0
-    product.specialPriceInclTax = 0
-    product.specialPriceTax = 0
-    /** END */
+    if (deprecatedPriceFieldsSupport) {
+      /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
+      product.priceInclTax = product.price
+      product.priceTax = 0
+      product.specialPriceInclTax = 0
+      product.specialPriceTax = 0
+      /** END */
+    }
 
     if (product.configurable_children) {
       for (let configurableChildren of product.configurable_children) {
@@ -242,12 +244,14 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
         configurableChildren.special_price_incl_tax = 0
         configurableChildren.special_price_tax = 0
 
-        /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
-        configurableChildren.priceInclTax = configurableChildren.price
-        configurableChildren.priceTax = 0
-        configurableChildren.specialPriceInclTax = 0
-        configurableChildren.specialPriceTax = 0
-        /** END */
+        if (deprecatedPriceFieldsSupport) {
+          /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
+          configurableChildren.priceInclTax = configurableChildren.price
+          configurableChildren.priceTax = 0
+          configurableChildren.specialPriceInclTax = 0
+          configurableChildren.specialPriceTax = 0
+          /** END */
+        }
       }
     }
   }
