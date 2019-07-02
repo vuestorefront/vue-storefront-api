@@ -207,7 +207,6 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false, 
 }
 
 export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true) {
-  console.log('FPINT', finalPriceInclTax)
   let rateFound = false
   if (product.tax_class_id > 0) {
     let taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
