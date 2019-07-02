@@ -36,6 +36,7 @@ class TaxProxy extends AbstractTaxProxy {
     if (sourcePriceInclTax === null) {
       sourcePriceInclTax = this._config.tax.sourcePriceIncludesTax
     }
+    this._deprecatedPriceFieldsSupport = this._config.tax.deprecatedPriceFieldsSupport
     this._taxCountry = taxCountry
     this._taxRegion = taxRegion
     this._sourcePriceInclTax = sourcePriceInclTax
@@ -44,7 +45,7 @@ class TaxProxy extends AbstractTaxProxy {
   }
 
   taxFor (product) {
-    return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax)
+    return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax, this._deprecatedPriceFieldsSupport)
   }
 
   applyTierPrices (productList, groupId) {
