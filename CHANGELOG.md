@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.11.0-rc.1] - UNRELEASED
 
 ### Added
-- Constant for Mailchimp subscription status
+- Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
 
 ### Fixed
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
