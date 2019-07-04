@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0-rc.1] - UNRELEASED
+
+### Added
+- Constant for Mailchimp subscription status
+
+### Fixed
+- The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
+- The `product.final_price` field is now being taken into product price calcualtion. Moreover, we've added the `config.tax.finalPriceIncludesTax` - which is set to `true` by default. All the `price`, `original_price` and `special_price` fields are calculated accordingly. It was required as Magento2 uses `final_price` to set the catalog pricing rules after-prices - @pkarw (#289)
+
+## [1.10.0-rc.1] - UNRELEASED
+
+### Added
+- Typescript support - @ResuBaka (#210, #242)
+- Multi Stock Inventory (Magento MSI) support - @aleron75, @dimasch (#226)
+- Import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
+- Information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
+- Introduce orderNumber to order creation endpoint - @Flyingmana (#251)
+- Optional Redis Auth functionality. @rain2o (#267)
+- Extensions have ability to modify Elasticsearch results. @grimasod (#269)
+- Refactored Travis build config @Tjitse-E (#273)
+- Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
+
+### Fixed
+- Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
+- Moving of graphql files to the dist folder @ResuBaka (#242)
+- Moving of schema files to the dist folder @ResuBaka (#244)
+- Missing assetPath config for magento1  @ResuBaka (#245)
+- New payload for magento1 stock check endpoint (#261)
+- `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
+- Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
+
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)
 

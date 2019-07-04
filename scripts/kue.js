@@ -8,11 +8,7 @@ program
   .option('-q|--prefix <prefix>', 'prefix', 'q')
   .action((cmd) => {
     kue.createQueue({
-      redis: {
-        host: config.host,
-        port: config.port,
-        db: config.db
-      },
+      redis: config,
       prefix: cmd.prefix
     })
   
