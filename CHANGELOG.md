@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0-rc.1] - UNRELEASED
+
+### Fixed
+- The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
+- The `product.final_price` field is now being taken into product price calcualtion. Moreover, we've added the `config.tax.finalPriceIncludesTax` - which is set to `true` by default. All the `price`, `original_price` and `special_price` fields are calculated accordingly. It was required as Magento2 uses `final_price` to set the catalog pricing rules after-prices - @pkarw (#289)
+
 ## [1.10.0-rc.1] - UNRELEASED
 
 ### Added
