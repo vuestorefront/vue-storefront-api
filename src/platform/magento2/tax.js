@@ -5,11 +5,12 @@ const bodybuilder = require('bodybuilder')
 import TierHelper from '../../helpers/priceTiers'
 
 class TaxProxy extends AbstractTaxProxy {
-  constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null) {
+  constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null, finalPriceInclTax = null) {
     super(config)
     this._entityType = entityType
     this._indexName = indexName
     this._sourcePriceInclTax = sourcePriceInclTax
+    this._finalPriceInclTax = finalPriceInclTax
 
     if (this._config.storeViews && this._config.storeViews.multistore) {
       for (let storeCode in this._config.storeViews){
@@ -20,6 +21,7 @@ class TaxProxy extends AbstractTaxProxy {
               taxRegion = store.tax.defaultRegion
               taxCountry = store.tax.defaultCountry
               sourcePriceInclTax = store.tax.sourcePriceIncludesTax
+              finalPriceInclTax = store.tax.finalPriceIncludesTax
               break;
             }
           }
@@ -36,15 +38,20 @@ class TaxProxy extends AbstractTaxProxy {
     if (sourcePriceInclTax === null) {
       sourcePriceInclTax = this._config.tax.sourcePriceIncludesTax
     }
+    if (finalPriceInclTax === null) {
+      finalPriceInclTax = this._config.tax.finalPriceIncludesTax
+    }
+    this._deprecatedPriceFieldsSupport = this._config.tax.deprecatedPriceFieldsSupport
     this._taxCountry = taxCountry
     this._taxRegion = taxRegion
     this._sourcePriceInclTax = sourcePriceInclTax
+    this._finalPriceInclTax = finalPriceInclTax
     console.log('Taxes will be calculated for', taxCountry, taxRegion, sourcePriceInclTax)
     this.taxFor = this.taxFor.bind(this)
   }
 
   taxFor (product) {
-    return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax)
+    return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax, this._deprecatedPriceFieldsSupport, this._finalPriceInclTax)
   }
 
   applyTierPrices (productList, groupId) {
