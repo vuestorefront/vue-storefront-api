@@ -72,7 +72,7 @@
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-		    "finalPriceIncludesTax": false        
+		    "finalPriceIncludesTax": true        
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -102,7 +102,9 @@
         "defaultCountry": "IT",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false,
+        "deprecatedPriceFieldsSupport": true,
+        "finalPriceIncludesTax": true
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -128,7 +130,9 @@
     "alwaysSyncPlatformPricesOver": false,
     "usePlatformTotals": true,
     "setConfigurableProductOptions": true,
-	"sourcePriceIncludesTax": false
+    "sourcePriceIncludesTax": false,
+    "deprecatedPriceFieldsSupport": true,
+    "finalPriceIncludesTax": true
   },
   "bodyLimit": "100kb",
   "corsHeaders": [
