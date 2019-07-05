@@ -1,5 +1,6 @@
 import * as config from 'config'
 import * as Prismic from 'prismic-javascript'
+import PrismicDOM from 'prismic-dom';
 
 class PrismicConnector {
 
@@ -30,7 +31,15 @@ class PrismicConnector {
             result = response.results.find(result => result.lang === config.extensions.icmaaCms.prismic.fallbackLanguage)
           }
 
-          return result.data || {}
+          let data = result.data || {}
+
+          for (let key in data) {
+            if (typeof data[key] === 'object') {
+              data[key] = PrismicDOM.RichText.asHtml(data[key])
+            }
+          }
+
+          return data
          })
         .catch(error => error)
     } catch (error) {
