@@ -34,7 +34,7 @@ class PrismicConnector {
           let data = result.data || {}
 
           for (let key in data) {
-            if (typeof data[key] === 'object') {
+            if (data[key] && typeof data[key] === 'object') {
               data[key] = PrismicDOM.RichText.asHtml(data[key])
             }
           }
