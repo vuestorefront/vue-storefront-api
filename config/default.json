@@ -72,7 +72,7 @@
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-		    "finalPriceIncludesTax": true        
+		    "finalPriceIncludesTax": true
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -172,7 +172,7 @@
   },
   "magento2": {
     "url": "http://demo-magento2.vuestorefront.io/",
-    "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog/product",
+    "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog",
     "assetPath": "/../var/magento2-sample-data/pub/media",
     "magentoUserName": "",
     "magentoUserPassword": "",

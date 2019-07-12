@@ -104,7 +104,7 @@ After setting the `config.magento2.api` section using Yours Magento2 oauth crede
 ```json
   "magento2": {
     "url": "http://magento2.demo-1.xyz.com",
-    "imgUrl": "http://localhost:8080/media/catalog/product",
+    "imgUrl": "http://localhost:8080/media/catalog",
     "assetPath": "/../var/magento2-sample-data/pub/media",
     "magentoUserName": "",
     "magentoUserPassword": "",
