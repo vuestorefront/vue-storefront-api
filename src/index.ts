@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import initializeDb from './db';
 import middleware from './middleware';
+import { loadAdditionalCertificates } from './helpers/loadAdditionalCertificates'
 import api from './api';
 import config from 'config';
 import img from './api/img';
@@ -27,6 +28,8 @@ app.use(cors({
 app.use(bodyParser.json({
   limit : config.get('bodyLimit')
 }));
+
+loadAdditionalCertificates()
 
 // connect to db
 initializeDb( db => {
