@@ -103,13 +103,8 @@ After setting the `config.magento2.api` section using Yours Magento2 oauth crede
 
 ```json
   "magento2": {
-    "url": "http://magento2.demo-1.xyz.com",
     "imgUrl": "http://localhost:8080/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
-    "magentoUserName": "",
-    "magentoUserPassword": "",
-    "httpUserName": "",
-    "httpUserPassword": "",
     "api": {
       "url": "http://demo-magento2.vuestorefront.io/rest",
       "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
