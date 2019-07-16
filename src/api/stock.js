@@ -1,5 +1,4 @@
-import { apiStatus } from '../lib/util';
-import { Router } from 'express';
+import { apiStatus, apiError } from '../lib/util';import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 
 export default ({ config, db }) => {
@@ -78,7 +77,7 @@ export default ({ config, db }) => {
 		Promise.all(promisesList).then((results) => {
 			apiStatus(res, results, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 

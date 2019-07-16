@@ -28,7 +28,7 @@ export default ({ config, db }) => {
 		productProxy.list(req.query.skus.split(',')).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -56,7 +56,7 @@ export default ({ config, db }) => {
 			})
 			apiStatus(res, result, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
