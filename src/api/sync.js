@@ -1,5 +1,4 @@
-import { apiStatus } from '../lib/util';
-import { Router } from 'express';
+import { apiStatus, apiError } from '../lib/util';import { Router } from 'express';
 
 export default ({ config, db }) => {
 
@@ -24,7 +23,7 @@ export default ({ config, db }) => {
 			if (orderMetaData) {
 				orderMetaData.order = null // for security reasons we're just clearing out the real order data as it's set by `order_2_magento2.js`
 			}
-			apiStatus(res, err ? err : orderMetaData,  err ? 500 :200);
+			apiStatus(res, err ? err : orderMetaData,  err ? 500 : 200);
 		})
 	})
 
