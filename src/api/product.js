@@ -1,4 +1,4 @@
-import { apiStatus, sgnSrc } from '../lib/util';
+import { apiStatus, sgnSrc, apiError } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 
