@@ -128,6 +128,7 @@ program
   .option('--skip-products <skipProducts>', 'skip import of products', false)
   .option('--skip-pages <skipPages>', 'skip import of cms pages', false)
   .option('--skip-blocks <skipBlocks>', 'skip import of cms blocks', false)
+  .option('--generate-unique-url-keys <generateUniqueUrlKeys>', 'generate unique url keys for categories', false)
   .action((cmd) => {
     let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
 
@@ -169,7 +170,9 @@ program
     if (cmd.skipBlocks) {
       magentoConfig.SKIP_BLOCKS = true;
     }
-
+    
+    magentoConfig.GENERATE_UNIQUE_URL_KEYS = cmd.generateUniqueUrlKeys;
+    
     const env = Object.assign({}, magentoConfig, process.env)  // use process env as well
     console.log('=== The mage2vuestorefront full reindex is about to start. Using the following Magento2 config ===', magentoConfig)
 
@@ -209,7 +212,8 @@ program
           'node_modules/mage2vuestorefront/src/cli.js',
           'categories',
           '--removeNonExistent=true',
-          '--extendedCategories=true'
+          '--extendedCategories=true',
+          `--generateUniqueUrlKeys=${magentoConfig.GENERATE_UNIQUE_URL_KEYS}`
         ], { env: env, shell: true })
       }
     }

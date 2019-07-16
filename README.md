@@ -146,6 +146,11 @@ You can use the following command to run a delta indexer for a specific storevie
 yarn mage2vs productsdelta --store-code=de
 ```
 
+## Self signed certificates
+
+Often in non production environment other services are using self signed certificates for secure connection.
+You can easily setup the application to trust them by putting them in config/certs directory.  
+
 License
 -------
 

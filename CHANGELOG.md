@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
+- mage2vs import now has optional `--generate-unique-url-keys` parameter which defaults to `false` to enable/disable the url key generation with name and id for categories - @rain2o (#232)
 
 ### Fixed
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
 - The `product.final_price` field is now being taken into product price calcualtion. Moreover, we've added the `config.tax.finalPriceIncludesTax` - which is set to `true` by default. All the `price`, `original_price` and `special_price` fields are calculated accordingly. It was required as Magento2 uses `final_price` to set the catalog pricing rules after-prices - @pkarw (#289)
+- Better handling of HTTP error codes provided by API client - #3151
 
 ## [1.10.0-rc.1] - UNRELEASED
 
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extensions have ability to modify Elasticsearch results. @grimasod (#269)
 - Refactored Travis build config @Tjitse-E (#273)
 - Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
+- Support self signed certificates - @lukeromanowicz (#287)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
