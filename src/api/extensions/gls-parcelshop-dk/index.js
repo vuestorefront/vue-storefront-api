@@ -22,7 +22,7 @@ module.exports = ({config, db}) => {
         returnData.droppoints = []
 
         // pass the request to elasticsearch
-        const url = 'http://' + config.elasticsearch.host + ':' + config.elasticsearch.port + '/gls_parcelshop_dk/droppoint/_search';
+        const url = config.elasticsearch.protocol + '://' + config.elasticsearch.host + ':' + config.elasticsearch.port + '/gls_parcelshop_dk/droppoint/_search';
 
         request({ // do the elasticsearch request
             uri: url,
