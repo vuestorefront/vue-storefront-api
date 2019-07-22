@@ -18,7 +18,8 @@ cli.command('buildcache', () => {
     const esConfig = {
         host: {
           host: config.elasticsearch.host,
-          port: config.elasticsearch.port
+          port: config.elasticsearch.port,
+          protocol: config.elasticsearch.protocol
         },
         log: 'debug',
         apiVersion: config.elasticsearch.apiVersion,
