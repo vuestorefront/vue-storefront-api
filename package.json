@@ -87,8 +87,6 @@
     "nodemailer": "^4.6.8",
     "oauth-1.0a": "^1.0.1",
     "pm2": "^2.10.4",
-    "prismic-dom": "^2.1.0",
-    "prismic-javascript": "2.0.3",
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
     "resource-router-middleware": "^0.6.0",

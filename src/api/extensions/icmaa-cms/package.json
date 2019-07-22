@@ -1,0 +1,12 @@
+{
+  "name": "icmaa-cms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "cewald <c.ewald@impericon.com> and contributors",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "prismic-dom": "^2.1.0",
+    "prismic-javascript": "2.0.3"
+  }
+}
