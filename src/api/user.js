@@ -11,15 +11,13 @@ function addUserGroupToken(config, result) {
   /**
    * Add group id to token
    */
-  if (config.usePriceTiers) {
-    const data = {
-      group_id : result.group_id,
-      id: result.id,
-      user: result.email,
-    }
-
-    result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+  const data = {
+    group_id : result.group_id,
+    id: result.id,
+    user: result.email,
   }
+
+  result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
 }
 
 export default ({config, db}) => {

@@ -72,7 +72,9 @@
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-		    "finalPriceIncludesTax": true        
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -104,7 +106,9 @@
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
         "deprecatedPriceFieldsSupport": true,
-        "finalPriceIncludesTax": true
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -132,7 +136,9 @@
     "setConfigurableProductOptions": true,
     "sourcePriceIncludesTax": false,
     "deprecatedPriceFieldsSupport": true,
-    "finalPriceIncludesTax": true
+    "finalPriceIncludesTax": true,
+    "userGroupId": null,
+    "useOnlyDefaultUserGroupId": false
   },
   "bodyLimit": "100kb",
   "corsHeaders": [

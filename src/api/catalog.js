@@ -68,22 +68,21 @@ export default ({config, db}) => function (req, res, body) {
 		url = config.elasticsearch.protocol + '://' + url
 	}
 
-	// Check price tiers
-	if (config.usePriceTiers) {
-		const userToken = requestBody.groupToken
+  const userToken = requestBody.groupToken
 
-		// Decode token and get group id
-        if (userToken && userToken.length > 10) {
-		// if (userToken && userToken.length > 10) {
-			const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-			groupId = decodeToken.group_id || groupId
-		}
+  // Decode token and get group id
+  if (userToken && userToken.length > 10) {
+    const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+    groupId = decodeToken.group_id || groupId
+  } else if (requestBody.groupId) {
+    groupId = requestBody.groupId || groupId
+  }
 
-		delete requestBody.groupToken
-	}
-  
+  delete requestBody.groupToken
+  delete requestBody.groupId
+
   let auth = null;
-  
+
   // Only pass auth if configured
   if(config.elasticsearch.user || config.elasticsearch.password) {
     auth = {
