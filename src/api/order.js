@@ -1,6 +1,5 @@
 import resource from 'resource-router-middleware';
-import { apiStatus } from '../lib/util';
-import { merge } from 'lodash';
+import { apiStatus, apiError } from '../lib/util';import { merge } from 'lodash';
 import PlatformFactory from '../platform/factory';
 
 const Ajv = require('ajv'); // json validator
@@ -68,7 +67,7 @@ export default ({ config, db }) => resource({
 				const job = queue.create('order', incomingOrder).save( function(err){
 					if(err) {
 						console.error(err)
-						apiStatus(res, err, 500);
+						apiError(res, err);
 					} else {
 						apiStatus(res, job.id, 200);
 					}
@@ -81,7 +80,7 @@ export default ({ config, db }) => resource({
 			orderProxy.create(req.body).then((result) => {
 				apiStatus(res, result, 200);
 			}).catch(err => {
-				apiStatus(res, err.toString(), 500);
+				apiError(res, err);
 			})
 		}
 	},
