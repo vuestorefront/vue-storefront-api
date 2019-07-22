@@ -67,15 +67,7 @@ export default ({config, db}) => {
 			/**
 			 * Second request for more user info
 			 */
-			if (config.usePriceTiers) {
-				userProxy.me(result).then((resultMe) => {
-					apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-				}).catch(err => {
-					apiError(res, err);
-				})
-			} else {
-				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-			}
+      apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 		}).catch(err => {
 			apiError(res, err);
 		})
