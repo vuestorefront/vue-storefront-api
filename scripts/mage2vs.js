@@ -128,7 +128,7 @@ program
   .option('--skip-products <skipProducts>', 'skip import of products', false)
   .option('--skip-pages <skipPages>', 'skip import of cms pages', false)
   .option('--skip-blocks <skipBlocks>', 'skip import of cms blocks', false)
-  .option('--generate-unique-url-keys <generateUniqueUrlKeys>', 'generate unique url keys for categories', false)
+  .option('--generate-unique-url-keys <generateUniqueUrlKeys>', 'generate unique url keys for categories', true)
   .action((cmd) => {
     let magentoConfig = getMagentoDefaultConfig(cmd.storeCode)
 
