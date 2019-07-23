@@ -21,6 +21,13 @@ function _updateQueryStringParameter(uri, key, value) {
   }
 }
 
+/**
+ * @route GET /catalog/<index_name>/_search
+ * @group Catalog
+ *
+ * @route GET /catalog/<index_name>/<entity_type>/_search
+ * @group Catalog
+ */
 export default ({config, db}) => function (req, res, body) {
 	let groupId = null
 

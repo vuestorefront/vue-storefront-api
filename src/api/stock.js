@@ -14,6 +14,8 @@ export default ({ config, db }) => {
 
 	/** 
 	 * GET get stock item
+	 * @route GET /stock/check/:sku
+	 * @group Stock
 	 */
 	stockApi.get('/check/:sku', (req, res) => {
 
@@ -31,6 +33,8 @@ export default ({ config, db }) => {
 
 	/** 
 	 * GET get stock item - 2nd version with the query url parameter
+	 * @route GET /stock/check
+	 * @group Stock
 	 */
 	stockApi.get('/check', (req, res) => {
 
@@ -48,6 +52,8 @@ export default ({ config, db }) => {
 
 	/** 
 	 * GET get stock item list by skus (comma separated)
+	 * @route GET /stock/list
+	 * @group Stock
 	 */
 	stockApi.get('/list', (req, res) => {
 

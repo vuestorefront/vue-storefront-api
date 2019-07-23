@@ -34,6 +34,8 @@ export default ({config, db}) => {
 
 	/**
 	 * POST create an user
+	 * @route POST /user/create
+	 * @group User
 	 */
 	userApi.post('/create', (req, res) => {
 
@@ -62,6 +64,8 @@ export default ({config, db}) => {
 
 	/**
 	 * POST login an user
+	 * @route POST /user/login
+	 * @group User
 	 */
 	userApi.post('/login', (req, res) => {
 		const userProxy = _getProxy(req)
@@ -86,6 +90,8 @@ export default ({config, db}) => {
 
 	/**
 	 * POST refresh user token
+	 * @route POST /user/refresh
+	 * @group User
 	 */
 	userApi.post('/refresh', (req, res) => {
 		const userProxy = _getProxy(req)
@@ -129,6 +135,8 @@ export default ({config, db}) => {
 
   /**
    * POST resetPassword
+   * @route POST /user/reset-password
+   * @group User
    */
   userApi.post('/reset-password', (req, res) => {
     const userProxy = _getProxy(req)
@@ -146,6 +154,8 @@ export default ({config, db}) => {
 
   /**
 	 * GET  an user
+	 * @route GET /user/me
+	 * @group User
 	 */
 	userApi.get('/me', (req, res) => {
 		const userProxy = _getProxy(req)
@@ -159,6 +169,8 @@ export default ({config, db}) => {
 
 	/**
 	 * GET  an user order history
+	 * @route GET /user/order-history
+	 * @group User
 	 */
 	userApi.get('/order-history', (req, res) => {
 		const userProxy = _getProxy(req)
@@ -171,6 +183,8 @@ export default ({config, db}) => {
 
 	/**
 	 * POST for updating user
+	 * @route POST /user/me
+	 * @group User
 	 */
 	userApi.post('/me', (req, res) => {
 		const ajv = new Ajv();
@@ -214,6 +228,8 @@ export default ({config, db}) => {
 
 	/**
 	 * POST for changing user's password
+	 * @route POST /user/change-password
+	 * @group User
 	 */
 	userApi.post('/change-password', (req, res) => {
 		const userProxy = _getProxy(req)

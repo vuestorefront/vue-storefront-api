@@ -13,6 +13,10 @@ export default ({config, db}) => {
     return factory.getAdapter(platform, 'review')
   };
 
+  /**
+   * @route POST /review/create
+   * @group Review
+   */
   reviewApi.post('/create', (req, res) => {
     const ajv = new Ajv();
     const reviewProxy = _getProxy(req)

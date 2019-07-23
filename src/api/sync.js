@@ -7,6 +7,8 @@ export default ({ config, db }) => {
 
 	/** 
 	 * GET get stock item
+	 * @route GET /order/
+	 * @group Product
 	 */
 	syncApi.get('/order/:order_id', (req, res) => {
 

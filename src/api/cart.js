@@ -15,6 +15,8 @@ export default ({ config, db }) => {
 	/** 
 	 * POST create a cart
 	 * req.query.token - user token
+	 * @route POST /cart/create
+	 * @group Cart
 	 */
 	cartApi.post('/create', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -32,6 +34,9 @@ export default ({ config, db }) => {
 	 *	  sku: orderItem.sku, 
 	 *	  qty: orderItem.qty, 
 	 *	 quoteId: cartKey}
+	 *
+	 * @route POST /cart/update
+	 * @group Cart
 	 */
 	cartApi.post('/update', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -50,6 +55,9 @@ export default ({ config, db }) => {
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart Ids
 	 *   req.query.coupon - coupon
+	 *
+	 * @route POST /cart/apply-coupon
+	 * @group Cart
 	 */
 	cartApi.post('/apply-coupon', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -67,6 +75,9 @@ export default ({ config, db }) => {
 	 * POST remove the coupon code
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart Ids
+	 *
+	 * @route POST /cart/delete-coupon
+	 * @group Cart
 	 */
 	cartApi.post('/delete-coupon', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -81,6 +92,9 @@ export default ({ config, db }) => {
 	 * GET get the applied coupon code
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart Ids
+	 *
+	 * @route GET /cart/coupon
+	 * @group Cart
 	 */
 	cartApi.get('/coupon', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -98,6 +112,9 @@ export default ({ config, db }) => {
 	 *	  sku: orderItem.sku, 
 	 *	  qty: orderItem.qty, 
 	 *	 quoteId: cartKey}
+	 *
+	 * @route POST /cart/delete
+	 * @group Cart
 	 */
 	cartApi.post('/delete', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -115,6 +132,9 @@ export default ({ config, db }) => {
 	 * GET pull the whole cart as it's currently se server side
 	 *   req.query.token - user token
 	 *   req.query.cartId - cartId
+	 *
+	 * @route GET /cart/pull
+	 * @group Cart
 	 */
 	cartApi.get('/pull', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -130,6 +150,9 @@ export default ({ config, db }) => {
 	 * GET totals the cart totals
 	 *   req.query.token - user token
 	 *   req.query.cartId - cartId
+	 *
+	 * @route GET /cart/totals
+	 * @group Cart
 	 */
 	cartApi.get('/totals', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -146,6 +169,9 @@ export default ({ config, db }) => {
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart ID if user is logged in, cart token if not
 	 *   req.body.address - shipping address object
+	 *
+	 * @route POST /cart/shipping-methods
+	 * @group Cart
 	 */
 	cartApi.post('/shipping-methods', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -164,6 +190,9 @@ export default ({ config, db }) => {
 	 * GET /payment-methods - available payment methods
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart ID if user is logged in, cart token if not
+	 *
+	 * @route GET /cart/payment-methods
+	 * @group Cart
 	 */
 	cartApi.get('/payment-methods', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -180,6 +209,9 @@ export default ({ config, db }) => {
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart ID if user is logged in, cart token if not
 	 *   req.body.addressInformation - shipping address object
+	 *
+	 * @route POST /cart/shipping-information
+	 * @group Cart
 	 */
 	cartApi.post('/shipping-information', (req, res) => {
 		const cartProxy = _getProxy(req)
@@ -199,6 +231,9 @@ export default ({ config, db }) => {
 	 *   req.query.token - user token
 	 *   req.query.cartId - cart ID if user is logged in, cart token if not
 	 *   req.body.shippingMethod - shipping and payment methods object
+	 *
+	 * @route POST /cart/collect-totals
+	 * @group Cart
 	 */
 	cartApi.post('/collect-totals', (req, res) => {
 		const cartProxy = _getProxy(req)

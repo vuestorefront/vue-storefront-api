@@ -17,6 +17,8 @@ export default ({ config, db }) => {
 
 	/**
 	 * GET get products info
+	 * @route GET /product/list
+	 * @group Product
 	 */
 	productApi.get('/list', (req, res) => {
 
@@ -34,6 +36,8 @@ export default ({ config, db }) => {
 
 	/**
 	 * GET get products info
+	 * @route GET /product/render-list
+	 * @group Product
 	 */
 	productApi.get('/render-list', (req, res) => {
 

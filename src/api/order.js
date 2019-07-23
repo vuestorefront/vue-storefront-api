@@ -23,6 +23,8 @@ export default ({ config, db }) => resource({
 
 	/**
 	 * POST create an order with JSON payload compliant with models/order.md
+	 * @route POST /order
+	 * @group Order
 	 */
 	create(req, res) {
 
