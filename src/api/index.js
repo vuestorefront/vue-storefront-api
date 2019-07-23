@@ -61,5 +61,37 @@ export default ({ config, db }) => {
     }
 	}
 
+	if (config.swagger && config.swagger.enabled) {
+		let options = {
+			swaggerDefinition: {
+				info: {
+					description: 'Vue storefront api definition',
+					title: 'Vue storefront api',
+					version: '1.9.6',
+				},
+				host: 'localhost:3000',
+				basePath: '/api',
+				produces: [
+					"application/json",
+					"application/xml"
+				],
+				schemes: ['http', 'https'],
+				securityDefinitions: {
+					JWT: {
+						type: 'apiKey',
+						in: 'header',
+						name: 'Authorization',
+						description: "",
+					}
+				}
+			},
+			basedir: __dirname, //app absolute path
+			files: ['./**/*.js'] //Path to the API handle folder
+		};
+		
+		const expressSwagger = swagger(app);
+		expressSwagger(options);
+	}
+		
 	return api;
 }
