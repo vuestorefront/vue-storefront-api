@@ -72,7 +72,7 @@
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-		    "finalPriceIncludesTax": true        
+		    "finalPriceIncludesTax": true
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -223,7 +223,17 @@
       "process": 4
     },
     "simd": true,
-    "keepDownloads": true
+    "keepDownloads": true,
+    "caching": {
+      "active": false,
+      "type": "file",
+      "file": {
+        "path": "/tmp/vue-storefront-api"
+      }
+    },
+    "action": {
+      "type": "local"
+    }
   },
   "entities": {
       "category": {

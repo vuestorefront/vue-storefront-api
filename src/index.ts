@@ -39,6 +39,9 @@ initializeDb( db => {
   // api router
   app.use('/api', api({ config, db }));
   app.use('/img', img({ config, db }));
+  app.use('/img/:width/:height/:action/:image', (req,res,next) => {
+    console.log(req.params)
+  });
 
   const port = process.env.PORT || config.get('server.port')
   const host = process.env.HOST || config.get('server.host')
