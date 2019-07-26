@@ -44,7 +44,6 @@ export default class GoogleCloudStorageImageCache extends ImageCache {
   }
 
   createKey(): string {
-    console.log(createHash('md5').update(this.req.url).digest('hex'))
     return createHash('md5').update(this.req.url).digest('hex')
   }
 
