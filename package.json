@@ -32,23 +32,11 @@
     "prestart": "npm run -s build",
     "test": "eslint src",
     "setup": "npm run restore; npm run migrate",
-    "lint": "eslint --ext .js src migrations scripts"
+    "lint": "eslint --ext .js,.ts src migrations scripts"
   },
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "sourceType": "module"
-    },
-    "env": {
-      "node": true,
-      "es6": true
-    },
-    "rules": {
-      "no-console": 0,
-      "no-unused-vars": 1
-    }
-  },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DivanteLtd/vue-storefront-api.git"
@@ -101,10 +89,19 @@
     "@types/config": "^0.0.34",
     "@types/express": "^4.16.1",
     "@types/node": "^11.13.4",
+    "@typescript-eslint/eslint-plugin": "^1.7.1-alpha.17",
+    "@typescript-eslint/parser": "^1.7.1-alpha.17",
     "apollo-server-express": "^1.3.6",
     "cpx": "^1.5.0",
-    "eslint": "^4.16.0",
+    "eslint": "^5.0.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "eslint-plugin-vue-storefront": "^0.0.1",
     "nodemon": "^1.18.7",
+    "pre-commit": "^1.2.2",
     "ts-node": "^8.1.0",
     "tslib": "^1.9.3",
     "typescript": "3.3.*"
