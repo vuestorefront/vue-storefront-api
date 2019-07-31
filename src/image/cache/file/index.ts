@@ -25,7 +25,7 @@ export default class FileImageCache extends ImageCache {
     return `${this.key.substring(0, 2)}/${this.key.substring(2, 4)}/${this.key}`
   }
 
-  private createKey (): string {
+  public createKey (): string {
     console.log(createHash('md5').update(this.req.url).digest('hex'))
     return createHash('md5').update(this.req.url).digest('hex')
   }
