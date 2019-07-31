@@ -3,7 +3,7 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import { getIndexName } from '../mapping'
 
-async function taxrule(filter, context, rootValue) {
+async function taxrule (filter, context, rootValue) {
   let query = buildQuery({ filter, pageSize: 150, type: 'taxrule' });
 
   const response = await client.search({

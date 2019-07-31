@@ -2,17 +2,16 @@ import { NextFunction, Request, Response } from 'express'
 import URL from 'url'
 
 export default abstract class ImageAction {
+  public readonly SUPPORTED_ACTIONS = ['fit', 'resize', 'identify']
+  public readonly SUPPORTED_MIMETYPES
 
-  readonly SUPPORTED_ACTIONS = ['fit', 'resize', 'identify']
-  readonly SUPPORTED_MIMETYPES
+  public req: Request
+  public res: Response
+  public next: NextFunction
+  public options
+  public mimeType: string
 
-  req: Request
-  res: Response
-  next: NextFunction
-  options
-  mimeType: string
-
-  constructor(req: Request, res: Response, next: NextFunction, options) {
+  public constructor (req: Request, res: Response, next: NextFunction, options) {
     this.req = req
     this.res = res
     this.next = next
@@ -31,7 +30,7 @@ export default abstract class ImageAction {
 
   abstract prossesImage(): void
 
-  isImageSourceHostAllowed() {
+  public isImageSourceHostAllowed () {
     if (!this._isUrlWhitelisted(this.getImageURL(), 'allowedHosts', true, this.whitelistDomain)) {
       return this.res.status(400).send({
         code: 400,
@@ -40,9 +39,8 @@ export default abstract class ImageAction {
     }
   }
 
-
-  _isUrlWhitelisted(url, whitelistType, defaultValue, whitelist) {
-    if (arguments.length != 4) throw new Error('params are not optional!')
+  public _isUrlWhitelisted (url, whitelistType, defaultValue, whitelist) {
+    if (arguments.length !== 4) throw new Error('params are not optional!')
 
     if (whitelist && whitelist.hasOwnProperty(whitelistType)) {
       const requestedHost = URL.parse(url).host

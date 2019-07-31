@@ -1,6 +1,6 @@
 // @ts-check
-import CacheFactory from "../image/cache/factory";
-import ActionFactory from "../image/action/factory";
+import CacheFactory from '../image/cache/factory';
+import ActionFactory from '../image/action/factory';
 
 const asyncMiddleware = fn => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -8,7 +8,7 @@ const asyncMiddleware = fn => (req, res, next) => {
 
 export default ({ config, db }) =>
   asyncMiddleware(async (req, res, next) => {
-    if (!(req.method == 'GET')) {
+    if (!(req.method === 'GET')) {
       res.set('Allow', 'GET');
       return res.status(405).send('Method Not Allowed');
     }
@@ -18,8 +18,8 @@ export default ({ config, db }) =>
 
     let imageBuffer
 
-    const actionFactory =  new ActionFactory(req , res, next, config)
-    const imageAction =  actionFactory.getAdapter(config.imageable.action.type)
+    const actionFactory = new ActionFactory(req, res, next, config)
+    const imageAction = actionFactory.getAdapter(config.imageable.action.type)
     imageAction.getOption()
     imageAction.validateOptions()
     imageAction.isImageSourceHostAllowed()

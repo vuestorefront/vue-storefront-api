@@ -3,34 +3,34 @@ import fs from 'fs-extra'
 import { createHash } from 'crypto'
 
 export default class FileImageCache extends ImageCache {
-
-  async getImageFromCache() {
+  public async getImageFromCache () {
     this.image = await fs.readFile(
       `${this.config.imageable.caching.file.path}/${this.path}`
     )
   }
 
-  async save() {
+  public async save () {
     await fs.outputFile(
       `${this.config.imageable.caching.file.path}/${this.path}`,
       this.image
     )
   }
 
-  async check() {
-    return await fs.pathExists(`${this.config.imageable.caching.file.path}/${this.path}`)
+  public async check () {
+    const response = await fs.pathExists(`${this.config.imageable.caching.file.path}/${this.path}`)
+    return response
   }
 
-  get path(): string {
+  private get path (): string {
     return `${this.key.substring(0, 2)}/${this.key.substring(2, 4)}/${this.key}`
   }
 
-  createKey(): string {
+  private createKey (): string {
     console.log(createHash('md5').update(this.req.url).digest('hex'))
     return createHash('md5').update(this.req.url).digest('hex')
   }
 
-  isValidFor(type) {
+  public isValidFor (type) {
     return type === 'file'
   }
 }

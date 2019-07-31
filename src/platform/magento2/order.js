@@ -11,17 +11,17 @@ class OrderProxy extends AbstractOrderProxy {
   }
 
   create (orderData) {
-      const inst = this
-      return new Promise ((resolve, reject) => {
-        try {
-            processSingleOrder(orderData, inst.config, null, (error, result) => {
-                console.log(error)
-                if (error) reject (error)
-                resolve (result)
-            })
-        } catch (e) {
-            reject(e)
-        }
+    const inst = this
+    return new Promise((resolve, reject) => {
+      try {
+        processSingleOrder(orderData, inst.config, null, (error, result) => {
+          console.log(error)
+          if (error) reject(error)
+          resolve(result)
+        })
+      } catch (e) {
+        reject(e)
+      }
     })
   }
 }

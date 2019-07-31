@@ -1,4 +1,4 @@
-function mapCountryRegion(countryList, countryId, regionCode) {
+function mapCountryRegion (countryList, countryId, regionCode) {
   let regionId = 0
   for (let country of countryList) {
     if (country.id === countryId) {

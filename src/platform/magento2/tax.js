@@ -1,8 +1,8 @@
 import AbstractTaxProxy from '../abstract/tax'
 import { calculateProductTax } from '../../lib/taxcalc'
+import TierHelper from '../../helpers/priceTiers'
 const es = require('elasticsearch')
 const bodybuilder = require('bodybuilder')
-import TierHelper from '../../helpers/priceTiers'
 
 class TaxProxy extends AbstractTaxProxy {
   constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null, finalPriceInclTax = null) {
@@ -13,7 +13,7 @@ class TaxProxy extends AbstractTaxProxy {
     this._finalPriceInclTax = finalPriceInclTax
 
     if (this._config.storeViews && this._config.storeViews.multistore) {
-      for (let storeCode in this._config.storeViews){
+      for (let storeCode in this._config.storeViews) {
         const store = this._config.storeViews[storeCode]
         if (typeof store === 'object') {
           if (store.elasticsearch && store.elasticsearch.index) { // workaround to map stores
@@ -64,7 +64,7 @@ class TaxProxy extends AbstractTaxProxy {
 
   process (productList, groupId = null) {
     const inst = this
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       inst.applyTierPrices(productList, groupId)
 
       if (this._config.tax.calculateServerSide) {
@@ -81,14 +81,14 @@ class TaxProxy extends AbstractTaxProxy {
         if (this._config.elasticsearch.user) {
           esConfig.httpAuth = this._config.elasticsearch.user + ':' + this._config.elasticsearch.password
         }
-        
+
         let client = new es.Client(esConfig)
         const esQuery = {
           index: this._indexName,
           type: 'taxrule',
           body: bodybuilder()
         }
-        client.search(esQuery).then(function (taxClasses) { // we're always trying to populate cache - when online
+        client.search(esQuery).then((taxClasses) => { // we're always trying to populate cache - when online
           inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
           for (let item of productList) {
             inst.taxFor(item._source)

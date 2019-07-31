@@ -32,7 +32,7 @@
     "prestart": "npm run -s build",
     "test": "eslint src",
     "setup": "npm run restore; npm run migrate",
-    "lint": "eslint --ext .js,.ts src migrations scripts"
+    "lint": "eslint --ext .js,.ts src migrations scripts --fix"
   },
   "pre-commit": [
     "lint"
