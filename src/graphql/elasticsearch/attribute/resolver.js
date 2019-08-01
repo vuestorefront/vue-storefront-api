@@ -3,10 +3,10 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import { getIndexName } from '../mapping'
 
-async function listAttributes(attributes, context, rootValue, _sourceInclude) {
+async function listAttributes (attributes, context, rootValue, _sourceInclude) {
   let query = buildQuery({ filter: attributes, pageSize: 150, type: 'attribute' });
 
-  if (_sourceInclude == undefined) {
+  if (_sourceInclude === undefined) {
     _sourceInclude = config.entities.attribute.includeFields
   }
 

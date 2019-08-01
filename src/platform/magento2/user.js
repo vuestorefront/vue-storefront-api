@@ -2,39 +2,39 @@ import AbstractUserProxy from '../abstract/user'
 import { multiStoreConfig } from './util'
 
 class UserProxy extends AbstractUserProxy {
-    constructor (config, req){
-        const Magento2Client = require('magento2-rest-client').Magento2Client;
-        super(config, req)
-        this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
-    }       
+  constructor (config, req) {
+    const Magento2Client = require('magento2-rest-client').Magento2Client;
+    super(config, req)
+    this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
+  }
 
-    register (userData) { 
-        return this.api.customers.create(userData)
-    }
-    
-    login (userData) { 
-        return this.api.customers.token(userData)
-    } 
+  register (userData) {
+    return this.api.customers.create(userData)
+  }
 
-    me (requestToken) {
-        console.log(this.api.customers.me(requestToken));
+  login (userData) {
+    return this.api.customers.token(userData)
+  }
 
-        return this.api.customers.me(requestToken)
-    }        
-    orderHistory (requestToken) { 
-        return this.api.customers.orderHistory(requestToken)
-    }         
-    resetPassword (emailData) { 
-        return this.api.customers.resetPassword(emailData)
-    }       
+  me (requestToken) {
+    console.log(this.api.customers.me(requestToken));
 
-    update (userData) {
-        return this.api.customers.update(userData)
-    }
+    return this.api.customers.me(requestToken)
+  }
+  orderHistory (requestToken) {
+    return this.api.customers.orderHistory(requestToken)
+  }
+  resetPassword (emailData) {
+    return this.api.customers.resetPassword(emailData)
+  }
 
-    changePassword (passwordData) {
-        return this.api.customers.changePassword(passwordData)
-    }
+  update (userData) {
+    return this.api.customers.update(userData)
+  }
+
+  changePassword (passwordData) {
+    return this.api.customers.changePassword(passwordData)
+  }
 }
 
 module.exports = UserProxy

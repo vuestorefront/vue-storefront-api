@@ -6,7 +6,7 @@ const client = new elasticsearch.Client({
     host: config.elasticsearch.host,
     port: config.elasticsearch.port,
     protocol: config.elasticsearch.protocol
-  },
+  }
 });
 
 export default client;
