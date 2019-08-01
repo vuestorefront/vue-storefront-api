@@ -49,7 +49,7 @@ class StoryblokConnector {
     let result = []
     options.forEach(option => {
       result.push({
-        'name': option[nameKey],
+        'name': typeof nameKey === 'function' ? nameKey(option) : option[nameKey],
         'value': option[valueKey],
         'sort_order': sortKey !== false ? option[sortKey] : 1
       })

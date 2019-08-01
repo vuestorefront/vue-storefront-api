@@ -78,7 +78,7 @@ module.exports = ({ config, db }) => {
       type: 'category',
       size: 2000,
       body: {
-        "_source": ["id", "url_path", "slug", "name", "is_active"],
+        "_source": ["id", "url_path", "slug", "name"],
         "query": {
           "bool" : {
             "must": [
@@ -102,7 +102,12 @@ module.exports = ({ config, db }) => {
         switch (req.query.style) {
           case 'storyblok':
             return res.status(200).json(
-              storyblokConnector.createAttributeOptionArray(results, 'slug', 'name', false)
+              storyblokConnector.createAttributeOptionArray(
+                results,
+                c => `${c.name} (/${c.url_path})`,
+                'slug',
+                false
+              )
             )
           default:
             return apiStatus(res, results, 200)
