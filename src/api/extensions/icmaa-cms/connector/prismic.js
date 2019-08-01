@@ -1,7 +1,7 @@
 import * as config from 'config'
 import * as Prismic from 'prismic-javascript'
 import PrismicDOM from 'prismic-dom';
-import camelCase from 'lodash/camelCase'
+import { objectKeysToCamelCase } from '../helpers/formatter'
 
 class PrismicConnector {
 
@@ -33,16 +33,11 @@ class PrismicConnector {
           }
 
           let data = result.data || {}
+          objectKeysToCamelCase(data)
 
           for (let key in data) {
             if (data[key] && typeof data[key] === 'object') {
               data[key] = PrismicDOM.RichText.asHtml(data[key])
-            }
-            
-            const ccKey = camelCase(key)
-            if (ccKey !== key) {
-              data[ccKey] = data[key]
-              delete data[key]
             }
           }
 

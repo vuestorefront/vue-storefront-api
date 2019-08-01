@@ -2,6 +2,7 @@ import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
 
 import prismicConnector from './connector/prismic'
+import storyblokConnector from './connector/storyblok'
 
 module.exports = ({ config, db }) => {
 
@@ -16,6 +17,11 @@ module.exports = ({ config, db }) => {
     switch (serviceName) {
       case 'prismic':
         await prismicConnector.fetch(req.query.type, req.query.uid, req.query.lang)
+          .then(response => apiStatus(res, response, 200))
+          .catch(error => apiStatus(res, error.message, 500))
+          break
+      case 'storyblok':
+        await storyblokConnector.fetch(req.query.type, req.query.uid, req.query.lang)
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
           break

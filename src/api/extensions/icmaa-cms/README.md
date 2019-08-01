@@ -12,11 +12,15 @@ This API extension get data from headless cms of choice.
    "extensions": {
      …
      "icmaaCms": {
-       "service": "prismic",
+       "service": "prismic", // prismic | storyblok
        "prismic": {
          "apiEndpoint": "https://YOUR-ENDPOINT.cdn.prismic.io/api/v2",
          "apiToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
          "fallbackLanguage": "de-de"
+       },
+       "storyblok": {
+         "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXX",
+         "defaultLanguage": "de-DE" // The language i18n code which should point to the "default" language in storyblok
        }
     }
   },
