@@ -15,9 +15,9 @@ class StoryblokConnector {
   }
 
   matchLanguage(lang) {
-    lang = lang.toLowerCase()
+    lang = lang ? lang.toLowerCase() : false
     const defaultLang = config.extensions.icmaaCms.storyblok.defaultLanguage.toLowerCase()
-    this.lang = lang === defaultLang ? false : lang
+    this.lang = !lang || lang === defaultLang ? false : lang
     
     return this.lang
   }
