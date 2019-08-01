@@ -3,8 +3,14 @@ import { Router } from 'express'
 
 import prismicConnector from './connector/prismic'
 import storyblokConnector from './connector/storyblok'
+import elasticsearch from 'elasticsearch';
 
 module.exports = ({ config, db }) => {
+
+  function esClient () {
+    let { host, port, protocol } = config.elasticsearch
+    return new elasticsearch.Client({ host: { host, port, protocol } })
+  }
 
 	let api = Router()
 
@@ -28,6 +34,35 @@ module.exports = ({ config, db }) => {
       default:
         return apiStatus(res, `CMS service "${serviceName}" is not supported yet`, 500)
     }
+  })
+
+  api.get('/attribute/:code', async (req, res) => {
+    return esClient().search({
+      index: config.elasticsearch.indices[0],
+      type: 'attribute',
+      body: {
+        "_source": ["attribute_code", "id", "options", "frontend_label"],
+        "query": {
+          "term": {
+            "attribute_code": {
+              "value": req.params.code
+            }
+          }
+        }
+      }
+    }).then(response => {
+      if (response.hits.total === 0) {
+        return apiStatus(res, 'No attribute found', 400)
+      }
+
+      const result = response.hits.hits[0]._source
+      if (result && result.options) {
+        return apiStatus(res, result.options, 200)
+      }
+
+      return apiStatus(res, 'No attribute values found', 400)
+      
+    })
   })
 
   return api
