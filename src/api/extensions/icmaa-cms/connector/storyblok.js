@@ -45,13 +45,13 @@ class StoryblokConnector {
     }
   }
 
-  createAttributeOptionArray(options) {
+  createAttributeOptionArray(options, nameKey = 'label', valueKey = 'value', sortKey = 'sort_order') {
     let result = []
     options.forEach(option => {
       result.push({
-        'name': option.label,
-        'value': option.value,
-        'sort_order': option.sort_order
+        'name': option[nameKey],
+        'value': option[valueKey],
+        'sort_order': sortKey !== false ? option[sortKey] : 1
       })
     });
 

@@ -72,5 +72,46 @@ module.exports = ({ config, db }) => {
     })
   })
 
+  api.get('/categories', async (req, res) => {
+    return esClient().search({
+      index: config.elasticsearch.indices[0],
+      type: 'category',
+      size: 2000,
+      body: {
+        "_source": ["id", "url_path", "slug", "name", "is_active"],
+        "query": {
+          "bool" : {
+            "must": [
+              { "exists": { "field": "name" } },
+              { "exists": { "field": "slug" } }
+            ]
+          }
+        }
+      }
+    }).then(response => {
+      if (response.hits.total === 0) {
+        return apiStatus(res, 'No categories found', 400)
+      }
+
+      if (response.hits.hits) {
+        let results = []
+        response.hits.hits.forEach(category => {
+          results.push(category._source)
+        })
+
+        switch (req.query.style) {
+          case 'storyblok':
+            return res.status(200).json(
+              storyblokConnector.createAttributeOptionArray(results, 'slug', 'name', false)
+            )
+          default:
+            return apiStatus(res, results, 200)
+        }
+      }
+
+      return apiStatus(res, 'No categories found', 400)
+    })
+  })
+
   return api
 }
