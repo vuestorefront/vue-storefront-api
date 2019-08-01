@@ -1,6 +1,7 @@
 import * as config from 'config'
 import StoryblokClient from 'storyblok-js-client'
 import { objectKeysToCamelCase } from '../helpers/formatter'
+import { sortBy } from 'lodash';
 
 class StoryblokConnector {
 
@@ -42,6 +43,21 @@ class StoryblokConnector {
     } catch (error) {
       return error
     }
+  }
+
+  createAttributeOptionArray(options) {
+    let result = []
+    options.forEach(option => {
+      result.push({
+        'name': option.label,
+        'value': option.value,
+        'sort_order': option.sort_order
+      })
+    });
+
+    result = sortBy(result, ['sort_order', 'name'])
+
+    return result
   }
 }
 

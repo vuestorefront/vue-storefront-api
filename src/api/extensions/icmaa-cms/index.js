@@ -57,7 +57,14 @@ module.exports = ({ config, db }) => {
 
       const result = response.hits.hits[0]._source
       if (result && result.options) {
-        return apiStatus(res, result.options, 200)
+        switch (req.query.style) {
+          case 'storyblok':
+            return res.status(200).json(
+              storyblokConnector.createAttributeOptionArray(result.options)
+            )
+          default:
+            return apiStatus(res, result.options, 200)
+        }
       }
 
       return apiStatus(res, 'No attribute values found', 400)
