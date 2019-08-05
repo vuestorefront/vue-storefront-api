@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
 - mage2vs import now has optional `--generate-unique-url-keys` parameter which defaults to `false` to enable/disable the url key generation with name and id for categories - @rain2o (#232)
-- Added caching factory and action factory for the image endpoint. This
-  gives the possibility to use other services for caching or image
-  processing - @resubaka (#317, #315)
+- Added eslint config from vue-storefront so we have the same config and in both repos typescript support - @resubaka (#320)
+- Added jest support - @resubaka (#321)
+- Added caching factory and action factory for the image endpoint. This gives the possibility to use other services for caching or image processing - @resubaka (#317, #315)
 
 ### Fixed
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)

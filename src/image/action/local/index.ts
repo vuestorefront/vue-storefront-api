@@ -3,24 +3,23 @@ import mime from 'mime-types'
 import { downloadImage, fit, identify, resize } from '../../../lib/image'
 
 export default class LocalImageAction extends ImageAction {
+  public imageOptions
+  public SUPPORTED_MIMETYPES = ['image/gif', 'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
+  public imageBuffer: Buffer
 
-  imageOptions
-  SUPPORTED_MIMETYPES = ['image/gif', 'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
-  imageBuffer: Buffer
-
-  get whitelistDomain(): string[] {
+  public get whitelistDomain (): string[] {
     return this.options.imageable.whitelist
   }
 
-  get maxAgeForResponse() {
+  public get maxAgeForResponse () {
     return 31557600000
   }
 
-  getImageURL(): string {
+  public getImageURL (): string {
     return this.imageOptions.imgUrl
   }
 
-  getOption() {
+  public getOption () {
     let imgUrl: string
     let width: number
     let height: number
@@ -53,7 +52,7 @@ export default class LocalImageAction extends ImageAction {
     }
   }
 
-  validateOptions() {
+  public validateOptions () {
     const { width, height, action } = this.imageOptions
     if (isNaN(width) || isNaN(height) || !this.SUPPORTED_ACTIONS.includes(action)) {
       return this.res.status(400).send({
@@ -70,7 +69,7 @@ export default class LocalImageAction extends ImageAction {
     }
   }
 
-  validateMIMEType() {
+  public validateMIMEType () {
     const mimeType = mime.lookup(this.imageOptions.imgUrl)
 
     if (mimeType === false || !this.SUPPORTED_MIMETYPES.includes(mimeType)) {
@@ -83,7 +82,7 @@ export default class LocalImageAction extends ImageAction {
     this.mimeType = mimeType
   }
 
-  async prossesImage() {
+  public async prossesImage () {
     const { imgUrl } = this.imageOptions
 
     try {

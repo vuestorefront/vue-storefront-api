@@ -11,7 +11,7 @@ const resolver = {
   }
 };
 
-async function list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
   const { req, res } = context;
 
   let query = buildQuery({
@@ -23,7 +23,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     type: 'product'
   });
 
-  let esIndex  = getIndexName(req.url)
+  let esIndex = getIndexName(req.url)
 
   let esResponse = await client.search({
     index: esIndex,
@@ -52,7 +52,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
 
   // Process sort
   let sortOptions = []
-  for (var sortAttribute in sort){
+  for (var sortAttribute in sort) {
     sortOptions.push(
       {
         label: sortAttribute,

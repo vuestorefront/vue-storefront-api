@@ -1,8 +1,7 @@
 import { Router } from 'express'
 
 module.exports = () => {
+  let exampleApi = Router()
 
-	let exampleApi = Router()
-
-	return exampleApi
+  return exampleApi
 }

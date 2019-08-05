@@ -3,9 +3,9 @@ const _ = require('lodash')
 const fs = require('fs');
 const jsonFile = require('jsonfile')
 
-function putAlias(db, originalName, aliasName, next) {
-  let step2 = () => { 
-    db.indices.putAlias({ index: originalName, name: aliasName }).then(result=>{
+function putAlias (db, originalName, aliasName, next) {
+  let step2 = () => {
+    db.indices.putAlias({ index: originalName, name: aliasName }).then(result => {
       console.log('Index alias created', result)
     }).then(next).catch(err => {
       console.log(err.message)
@@ -14,7 +14,7 @@ function putAlias(db, originalName, aliasName, next) {
   }
   return db.indices.deleteAlias({
     index: aliasName,
-    name:  originalName
+    name: originalName
   }).then((result) => {
     console.log('Public index alias deleted', result)
     step2()
@@ -28,9 +28,9 @@ function search (db, query) {
   return db.search(query)
 }
 
-function deleteIndex(db, indexName, next) {
+function deleteIndex (db, indexName, next) {
   db.indices.delete({
-    "index": indexName
+    'index': indexName
   }).then((res) => {
     console.dir(res, { depth: null, colors: true })
     next()
@@ -39,15 +39,15 @@ function deleteIndex(db, indexName, next) {
     next(err)
   })
 }
-function reIndex(db, fromIndexName, toIndexName, next) {
+function reIndex (db, fromIndexName, toIndexName, next) {
   db.reindex({
     waitForCompletion: true,
     body: {
-      "source": {
-        "index": fromIndexName
+      'source': {
+        'index': fromIndexName
       },
-      "dest": {
-        "index": toIndexName
+      'dest': {
+        'index': toIndexName
       }
     }
   }).then(res => {
@@ -59,20 +59,19 @@ function reIndex(db, fromIndexName, toIndexName, next) {
   })
 }
 
-function createIndex(db, indexName, next) {
+function createIndex (db, indexName, next) {
   let indexSchema = loadSchema('index');
 
   const step2 = () => {
-
     db.indices.delete({
-      "index": indexName
+      'index': indexName
     }).then(res1 => {
       console.dir(res1, { depth: null, colors: true })
       db.indices.create(
-      {
-        "index": indexName,
-        "body": indexSchema
-      }).then(res2 => {
+        {
+          'index': indexName,
+          'body': indexSchema
+        }).then(res2 => {
         console.dir(res2, { depth: null, colors: true })
         next()
       }).catch(err => {
@@ -81,10 +80,10 @@ function createIndex(db, indexName, next) {
       })
     }).catch(() => {
       db.indices.create(
-      {
-        "index": indexName,
-        "body": indexSchema
-      }).then(res2 => {
+        {
+          'index': indexName,
+          'body': indexSchema
+        }).then(res2 => {
         console.dir(res2, { depth: null, colors: true })
         next()
       }).catch(err => {
@@ -96,7 +95,7 @@ function createIndex(db, indexName, next) {
 
   return db.indices.deleteAlias({
     index: '*',
-    name:  indexName
+    name: indexName
   }).then((result) => {
     console.log('Public index alias deleted', result)
     step2()
@@ -108,9 +107,9 @@ function createIndex(db, indexName, next) {
 
 /**
  * Load the schema definition for particular entity type
- * @param {String} entityType 
+ * @param {String} entityType
  */
-function loadSchema(entityType) {
+function loadSchema (entityType) {
   let elasticSchema = jsonFile.readFileSync(path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json'));
   const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
   if (fs.existsSync(extensionsPath)) {
@@ -120,7 +119,7 @@ function loadSchema(entityType) {
   return elasticSchema
 }
 
-function putMappings(db, indexName, next) {
+function putMappings (db, indexName, next) {
   let productSchema = loadSchema('product');
   let categorySchema = loadSchema('category');
   let taxruleSchema = loadSchema('taxrule');
@@ -130,39 +129,39 @@ function putMappings(db, indexName, next) {
 
   db.indices.putMapping({
     index: indexName,
-    type: "product",
+    type: 'product',
     body: productSchema
   }).then(res1 => {
     console.dir(res1, { depth: null, colors: true })
 
     db.indices.putMapping({
       index: indexName,
-      type: "taxrule",
+      type: 'taxrule',
       body: taxruleSchema
     }).then(res2 => {
       console.dir(res2, { depth: null, colors: true })
 
       db.indices.putMapping({
         index: indexName,
-        type: "attribute",
+        type: 'attribute',
         body: attributeSchema
       }).then(res3 => {
         console.dir(res3, { depth: null, colors: true })
         db.indices.putMapping({
           index: indexName,
-          type: "cms_page",
+          type: 'cms_page',
           body: pageSchema
         }).then(res4 => {
-          console.dir(res4, { depth: null, colors: true })        
+          console.dir(res4, { depth: null, colors: true })
           db.indices.putMapping({
             index: indexName,
-            type: "cms_block",
+            type: 'cms_block',
             body: blockSchema
           }).then(res5 => {
-            console.dir(res5, { depth: null, colors: true })   
+            console.dir(res5, { depth: null, colors: true })
             db.indices.putMapping({
               index: indexName,
-              type: "category",
+              type: 'category',
               body: categorySchema
             }).then(res6 => {
               console.dir(res6, { depth: null, colors: true })

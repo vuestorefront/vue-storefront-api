@@ -2,11 +2,10 @@ import ImageCache from '../abstract'
 import { createHash } from 'crypto'
 import { Bucket, Storage } from '@google-cloud/storage'
 export default class GoogleCloudStorageImageCache extends ImageCache {
+  private static storage: Storage
+  private static bucket: Bucket
 
-  static storage: Storage
-  static bucket: Bucket
-
-  constructor(config, req) {
+  public constructor (config, req) {
     super(config, req)
     if (GoogleCloudStorageImageCache.storage === undefined) {
       GoogleCloudStorageImageCache.storage = new Storage(
@@ -16,38 +15,37 @@ export default class GoogleCloudStorageImageCache extends ImageCache {
     if (GoogleCloudStorageImageCache.bucket === undefined) {
       GoogleCloudStorageImageCache.bucket = GoogleCloudStorageImageCache.storage.bucket(this.bucketName)
     }
-
   }
 
-  get bucketName (): string {
+  public get bucketName (): string {
     return this.moduleConfig.bucket
   }
 
-  get moduleConfig (): any {
+  public get moduleConfig (): any {
     return this.config.imageable.caching[`google-cloud-storage`]
   }
 
-  async getImageFromCache() {
+  public async getImageFromCache () {
     const donwload = await GoogleCloudStorageImageCache.bucket.file('testing/cache/image/' + this.key).download()
     this.image = donwload[0]
   }
 
-  async save() {
+  public async save () {
     await GoogleCloudStorageImageCache.bucket.file('testing/cache/image/' + this.key).save(this.image, {
       gzip: true
     })
   }
 
-  async check() {
+  public async check () {
     const response = await GoogleCloudStorageImageCache.bucket.file('testing/cache/image/' + this.key).exists()
     return response[0]
   }
 
-  createKey(): string {
+  public createKey (): string {
     return createHash('md5').update(this.req.url).digest('hex')
   }
 
-  isValidFor(type) {
+  public isValidFor (type) {
     return type === 'google-cloud-storage'
   }
 }
