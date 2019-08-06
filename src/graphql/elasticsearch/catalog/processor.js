@@ -1,7 +1,7 @@
 import config from 'config'
 import ProcessorFactory from '../../../processor/factory'
 
-export default function esResultsProcessor(response, esRequest, entityType, indexName) {
+export default function esResultsProcessor (response, esRequest, entityType, indexName) {
   return new Promise((resolve, reject) => {
     const factory = new ProcessorFactory(config)
     let resultProcessor = factory.getAdapter(entityType, indexName, esRequest, response)
