@@ -11,15 +11,13 @@ function addUserGroupToken (config, result) {
   /**
    * Add group id to token
    */
-  if (config.usePriceTiers) {
-    const data = {
-      group_id: result.group_id,
-      id: result.id,
-      user: result.email
-    }
-
-    result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+  const data = {
+    group_id: result.group_id,
+    id: result.id,
+    user: result.email
   }
+
+  result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
 }
 
 export default ({config, db}) => {
@@ -65,17 +63,9 @@ export default ({config, db}) => {
 
     userProxy.login(req.body).then((result) => {
       /**
-       * Second request for more user info
-       */
-      if (config.usePriceTiers) {
-        userProxy.me(result).then((resultMe) => {
-          apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-        }).catch(err => {
-          apiError(res, err);
-        })
-      } else {
-        apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
-      }
+      * Second request for more user info
+      */
+      apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
     }).catch(err => {
       apiError(res, err);
     })

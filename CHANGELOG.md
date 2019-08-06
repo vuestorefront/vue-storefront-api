@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added eslint config from vue-storefront so we have the same config and in both repos typescript support - @resubaka (#320)
 - Added jest support - @resubaka (#321)
 - Added caching factory and action factory for the image endpoint. This gives the possibility to use other services for caching or image processing - @resubaka (#317, #315)
+- Added support for tax calculation where the values from customer_tax_class_ids is used - @resubaka (#307)
 
 ### Fixed
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
