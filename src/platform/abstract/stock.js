@@ -1,16 +1,16 @@
 class AbstractStockProxy {
-  constructor(config, req) {
+  constructor (config, req) {
     this._config = config
     this._request = req
   }
 
   /**
-   * 
+   *
    * EXAMPLE INPUT:
    * ?sku=<product sku>
-   * 
+   *
    * EXAMPLE OUTPUT:
-   * 
+   *
    * {
    *    "item_id": 14,
    *    "product_id": 14,
@@ -39,7 +39,7 @@ class AbstractStockProxy {
    *    "is_decimal_divided": false,
    *    "stock_status_changed_auto": 0
    * }
-   * 
+   *
    */
   check (sku) {
     throw new Error('UserProxy::check must be implemented for specific platform')

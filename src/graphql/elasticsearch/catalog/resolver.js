@@ -11,14 +11,14 @@ const resolver = {
   }
 };
 
-async function list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
   let _req = {
     query: {
       _source_exclude: _sourceExclude,
-      _source_include: _sourceInclude,
+      _source_include: _sourceInclude
     }
   }
-  
+
   let query = buildQuery({
     filter: filter,
     sort: sort,
@@ -28,7 +28,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     type: 'product'
   });
 
-  let esIndex  = getIndexName(req.url)
+  let esIndex = getIndexName(context.req.url)
 
   let esResponse = await client.search({
     index: esIndex,
@@ -57,7 +57,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
 
   // Process sort
   let sortOptions = []
-  for (var sortAttribute in sort){
+  for (var sortAttribute in sort) {
     sortOptions.push(
       {
         label: sortAttribute,
