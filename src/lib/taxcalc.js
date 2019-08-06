@@ -1,11 +1,11 @@
 function isSpecialPriceActive (fromDate, toDate) {
-  const now = new Date()
-  fromDate = fromDate ? new Date(fromDate) : false
-  toDate = toDate ? new Date(toDate) : false
-
   if (!fromDate && !toDate) {
     return true
   }
+
+  const now = new Date()
+  fromDate = fromDate ? new Date(fromDate) : false
+  toDate = toDate ? new Date(toDate) : false
 
   if (fromDate && toDate) {
     return fromDate < now && toDate > now
@@ -210,7 +210,7 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
   let rateFound = false
   if (product.tax_class_id > 0) {
     let taxClass
-    if (checkIfTaxWithUserGroupIsActive(_storeConfigTax) && typeof userGroupId === "number") {
+    if (checkIfTaxWithUserGroupIsActive(_storeConfigTax) && typeof userGroupId === 'number') {
       taxClass = taxClasses.find((el) =>
         el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id)) >= 0 &&
           el.customer_tax_class_ids.indexOf(userGroupId) >= 0
@@ -266,15 +266,15 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
   }
 }
 
-export function checkIfTaxWithUserGroupIsActive(configTax) {
-  if (typeof configTax.userGroupId === "number") {
+export function checkIfTaxWithUserGroupIsActive (configTax) {
+  if (typeof configTax.userGroupId === 'number') {
     return true
   }
 
   return false
 }
 
-export function getUserGroupIdToUse(userGroupId, configTax) {
+export function getUserGroupIdToUse (userGroupId, configTax) {
   if (configTax.useOnlyDefaultUserGroupId) {
     return configTax.userGroupId
   }

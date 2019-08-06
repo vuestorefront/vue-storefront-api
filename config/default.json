@@ -229,7 +229,22 @@
       "process": 4
     },
     "simd": true,
-    "keepDownloads": true
+    "keepDownloads": true,
+    "caching": {
+      "active": false,
+      "type": "file",
+      "file": {
+        "path": "/tmp/vue-storefront-api"
+      },
+      "google-cloud-storage": {
+        "libraryOptions": {},
+        "bucket": "",
+        "prefix": "vue-storefront-api/image-cache"
+      }
+    },
+    "action": {
+      "type": "local"
+    }
   },
   "entities": {
       "category": {

@@ -3,10 +3,10 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import { getIndexName } from '../mapping'
 
-async function list(search, filter, currentPage, pageSize = 200, sort, context, rootValue, _sourceInclude) {
+async function list (search, filter, currentPage, pageSize = 200, sort, context, rootValue, _sourceInclude) {
   let query = buildQuery({ search, filter, currentPage, pageSize, sort, type: 'category' });
 
-  if (_sourceInclude == undefined) {
+  if (_sourceInclude === undefined) {
     _sourceInclude = config.entities.category.includeFields
   }
 
