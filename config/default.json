@@ -229,6 +229,11 @@
       "type": "file",
       "file": {
         "path": "/tmp/vue-storefront-api"
+      },
+      "google-cloud-storage": {
+        "libraryOptions": {},
+        "bucket": "",
+        "prefix": "vue-storefront-api/image-cache"
       }
     },
     "action": {

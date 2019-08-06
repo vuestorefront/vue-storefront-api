@@ -45,6 +45,7 @@
   "author": "Piotr Karwatka <pkarwatka@divante.pl>",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^3.0.3",
     "ajv": "^6.4.0",
     "ajv-keywords": "^3.4.0",
     "body-parser": "^1.18.2",
