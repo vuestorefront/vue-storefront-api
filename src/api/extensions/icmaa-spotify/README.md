@@ -20,5 +20,5 @@ This API extension gets data from Spotify API
 
 ## API endpoints
 ```
-/api/ext/icmaa-spotify/related-bands/BANDNAME
+/api/ext/icmaa-spotify/related-artists/NAME
 ```

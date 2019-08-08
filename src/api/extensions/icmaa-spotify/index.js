@@ -7,7 +7,7 @@ module.exports = ({ config }) => {
 
 	let api = Router()
 
-  api.get('/related-bands/:name', async (req, res) => {
+  api.get('/related-artists/:name', async (req, res) => {
     const { name } = req.params
 
     /**
