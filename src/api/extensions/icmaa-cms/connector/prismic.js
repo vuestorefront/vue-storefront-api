@@ -35,6 +35,8 @@ class PrismicConnector {
           let data = result.data || {}
           objectKeysToCamelCase(data)
 
+          data.identifier = uid
+
           for (let key in data) {
             if (data[key] && typeof data[key] === 'object') {
               data[key] = PrismicDOM.RichText.asHtml(data[key])
