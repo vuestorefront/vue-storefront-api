@@ -23,6 +23,14 @@ class StoryblokConnector {
     return this.lang
   }
 
+  isJsonString(string) {
+    try {
+      return JSON.parse(string)
+    } catch (e) {
+      return false
+    }
+  }
+
   async fetch(type, uid, lang) {
     try {
       this.matchLanguage(lang)
@@ -37,6 +45,31 @@ class StoryblokConnector {
         let { content } = response.data.stories.shift() || { content: {} }
         objectKeysToCamelCase(content)
         return content
+      }).catch(error => {
+        console.log(error)
+      })
+    } catch (error) {
+      return error
+    }
+  }
+
+  async search(type, q, lang) {
+    let queryObject = { "identifier": { "in": q } }
+    if (this.isJsonString(q)) {
+      queryObject = this.isJsonString(q)
+    }
+
+    try {
+      this.matchLanguage(lang)
+      return this.api().get('cdn/stories', {
+        "starts_with": this.lang ? `${this.lang}/*` : "",
+        "filter_query": {
+          "component": { "in": type },
+          ...queryObject
+        }
+      })
+      .then(response => {
+        return response.data.stories.map(story => objectKeysToCamelCase(story.content))
       }).catch(error => {
         console.log(error)
       })

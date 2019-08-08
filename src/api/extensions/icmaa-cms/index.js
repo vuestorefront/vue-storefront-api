@@ -36,6 +36,23 @@ module.exports = ({ config, db }) => {
     }
   })
 
+  api.get('/search', async (req, res) => {
+    if (req.query.type === undefined || req.query.q === undefined) {
+      return apiStatus(res, '"q" and "type" are mandatory in request url', 500)
+    }
+
+    let serviceName = config.extensions.icmaaCms.service;
+    switch (serviceName) {
+      case 'storyblok':
+        await storyblokConnector.search(req.query.type, req.query.q, req.query.lang)
+          .then(response => apiStatus(res, response, 200))
+          .catch(error => apiStatus(res, error.message, 500))
+          break
+      default:
+        return apiStatus(res, `CMS service "${serviceName}" is not supported yet`, 500)
+    }
+  })
+
   api.get('/attribute/:code', async (req, res) => {
     return esClient().search({
       index: config.elasticsearch.indices[0],

@@ -28,5 +28,6 @@ This API extension get data from headless cms of choice.
 
 ## API endpoints
 ```
-/api/ext/icmaa-cms/by-uid?uid=XXXXXXX&type=XXXXXXXX&lang=de-de
+/api/ext/icmaa-cms/by-uid?uid=navigation-main&type=block&lang=de-de
+/api/ext/icmaa-cms/search?type=block&lang=de-de&q={"identifier":%20{"in":%20"navigation-meta,navigation-main"}}
 ```
