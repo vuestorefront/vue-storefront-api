@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.0-rc.1] - 2019.06.17
+## [1.10.0] - 2019.08.10
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
@@ -27,8 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
 - Better handling of HTTP error codes provided by API client - pkarw (#3151)
 
+## [1.9.6] - 2019.07.11
+- Dependencies update to avoid lodash security issues.
+
 ## [1.9.5] - 2019.06.17
-- Dependencies security update against js-yaml flaws.
+- Dependencies update to avoid js-yaml security issues.
 
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)

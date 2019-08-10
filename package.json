@@ -68,7 +68,7 @@
     "elasticsearch": "^15.2.0",
     "email-check": "^1.1.0",
     "express": "^4.16.3",
-    "graphql": "^0.10.1",
+    "graphql": "^0.13.1",
     "graphql-tools": "^1.2.1",
     "humps": "^1.1.0",
     "jsonfile": "^4.0.0",
