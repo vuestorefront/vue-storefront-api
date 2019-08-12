@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.0] - 2019.08.10
+## [1.10.0] - 2019.08.12
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
@@ -12,20 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
 - Information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
 - Introduce orderNumber to order creation endpoint - @Flyingmana (#251)
-- Optional Redis Auth functionality. @rain2o (#267)
-- Extensions have ability to modify Elasticsearch results. @grimasod (#269)
-- Refactored Travis build config @Tjitse-E (#273)
-- Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
+- Optional Redis Auth functionality. - @rain2o (#267)
+- Extensions have ability to modify Elasticsearch results. - @grimasod (#269)
+- Refactored Travis build config - @Tjitse-E (#273)
+- Multistore support for `magento1`-platform using `magento1-vsbridge` - @cewald (#276)
+
+### Changed
+- Sharp dependency has been updated. *It might require reinstalling yarn dependencies* - @lukeromanowicz
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
-- Moving of graphql files to the dist folder @ResuBaka (#242)
-- Moving of schema files to the dist folder @ResuBaka (#244)
-- Missing assetPath config for magento1  @ResuBaka (#245)
-- New payload for magento1 stock check endpoint (#261)
-- `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
-- Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
-- Better handling of HTTP error codes provided by API client - pkarw (#3151)
+- Moving of graphql files to the dist folder - @ResuBaka (#242)
+- Moving of schema files to the dist folder - @ResuBaka (#244)
+- Missing assetPath config for magento1 - @ResuBaka (#245)
+- New payload for magento1 stock check endpoint - @cewald (#261)
+- `yarn dev:inspect` command and extract nodemon config to nodemon.json - @Tjitse-E, @cewald (#272, #279)
+- Include Magento Currency Code in mage2vs import and productsdelta if available - @rain2o (#281)
+- Better handling of HTTP error codes provided by API client - @pkarw (#3151)
 
 ## [1.9.6] - 2019.07.11
 - Dependencies update to avoid lodash security issues.
