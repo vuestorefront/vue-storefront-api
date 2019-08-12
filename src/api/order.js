@@ -1,5 +1,6 @@
 import resource from 'resource-router-middleware';
-import { apiStatus, apiError } from '../lib/util'; import { merge } from 'lodash';
+import { apiStatus, apiError } from '../lib/util';
+import { merge } from 'lodash';
 import PlatformFactory from '../platform/factory';
 
 const Ajv = require('ajv'); // json validator
