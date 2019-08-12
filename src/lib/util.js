@@ -46,6 +46,7 @@ export function apiStatus (res, result = 'OK', code = 200, meta = null) {
   return result;
 }
 
+
 /**  Creates a api error status Express Response object.
  *  @param {express.Response} res  Express HTTP Response
  *  @param {number} [code=200]    Status code to send on success
