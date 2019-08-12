@@ -8,6 +8,9 @@ let redisClient = Redis.createClient(config.redis); // redis client
 redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
   redisClient = Redis.createClient(config.redis); // redis client
 });
+if (config.redis.auth) {
+  redisClient.auth(config.redis.auth);
+}
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
@@ -235,9 +238,15 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
                   order: orderData
                 }));
                 redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
-
-                if(job) job.progress(currentStep++, TOTAL_STEPS);
-                return done(null, { magentoOrderId: result, backendOrderId: result, transferedAt: new Date() });
+                let orderIncrementId = null;
+                api.orders.incrementIdById(result).then(result => {
+                  orderIncrementId = result.increment_id
+                }).catch( err => {
+                  logger.warn('could not fetch increment_id for Order', err, typeof err)
+                }).finally(() => {
+                  if(job) job.progress(currentStep++, TOTAL_STEPS);
+                  return done(null, { magentoOrderId: result, orderNumber: orderIncrementId, backendOrderId: result, transferedAt: new Date() });
+                })
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
                 if (job) job.attempts(6).backoff({ delay: 30*1000, type:'fixed' }).save()

@@ -1,12 +1,16 @@
 {
   "name": "vue-storefront-api",
-  "version": "1.9.5",
+  "version": "1.10.0-rc1",
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
   "scripts": {
-    "dev": "nodemon -w src --exec \"babel-node src\"",
-    "build": "babel src -s -D -d dist",
+    "dev": "nodemon",
+    "dev:inspect": "nodemon --exec \"node --inspect -r ts-node/register src\"",
+    "build": "npm run -s build:code && npm run -s build:copy:graphql && npm run -s build:copy:schema",
+    "build:code": "tsc --build",
+    "build:copy:graphql": "cpx src/**/*.graphqls dist",
+    "build:copy:schema": "cpx 'src/**/*.schema*.json' dist",
     "start": "pm2 start ecosystem.json $PM2_ARGS",
     "db": "node scripts/db.js",
     "seo": "node scripts/seo.js",
@@ -75,6 +79,7 @@
     "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
     "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
+    "md5": "^2.2.1",
     "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.6.2",
     "mime-types": "^2.1.18",
@@ -90,13 +95,17 @@
     "winston": "^2.4.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.4.0",
-    "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.4.2",
+    "@types/body-parser": "^1.17.0",
+    "@types/config": "^0.0.34",
+    "@types/express": "^4.16.1",
+    "@types/node": "^11.13.4",
     "apollo-server-express": "^1.3.6",
+    "cpx": "^1.5.0",
     "eslint": "^4.16.0",
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.18.7",
+    "ts-node": "^8.1.0",
+    "tslib": "^1.9.3",
+    "typescript": "3.3.*"
   },
   "bugs": {
     "url": "https://github.com/DivanteLtd/vue-storefront-api/issues"

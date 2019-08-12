@@ -24,7 +24,7 @@ function applyFilters(filter, query, type) {
     return query
   }
   const rangeOperators = ['gt', 'lt', 'gte', 'lte', 'moreq', 'from', 'to']
-  const optionsPrfeix = '_options'
+  const optionsPrefix = '_options'
 
   const appliedFilters = [];
   if (filter) {
@@ -96,7 +96,7 @@ function applyFilters(filter, query, type) {
 
     if (hasCatalogFilters) {
       query = query.orFilter('bool', (b) => attrFilterBuilder(b))
-        .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrfeix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
+        .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrefix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
     }
 
     // Add aggregations for filters
@@ -105,7 +105,7 @@ function applyFilters(filter, query, type) {
         if (attrToFilter.scope == 'catalog') {
           if (attrToFilter.attribute != 'price') {
             query = query.aggregation('terms', getMapping(attrToFilter.attribute))
-            query = query.aggregation('terms', attrToFilter.attribute + optionsPrfeix)
+            query = query.aggregation('terms', attrToFilter.attribute + optionsPrefix)
           } else {
             query = query.aggregation('terms', attrToFilter.attribute)
             query.aggregation('range', 'price', {
