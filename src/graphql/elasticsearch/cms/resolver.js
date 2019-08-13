@@ -2,7 +2,7 @@ import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
 
-async function list(filter, currentPage, pageSize = 200, _sourceInclude, type) {
+async function list (filter, currentPage, pageSize = 200, _sourceInclude, type) {
   let query = buildQuery({ filter, currentPage, pageSize, _sourceInclude, type });
 
   const response = await client.search({
@@ -16,7 +16,7 @@ async function list(filter, currentPage, pageSize = 200, _sourceInclude, type) {
   return items;
 }
 
-function buildItems(response) {
+function buildItems (response) {
   response.items = []
   response.hits.hits.forEach(hit => {
     let item = hit._source

@@ -12,33 +12,37 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import resolvers from './graphql/resolvers';
 import typeDefs from './graphql/schema';
+import * as path from 'path'
 
 const app = express();
 
 // logger
 app.use(morgan('dev'));
 
-app.use('/media', express.static(__dirname + config.get(`${config.get('platform')}.assetPath`)))
+app.use('/media', express.static(path.join(__dirname, config.get(`${config.get('platform')}.assetPath`))))
 
 // 3rd party middleware
 app.use(cors({
-  exposedHeaders: config.get('corsHeaders'),
+  exposedHeaders: config.get('corsHeaders')
 }));
 
 app.use(bodyParser.json({
-  limit : config.get('bodyLimit')
+  limit: config.get('bodyLimit')
 }));
 
 loadAdditionalCertificates()
 
 // connect to db
-initializeDb( db => {
+initializeDb(db => {
   // internal middleware
   app.use(middleware({ config, db }));
 
   // api router
   app.use('/api', api({ config, db }));
   app.use('/img', img({ config, db }));
+  app.use('/img/:width/:height/:action/:image', (req, res, next) => {
+    console.log(req.params)
+  });
 
   const port = process.env.PORT || config.get('server.port')
   const host = process.env.HOST || config.get('server.host')

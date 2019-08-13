@@ -13,19 +13,18 @@ let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
 let numCPUs = require('os').cpus().length;
 const processSingleOrder = require('../platform/magento2/o2m').processSingleOrder
 
-
 // RUN
 program
   .command('start')
   .option('--partitions <partitions>', 'number of partitions', numCPUs)
   .action((cmd) => { // default command is to run the service worker
-  let partition_count = parseInt(cmd.partitions);
-  logger.info(`Starting KUE worker for "order" message [${partition_count}]...`);
-  queue.process('order', partition_count, (job, done) => {
-    logger.info('Processing order: ' + job.data.title);
-    return processSingleOrder(job.data.order, config, job, done);
+    let partition_count = parseInt(cmd.partitions);
+    logger.info(`Starting KUE worker for "order" message [${partition_count}]...`);
+    queue.process('order', partition_count, (job, done) => {
+      logger.info('Processing order: ' + job.data.title);
+      return processSingleOrder(job.data.order, config, job, done);
+    });
   });
-});
 
 program
   .command('testAuth')
