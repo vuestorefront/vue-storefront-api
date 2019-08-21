@@ -95,6 +95,18 @@ NOTE: `npm` users will still have to install the dependencies individually in th
 ## Reviews
 To use review feature you need to install custom module for Magento 2: [Divante ReviewApi](https://github.com/DivanteLtd/magento2-review-api)
 
+## Output Cache
+Vue Storefront API supports output cache for catalog operations. Cache is tagged and can by dynamically invalidated. Please find the details how to configure it [in our docs](https://docs.vuestorefront.io/guide/basics/ssr-cache.html).
+
+You can manually clear the Redis cache for specific tags by running the following command:
+
+```bash
+npm run cache clear
+npm run cache clear -- --tag=product,category
+npm run cache clear -- --tag=P198
+npm run cache clear -- --tag=*
+```
+
 ## Running initial Magento2 import
 
 Magento2 data import is now integrated into `vue-storefront-api` for simplicity. It's still managed by the [mage2vuestorefront](https://github.com/DivanteLtd/mage2vuestorefront) - added as a dependency to `vue-storefront-api`.

@@ -2,7 +2,14 @@
   "server": {
     "host": "localhost",
     "port": 8080,
-    "searchEngine": "elasticsearch"
+    "searchEngine": "elasticsearch",
+    "useOutputCacheTagging": false,
+    "useOutputCache": false,
+    "outputCacheDefaultTtl": 86400,
+    "availableCacheTags": ["P", "C", "T", "A", "product", "category", "attribute", "taxrule"],
+    "invalidateCacheKey": "aeSu7aip",
+    "invalidateCacheForwarding": false,
+    "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag="
   },
   "orders": {
     "useServerQueue": false
