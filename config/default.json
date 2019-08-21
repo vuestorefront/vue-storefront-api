@@ -150,7 +150,8 @@
     "example-magento-api",
     "cms-data",
     "mail-service",
-    "example-processor"
+    "example-processor",
+    "elastic-stock"
   ],
   "extensions": {
     "mailchimp": {
