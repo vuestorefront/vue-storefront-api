@@ -1,34 +1,14 @@
-import { apiStatus } from '../../../lib/util';
+import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../../lib/util';
+import { getClient as getElasticClient } from '../../../lib/elastic'
 import { Router } from 'express';
-const es = require('elasticsearch')
 const bodybuilder = require('bodybuilder')
 
 module.exports = ({ config, db }) => {
 
 	let api = Router();
 
-	const getElasticClient = (config) => {
-        const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-          host: {
-            host: config.elasticsearch.host,
-            port: config.elasticsearch.port,
-            protocol: config.elasticsearch.protocol
-          },
-          apiVersion: config.elasticsearch.apiVersion,
-          requestTimeout: 5000
-        }
-        if (config.elasticsearch.user) {
-          esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
-        }
-        return new es.Client(esConfig)	
-	}
-
 	const getStockList = (storeCode, skus) => {
-		let storeView = config
-		if (storeCode && config.storeViews[storeCode]) {
-			storeView = config.storeViews[storeCode]
-		}			
-
+		let storeView = getCurrentStoreView(storeCode)
         const esQuery = {
 			index: storeView.elasticsearch.indexName, // current index name
 			type: 'product',
@@ -52,7 +32,7 @@ module.exports = ({ config, db }) => {
 			return apiStatus(res, 'sku parameter is required', 500);
 		}
 
-		getStockList(req.params.storeCode, [req.params.sku]).then((result) => {
+		getStockList(getCurrentStoreCode(req), [req.params.sku]).then((result) => {
 			if (result && result.length > 0) {
 				apiStatus(res, result[0], 200);
 			} else {
@@ -70,7 +50,7 @@ module.exports = ({ config, db }) => {
 		if (!req.query.sku) {
 			return apiStatus(res, 'sku parameter is required', 500);
 		}
-		getStockList(req.params.storeCode, [req.query.sku]).then((result) => {
+		getStockList(getCurrentStoreCode(req), [req.query.sku]).then((result) => {
 			if (result && result.length > 0) {
 				apiStatus(res, result[0], 200);
 			} else {
@@ -89,7 +69,7 @@ module.exports = ({ config, db }) => {
 			return apiStatus(res, 'skus parameter is required', 500);
 		}
 		const skuArray = req.query.skus.split(',')
-		getStockList(req.params.storeCode, skuArray).then((result) => {
+		getStockList(getCurrentStoreCode(req), skuArray).then((result) => {
 			if (result && result.length > 0) {
 				apiStatus(res, result, 200);
 			} else {

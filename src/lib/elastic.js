@@ -2,6 +2,23 @@ const path = require('path')
 const _ = require('lodash')
 const fs = require('fs');
 const jsonFile = require('jsonfile')
+const es = require('elasticsearch')
+
+function getClient(config) {
+  const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
+    host: {
+      host: config.elasticsearch.host,
+      port: config.elasticsearch.port,
+      protocol: config.elasticsearch.protocol
+    },
+    apiVersion: config.elasticsearch.apiVersion,
+    requestTimeout: 5000
+  }
+  if (config.elasticsearch.user) {
+    esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
+  }
+  return new es.Client(esConfig)	
+}
 
 function putAlias (db, originalName, aliasName, next) {
   let step2 = () => {
@@ -182,6 +199,7 @@ function putMappings (db, indexName, next) {
 }
 
 module.exports = {
+  getClient,
   putMappings,
   putAlias,
   createIndex,
