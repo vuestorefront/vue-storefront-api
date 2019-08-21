@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
 - mage2vs import now has optional `--generate-unique-url-keys` parameter which defaults to `false` to enable/disable the url key generation with name and id for categories - @rain2o (#232)
 - `extensions/elastic-stock` module added which is a drop-in replacement for `stock`; the difference is that it's getting the stock information from Elastic, not from e-Commerce backend directly; to use it - please just make sure your `config/local.json` file has `elastic-stock` in the `registeredExtensions` collection; then please make sure in the `vue-storefront` to change the `config.stock.ednpoint`  from `http://<your-api-host>/api/stock` to `http://<your-api-host>/api/ext/elastic-stock`
+- Added eslint config from vue-storefront so we have the same config and in both repos typescript support - @resubaka (#320)
+- Added jest support - @resubaka (#321)
+- Added caching factory and action factory for the image endpoint. This gives the possibility to use other services for caching or image processing - @resubaka (#317, #315)
+- Added support for tax calculation where the values from customer_tax_class_ids is used - @resubaka (#307)
 
 ### Fixed
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Force ES connections to use protocol config option - @cewald (#303, #304)
 - Better handling of HTTP error codes provided by API client - #3151
 
-## [1.10.0-rc.1] - UNRELEASED
+## [1.10.0] - 2019.08.12
 
 ### Added
 - Typescript support - @ResuBaka (#210, #242)
@@ -25,20 +29,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Import of magento 2 cms pages and blocks to the full import - @toh82 (#235)
 - Information about magento 2 cms pages and blocks import to the readme - @toh82 (#235)
 - Introduce orderNumber to order creation endpoint - @Flyingmana (#251)
-- Optional Redis Auth functionality. @rain2o (#267)
-- Extensions have ability to modify Elasticsearch results. @grimasod (#269)
-- Refactored Travis build config @Tjitse-E (#273)
-- Multistore support for `magento1`-platform using `magento1-vsbridge` @cewald (#276)
+- Optional Redis Auth functionality. - @rain2o (#267)
+- Extensions have ability to modify Elasticsearch results. - @grimasod (#269)
+- Refactored Travis build config - @Tjitse-E (#273)
+- Multistore support for `magento1`-platform using `magento1-vsbridge` - @cewald (#276)
 - Support self signed certificates - @lukeromanowicz (#287)
+
+### Changed
+- Sharp dependency has been updated. *It might require reinstalling yarn dependencies* - @lukeromanowicz
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
-- Moving of graphql files to the dist folder @ResuBaka (#242)
-- Moving of schema files to the dist folder @ResuBaka (#244)
-- Missing assetPath config for magento1  @ResuBaka (#245)
-- New payload for magento1 stock check endpoint (#261)
-- `yarn dev:inspect` command and extract nodemon config to nodemon.json @Tjitse-E, @cewald (#272, #279)
-- Include Magento Currency Code in mage2vs import and productsdelta if available @rain2o (#281)
+- Moving of graphql files to the dist folder - @ResuBaka (#242)
+- Moving of schema files to the dist folder - @ResuBaka (#244)
+- Missing assetPath config for magento1 - @ResuBaka (#245)
+- New payload for magento1 stock check endpoint - @cewald (#261)
+- `yarn dev:inspect` command and extract nodemon config to nodemon.json - @Tjitse-E, @cewald (#272, #279)
+- Include Magento Currency Code in mage2vs import and productsdelta if available - @rain2o (#281)
+- Better handling of HTTP error codes provided by API client - @pkarw (#3151)
+
+## [1.9.6] - 2019.07.11
+- Dependencies update to avoid lodash security issues.
+
+## [1.9.5] - 2019.06.17
+- Dependencies update to avoid js-yaml security issues.
 
 ## [1.9.4] - 2019.06.03
 - Extension schemas in `src/models` are not required anymore - @EmilsM, @lukeromanowicz (#259, #263)

@@ -1,5 +1,5 @@
 class AbstractTaxProxy {
-  constructor(config, req) {
+  constructor (config, req) {
     this._config = config
     this._request = req
   }
@@ -9,7 +9,7 @@ class AbstractTaxProxy {
   }
 
   /**
-   * @param Array productList 
+   * @param Array productList
    * @returns Promise
    */
   process (productList, groupId = null) {
