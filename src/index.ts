@@ -8,6 +8,7 @@ import { loadAdditionalCertificates } from './helpers/loadAdditionalCertificates
 import api from './api';
 import config from 'config';
 import img from './api/img';
+import invalidateCache from './api/invalidate'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import resolvers from './graphql/resolvers';
@@ -43,6 +44,8 @@ initializeDb(db => {
   app.use('/img/:width/:height/:action/:image', (req, res, next) => {
     console.log(req.params)
   });
+  app.post('/invalidate', invalidateCache)
+  app.get('/invalidate', invalidateCache)
 
   const port = process.env.PORT || config.get('server.port')
   const host = process.env.HOST || config.get('server.host')
