@@ -19,8 +19,7 @@ This API extension get data from headless cms of choice.
          "fallbackLanguage": "de-de"
        },
        "storyblok": {
-         "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXX",
-         "defaultLanguage": "de-DE" // The language i18n code which should point to the "default" language in storyblok
+         "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXX"
        }
     }
   },

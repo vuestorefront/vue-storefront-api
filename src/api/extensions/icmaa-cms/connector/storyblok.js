@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import StoryblokClient from 'storyblok-js-client'
 import { objectKeysToCamelCase } from '../helpers/formatter'
 import { sortBy } from 'lodash';
@@ -16,10 +16,8 @@ class StoryblokConnector {
   }
 
   matchLanguage(lang) {
-    lang = lang ? lang.toLowerCase() : false
-    const defaultLang = config.extensions.icmaaCms.storyblok.defaultLanguage.toLowerCase()
-    this.lang = !lang || lang === defaultLang ? false : lang
-    
+    lang = lang && lang !== 'default' ? lang.toLowerCase() : false
+    this.lang = lang && config.icmaa.mandant ? `${config.icmaa.mandant}-${lang}` : lang
     return this.lang
   }
 
