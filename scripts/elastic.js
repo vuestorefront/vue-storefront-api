@@ -2,11 +2,9 @@ const program = require('commander')
 const config = require('config').elasticsearch
 const spawnSync = require('child_process').spawnSync
 
-function stdOutErr(stdout, stderr) {
-  if (stdout.length > 0)
-    console.log(stdout.toString('utf8'))
-  if (stderr.length > 0)
-    console.error(stderr.toString('utf8'))
+function stdOutErr (stdout, stderr) {
+  if (stdout.length > 0) { console.log(stdout.toString('utf8')) }
+  if (stderr.length > 0) { console.error(stderr.toString('utf8')) }
 }
 
 program
@@ -49,9 +47,9 @@ program
   .parse(process.argv)
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason)
+  console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
 })
 
-process.on('uncaughtException', function(exception) {
+process.on('uncaughtException', (exception) => {
   console.log(exception)
 })

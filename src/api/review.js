@@ -1,4 +1,4 @@
-import { apiStatus, apiError } from '../lib/util';import { Router } from 'express';
+import { apiStatus, apiError } from '../lib/util'; import { Router } from 'express';
 import PlatformFactory from '../platform/factory'
 
 const Ajv = require('ajv'); // json validator
@@ -26,8 +26,8 @@ export default ({config, db}) => {
 
     reviewProxy.create(req.body.review).then((result) => {
       apiStatus(res, result, 200);
-    }).catch(err=> {
-			apiError(res, err);
+    }).catch(err => {
+      apiError(res, err);
     })
   })
 

@@ -1,5 +1,5 @@
 class AbstractAddressProxy {
-  constructor(config, req) {
+  constructor (config, req) {
     this._config = config
     this._request = req
   }
@@ -14,7 +14,7 @@ class AbstractAddressProxy {
     throw new Error('AbstractAddressProxy::get must be implemented for specific platform')
   }
   delete (customerToken, addressData) {
-      throw new Error('AbstractAddressProxy::delete must be implemented for specific platform')
+    throw new Error('AbstractAddressProxy::delete must be implemented for specific platform')
   }
 }
 

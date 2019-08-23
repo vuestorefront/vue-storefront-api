@@ -2,7 +2,14 @@
   "server": {
     "host": "localhost",
     "port": 8080,
-    "searchEngine": "elasticsearch"
+    "searchEngine": "elasticsearch",
+    "useOutputCacheTagging": false,
+    "useOutputCache": false,
+    "outputCacheDefaultTtl": 86400,
+    "availableCacheTags": ["P", "C", "T", "A", "product", "category", "attribute", "taxrule"],
+    "invalidateCacheKey": "aeSu7aip",
+    "invalidateCacheForwarding": false,
+    "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag="
   },
   "orders": {
     "useServerQueue": false
@@ -72,7 +79,9 @@
         "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-		    "finalPriceIncludesTax": true        
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -104,7 +113,9 @@
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
         "deprecatedPriceFieldsSupport": true,
-        "finalPriceIncludesTax": true
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -132,7 +143,9 @@
     "setConfigurableProductOptions": true,
     "sourcePriceIncludesTax": false,
     "deprecatedPriceFieldsSupport": true,
-    "finalPriceIncludesTax": true
+    "finalPriceIncludesTax": true,
+    "userGroupId": null,
+    "useOnlyDefaultUserGroupId": false
   },
   "bodyLimit": "100kb",
   "corsHeaders": [
@@ -144,7 +157,8 @@
     "example-magento-api",
     "cms-data",
     "mail-service",
-    "example-processor"
+    "example-processor",
+    "elastic-stock"
   ],
   "extensions": {
     "mailchimp": {
@@ -171,13 +185,8 @@
     }
   },
   "magento2": {
-    "url": "http://demo-magento2.vuestorefront.io/",
     "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
-    "magentoUserName": "",
-    "magentoUserPassword": "",
-    "httpUserName": "",
-    "httpUserPassword": "",
     "api": {
       "url": "http://demo-magento2.vuestorefront.io/rest",
       "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
@@ -187,7 +196,6 @@
     }
   },
   "magento1": {
-    "url": "http://magento-demo.local",
     "imgUrl": "http://magento-demo.local/media/catalog/product",
     "assetPath": "",
     "magentoUserName": "",
@@ -203,7 +211,6 @@
     }
   },
   "imageable": {
-    "namespace": "",
     "maxListeners": 512,
     "imageSizeLimit": 1024,
     "whitelist": {
@@ -223,7 +230,21 @@
       "process": 4
     },
     "simd": true,
-    "keepDownloads": true
+    "caching": {
+      "active": false,
+      "type": "file",
+      "file": {
+        "path": "/tmp/vue-storefront-api"
+      },
+      "google-cloud-storage": {
+        "libraryOptions": {},
+        "bucket": "",
+        "prefix": "vue-storefront-api/image-cache"
+      }
+    },
+    "action": {
+      "type": "local"
+    }
   },
   "entities": {
       "category": {
