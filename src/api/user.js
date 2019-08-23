@@ -1,4 +1,4 @@
-import { apiStatus, encryptToken, decryptToken } from '../lib/util';
+import { apiStatus, encryptToken, decryptToken, apiError } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 import jwt from 'jwt-simple';
@@ -46,8 +46,7 @@ export default ({config, db}) => {
 		const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
 
 		if (!validate(req.body)) { // schema validation of upcoming order
-			console.dir(validate.errors);
-			apiStatus(res, validate.errors, 200);
+			apiStatus(res, validate.errors, 400);
 			return;
 		}
 
@@ -56,7 +55,7 @@ export default ({config, db}) => {
 		userProxy.register(req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -74,13 +73,13 @@ export default ({config, db}) => {
 				userProxy.me(result).then((resultMe) => {
 					apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 				}).catch(err => {
-					apiStatus(res, err, 500);
+					apiError(res, err);
 				})
 			} else {
-        apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
+				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	});
 
@@ -103,10 +102,10 @@ export default ({config, db}) => {
 			userProxy.login(decodedToken).then((result) => {
 				apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(decodedToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
 			}).catch(err => {
-				apiStatus(res, err, 500);
+				apiError(res, err);
 			})
 		} catch (err) {
-			return apiStatus(res, err.message, 500);
+			apiError(res, err);
 		}
 	});
 
@@ -123,7 +122,7 @@ export default ({config, db}) => {
 		userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	});
 
@@ -140,7 +139,7 @@ export default ({config, db}) => {
     userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err=> {
-      apiStatus(res, err, 500);
+		apiError(res, err);
     })
   });
 
@@ -153,7 +152,7 @@ export default ({config, db}) => {
 			addUserGroupToken(config, result)
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	});
 
@@ -165,7 +164,7 @@ export default ({config, db}) => {
 		userProxy.orderHistory(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	});
 

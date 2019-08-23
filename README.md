@@ -103,13 +103,8 @@ After setting the `config.magento2.api` section using Yours Magento2 oauth crede
 
 ```json
   "magento2": {
-    "url": "http://magento2.demo-1.xyz.com",
     "imgUrl": "http://localhost:8080/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
-    "magentoUserName": "",
-    "magentoUserPassword": "",
-    "httpUserName": "",
-    "httpUserPassword": "",
     "api": {
       "url": "http://demo-magento2.vuestorefront.io/rest",
       "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
@@ -130,6 +125,12 @@ You can run the following command to execute the full import:
 
 ```bash
  yarn mage2vs import --store-code=de
+ ```
+
+ Import of CMS blocks and pages is also performed by the full import. If the CMS API extension ((SnowdogApps/magento2-cms-api)[https://github.com/SnowdogApps/magento2-cms-api]) was not installed in magento 2, it's recommended to skip the CMS import commands.
+
+```bash
+ yarn mage2vs import --skip-blocks --skip-pages
  ```
  
 ## Executing delta indexer
