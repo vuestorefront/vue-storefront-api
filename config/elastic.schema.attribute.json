@@ -10,7 +10,7 @@
             "properties": {
                 "value": {
                     "type": "text",
-                    "index": "not_analyzed"
+                    "index": true
                 }
             }
         }
