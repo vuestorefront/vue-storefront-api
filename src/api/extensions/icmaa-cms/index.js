@@ -3,16 +3,16 @@ import { Router } from 'express'
 
 import prismicConnector from './connector/prismic'
 import storyblokConnector from './connector/storyblok'
-import elasticsearch from 'elasticsearch';
+import elasticsearch from 'elasticsearch'
 
 module.exports = ({ config, db }) => {
-
   function esClient () {
     let { host, port, protocol } = config.elasticsearch
-    return new elasticsearch.Client({ host: { host, port, protocol } })
+    const httpAuth = config.elasticsearch.user ? `${config.elasticsearch.user}:${config.elasticsearch.password}` : undefined
+    return new elasticsearch.Client({ host: { host, port, protocol }, httpAuth })
   }
 
-	let api = Router()
+  let api = Router()
 
   api.get('/by-uid', async (req, res) => {
     if (req.query.type === undefined || req.query.uid === undefined) {
@@ -25,12 +25,12 @@ module.exports = ({ config, db }) => {
         await prismicConnector.fetch(req.query.type, req.query.uid, req.query.lang)
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
-          break
+        break
       case 'storyblok':
         await storyblokConnector.fetch(req.query.type, req.query.uid, req.query.lang)
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
-          break
+        break
       default:
         return apiStatus(res, `CMS service "${serviceName}" is not supported yet`, 500)
     }
@@ -47,7 +47,7 @@ module.exports = ({ config, db }) => {
         await storyblokConnector.search(req.query.type, req.query.q, req.query.lang)
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
-          break
+        break
       default:
         return apiStatus(res, `CMS service "${serviceName}" is not supported yet`, 500)
     }
@@ -58,11 +58,11 @@ module.exports = ({ config, db }) => {
       index: config.elasticsearch.indices[0],
       type: 'attribute',
       body: {
-        "_source": ["attribute_code", "id", "options", "frontend_label"],
-        "query": {
-          "term": {
-            "attribute_code": {
-              "value": req.params.code
+        '_source': ['attribute_code', 'id', 'options', 'frontend_label'],
+        'query': {
+          'term': {
+            'attribute_code': {
+              'value': req.params.code
             }
           }
         }
@@ -85,8 +85,7 @@ module.exports = ({ config, db }) => {
       }
 
       return apiStatus(res, 'No attribute values found', 400)
-      
-    })
+    }).catch(e => apiStatus(res, 'Elasticsearch client: ' + e.message, 500))
   })
 
   api.get('/categories', async (req, res) => {
@@ -95,12 +94,12 @@ module.exports = ({ config, db }) => {
       type: 'category',
       size: 2000,
       body: {
-        "_source": ["id", "url_path", "slug", "name"],
-        "query": {
-          "bool" : {
-            "must": [
-              { "exists": { "field": "name" } },
-              { "exists": { "field": "slug" } }
+        '_source': ['id', 'url_path', 'slug', 'name'],
+        'query': {
+          'bool': {
+            'must': [
+              { 'exists': { 'field': 'name' } },
+              { 'exists': { 'field': 'slug' } }
             ]
           }
         }
@@ -132,7 +131,7 @@ module.exports = ({ config, db }) => {
       }
 
       return apiStatus(res, 'No categories found', 400)
-    })
+    }).catch(e => apiStatus(res, 'Elasticsearch client: ' + e.message, 500))
   })
 
   return api
