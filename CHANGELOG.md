@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Force ES connections to use protocol config option - @cewald (#303, #304)
 - Better handling of HTTP error codes provided by API client - #3151
 
+### Changed
+- Error responses for mailchimp - (@andrzejewsky)
+
 ## [1.10.0] - 2019.08.12
 
 ### Added
@@ -74,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support unicode characters in order requests - @lukeromanowicz (#201)
 - TravisCI configured for building and linting - @lukeromanowicz (#204)
 - Use Redis database from configuration in mage2vs - @Cyclonecode (#211)
-- Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220) 
+- Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220)
 - `src/models/order.schema.json` was moved to `src/models/order.schema.js` to support regex transformation - @lukeromanowicz (#201)
 
 ## [1.8.4] - 2019.04.17
