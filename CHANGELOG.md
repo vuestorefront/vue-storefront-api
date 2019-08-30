@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better handling of HTTP error codes provided by API client - #3151
 
 ### Changed
-- Error responses for mailchimp - (@andrzejewsky)
+- Error responses for mailchimp - @andrzejewsky (#3337)
+- Replaced function arguments to object destructuring in `calculateProductTax` - @andrzejewsky (#3337)
 
 ## [1.10.0] - 2019.08.12
 
