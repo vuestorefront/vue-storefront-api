@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Sharp dependency has been updated. *It might require reinstalling yarn dependencies* - @lukeromanowicz
+- Replaced index property value `not_analyzed` with `true` for `options` field in attribute schema - @adityasharma7 (#334)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
