@@ -19,7 +19,7 @@ Besides a big improvement for the shopping experience, we also want to create a 
 - Docker and Docker Compose
 
 Already included in `vue-storefront-api` Docker image (required locally, if you do not use containerization):
-- Node.js 8.x or higher
+- Node.js 10.x or higher
 - Yarn
 
 ## Installation
