@@ -1,4 +1,4 @@
-import { apiStatus } from '../lib/util';
+import { apiStatus, apiError } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 
@@ -23,7 +23,7 @@ export default ({ config, db }) => {
 		cartProxy.create(req.query.token).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -46,7 +46,7 @@ export default ({ config, db }) => {
 		cartProxy.update(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -67,7 +67,7 @@ export default ({ config, db }) => {
 		cartProxy.applyCoupon(req.query.token, req.query.cartId ? req.query.cartId : null, req.query.coupon).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -84,7 +84,7 @@ export default ({ config, db }) => {
 		cartProxy.deleteCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -101,7 +101,7 @@ export default ({ config, db }) => {
 		cartProxy.getCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -124,7 +124,7 @@ export default ({ config, db }) => {
 		cartProxy.delete(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.cartItem).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -142,7 +142,7 @@ export default ({ config, db }) => {
 		cartProxy.pull(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -160,7 +160,7 @@ export default ({ config, db }) => {
 		cartProxy.totals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -182,7 +182,7 @@ export default ({ config, db }) => {
 		cartProxy.getShippingMethods(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.address).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -200,7 +200,7 @@ export default ({ config, db }) => {
 		cartProxy.getPaymentMethods(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -222,7 +222,7 @@ export default ({ config, db }) => {
 		cartProxy.setShippingInformation(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -244,7 +244,7 @@ export default ({ config, db }) => {
 		cartProxy.collectTotals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body.methods).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err => {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 

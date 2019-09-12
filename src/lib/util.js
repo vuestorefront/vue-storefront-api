@@ -46,6 +46,16 @@ export function apiStatus(res, result = 'OK', code = 200, meta = null) {
 	return result;
 }
 
+
+/**	Creates a api error status Express Response object.
+ *	@param {express.Response} res	Express HTTP Response
+ *	@param {number} [code=200]		Status code to send on success
+ *	@param {json} [result='OK']		Text message or result information object
+ */
+export function apiError(res, errorObj, code = 500) {
+	return apiStatus(res, errorObj.errorMessage ? errorObj.errorMessage : errorObj, errorObj.code ? errorObj.code : 500)
+}
+
 export function encryptToken(textToken, secret) {
 	const cipher = crypto.createCipher(algorithm, secret)
 	let crypted = cipher.update(textToken, 'utf8',  'hex')

@@ -1,4 +1,4 @@
-import { apiStatus, sgnSrc } from '../lib/util';
+import { apiStatus, sgnSrc, apiError } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 
@@ -30,7 +30,7 @@ export default ({ config, db }) => {
 		productProxy.list(req.query.skus.split(',')).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 
@@ -60,7 +60,7 @@ export default ({ config, db }) => {
 			})
 			apiStatus(res, result, 200);
 		}).catch(err=> {
-			apiStatus(res, err, 500);
+			apiError(res, err);
 		})
 	})
 

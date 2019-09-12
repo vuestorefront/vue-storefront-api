@@ -1,13 +1,39 @@
-import { apiStatus } from '../../../lib/util';
-import { Router } from 'express';
+import { apiStatus } from '../../../lib/util'
+import { Router } from 'express'
+const request = require('request')
+const md5 = require('md5')
 
 module.exports = ({ config, db }) => {
 
 	let mcApi = Router();
-	
 
-	/** 
-	 * POST create an user
+  /**
+   * Retrieve user subscription status
+   */
+  mcApi.get('/subscribe', (req, res) => {
+
+    const email = req.query.email
+    if(!email) {
+      apiStatus(res, 'Invalid e-mail provided!', 500)
+      return
+    }
+    return request({
+      url: config.extensions.mailchimp.apiUrl + '/lists/' + config.extensions.mailchimp.listId + '/members/' + md5(email.toLowerCase()),
+      method: 'GET',
+      json: true,
+      headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey }
+    }, function (error, response, body) {
+      if (error) {
+        console.error(error)
+        apiStatus(res, 'An error occured while accessing Mailchimp', 500)
+      } else {
+        apiStatus(res, body.status, 200)
+      }
+    })
+  })
+
+	/**
+	 * POST subscribe a user
 	 */
 	mcApi.post('/subscribe', (req, res) => {
 
@@ -16,25 +42,24 @@ module.exports = ({ config, db }) => {
 			apiStatus(res, 'Invalid e-mail provided!', 500)
 			return
 		}
-		
-		let request = require('request');
-		request({
-			url: config.extensions.mailchimp.apiUrl + '/lists/' + config.extensions.mailchimp.listId + '/members',
-			method: 'POST',
-			headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey },
-			json: true,
-			body: { email_address: userData.email, status: 'subscribed' }
-		}, function (error, response, body) {
-			if (error) {
-				apiStatus(res, error, 500)
-			} else {
-				apiStatus(res, body, 200)
-			}
-		})
+    request({
+      url: config.extensions.mailchimp.apiUrl + '/lists/' + config.extensions.mailchimp.listId,
+      method: 'POST',
+      headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey },
+      json: true,
+      body: { members: [ { email_address: userData.email, status: 'subscribed' } ], "update_existing": true }
+    }, function (error, response, body) {
+      if (error) {
+        console.error(error)
+        apiStatus(res, 'An error occured while accessing Mailchimp', 500)
+      } else {
+        apiStatus(res, body.status, 200)
+      }
+    })
 	})
 
-	/** 
-	 * DELETE delete an user
+	/**
+	 * DELETE unsubscribe a user
 	 */
 	mcApi.delete('/subscribe', (req, res) => {
 
@@ -43,7 +68,7 @@ module.exports = ({ config, db }) => {
 			apiStatus(res, 'Invalid e-mail provided!', 500)
 			return
 		}
-		
+
 		let request = require('request');
 		request({
 			url: config.extensions.mailchimp.apiUrl + '/lists/' + config.extensions.mailchimp.listId,
@@ -53,11 +78,13 @@ module.exports = ({ config, db }) => {
 			body: { members: [ { email_address: userData.email, status: 'unsubscribed' } ], "update_existing": true }
 		}, function (error, response, body) {
 			if (error) {
-				apiStatus(res, error, 500)
+        console.error(error)
+				apiStatus(res, 'An error occured while accessing Mailchimp', 500)
 			} else {
-				apiStatus(res, body, 200)
+				apiStatus(res, body.status, 200)
 			}
 		})
-	})	
-	return mcApi
+	})
+
+  return mcApi
 }
