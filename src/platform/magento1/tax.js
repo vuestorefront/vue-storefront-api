@@ -1,7 +1,7 @@
 import AbstractTaxProxy from '../abstract/tax'
 import { calculateProductTax, checkIfTaxWithUserGroupIsActive, getUserGroupIdToUse } from '../../lib/taxcalc'
 import TierHelper from '../../helpers/priceTiers'
-const es = require('elasticsearch')
+const es = require('@elastic/elasticsearch')
 const bodybuilder = require('bodybuilder')
 
 class TaxProxy extends AbstractTaxProxy {
@@ -73,11 +73,7 @@ class TaxProxy extends AbstractTaxProxy {
 
       if (this._config.tax.calculateServerSide) {
         const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-          host: {
-            host: this._config.elasticsearch.host,
-            port: this._config.elasticsearch.port,
-            protocol: this._config.elasticsearch.protocol
-          },
+          node: `${this._config.elasticsearch.protocol}://${this._config.elasticsearch.host}:${this._config.elasticsearch.port}`,
           log: 'debug',
           apiVersion: this._config.elasticsearch.apiVersion,
           requestTimeout: 5000

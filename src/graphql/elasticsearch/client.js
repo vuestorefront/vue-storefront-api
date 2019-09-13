@@ -1,12 +1,8 @@
 import config from 'config';
-import elasticsearch from 'elasticsearch';
+import elasticsearch from '@elastic/elasticsearch';
 
 const client = new elasticsearch.Client({
-  host: {
-    host: config.elasticsearch.host,
-    port: config.elasticsearch.port,
-    protocol: config.elasticsearch.protocol
-  }
+  node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`
 });
 
 export default client;

@@ -4,7 +4,7 @@ import {
 import {
   Router
 } from 'express';
-const es = require('elasticsearch')
+const es = require('@elastic/elasticsearch')
 const bodybuilder = require('bodybuilder')
 
 module.exports = ({
@@ -15,11 +15,7 @@ module.exports = ({
 
   const getElasticClient = (config) => {
     const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-      host: {
-        host: config.elasticsearch.host,
-        port: config.elasticsearch.port,
-        protocol: config.elasticsearch.protocol
-      },
+      node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
       apiVersion: config.elasticsearch.apiVersion,
       requestTimeout: 5000
     }

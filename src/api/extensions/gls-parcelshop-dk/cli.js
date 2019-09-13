@@ -13,13 +13,9 @@ cli.option({
 
 cli.command('buildcache', () => {
   const soap = require('soap')
-  const elasticsearch = require('elasticsearch');
+  const elasticsearch = require('@elastic/elasticsearch');
   const esConfig = {
-    host: {
-      host: config.elasticsearch.host,
-      port: config.elasticsearch.port,
-      protocol: config.elasticsearch.protocol
-    },
+    node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
     log: 'debug',
     apiVersion: config.elasticsearch.apiVersion,
     requestTimeout: 1000 * 60 * 60,

@@ -6,7 +6,7 @@ const jsonFile = require('jsonfile')
 function putAlias (db, originalName, aliasName, next) {
   let step2 = () => {
     db.indices.putAlias({ index: originalName, name: aliasName }).then(result => {
-      console.log('Index alias created', result)
+      console.log('Index alias created')
     }).then(next).catch(err => {
       console.log(err.message)
       next()
@@ -16,7 +16,7 @@ function putAlias (db, originalName, aliasName, next) {
     index: aliasName,
     name: originalName
   }).then((result) => {
-    console.log('Public index alias deleted', result)
+    console.log('Public index alias deleted')
     step2()
   }).catch((err) => {
     console.log('Public index alias does not exists', err.message)
@@ -32,13 +32,21 @@ function deleteIndex (db, indexName, next) {
   db.indices.delete({
     'index': indexName
   }).then((res) => {
-    console.dir(res, { depth: null, colors: true })
     next()
   }).catch(err => {
-    console.error(err)
-    next(err)
+    return db.indices.deleteAlias({
+      index: '*',
+      name: indexName
+    }).then((result) => {
+      console.log('Public index alias deleted')
+      next()
+    }).catch((err) => {
+      console.log('Public index alias does not exists', err.message)
+      next()
+    })
   })
 }
+
 function reIndex (db, fromIndexName, toIndexName, next) {
   db.reindex({
     waitForCompletion: true,
@@ -51,7 +59,6 @@ function reIndex (db, fromIndexName, toIndexName, next) {
       }
     }
   }).then(res => {
-    console.dir(res, { depth: null, colors: true })
     next()
   }).catch(err => {
     console.error(err)
@@ -59,20 +66,18 @@ function reIndex (db, fromIndexName, toIndexName, next) {
   })
 }
 
-function createIndex (db, indexName, next) {
-  let indexSchema = loadSchema('index');
+function createIndex (db, indexName, collectionName, next) {
+  let indexSchema = loadSchema(collectionName);
 
   const step2 = () => {
     db.indices.delete({
       'index': indexName
     }).then(res1 => {
-      console.dir(res1, { depth: null, colors: true })
       db.indices.create(
         {
           'index': indexName,
           'body': indexSchema
         }).then(res2 => {
-        console.dir(res2, { depth: null, colors: true })
         next()
       }).catch(err => {
         console.error(err)
@@ -84,7 +89,6 @@ function createIndex (db, indexName, next) {
           'index': indexName,
           'body': indexSchema
         }).then(res2 => {
-        console.dir(res2, { depth: null, colors: true })
         next()
       }).catch(err => {
         console.error(err)
@@ -97,7 +101,7 @@ function createIndex (db, indexName, next) {
     index: '*',
     name: indexName
   }).then((result) => {
-    console.log('Public index alias deleted', result)
+    console.log('Public index alias deleted')
     step2()
   }).catch((err) => {
     console.log('Public index alias does not exists', err.message)
@@ -110,79 +114,20 @@ function createIndex (db, indexName, next) {
  * @param {String} entityType
  */
 function loadSchema (entityType) {
-  let elasticSchema = jsonFile.readFileSync(path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json'));
+  const rootSchemaPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json')
+  if (!fs.existsSync(rootSchemaPath)) {
+    return null
+  }
+  let elasticSchema = Object.assign({}, { mappings: jsonFile.readFileSync(rootSchemaPath) });
   const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
   if (fs.existsSync(extensionsPath)) {
-    let elasticSchemaExtensions = jsonFile.readFileSync(extensionsPath);
+    let elasticSchemaExtensions = Object.assign({}, { mappings: jsonFile.readFileSync(extensionsPath) });
     elasticSchema = _.merge(elasticSchema, elasticSchemaExtensions) // user extensions
   }
   return elasticSchema
 }
 
-function putMappings (db, indexName, next) {
-  let productSchema = loadSchema('product');
-  let categorySchema = loadSchema('category');
-  let taxruleSchema = loadSchema('taxrule');
-  let attributeSchema = loadSchema('attribute');
-  let pageSchema = loadSchema('page');
-  let blockSchema = loadSchema('block');
-
-  db.indices.putMapping({
-    index: indexName,
-    type: 'product',
-    body: productSchema
-  }).then(res1 => {
-    console.dir(res1, { depth: null, colors: true })
-
-    db.indices.putMapping({
-      index: indexName,
-      type: 'taxrule',
-      body: taxruleSchema
-    }).then(res2 => {
-      console.dir(res2, { depth: null, colors: true })
-
-      db.indices.putMapping({
-        index: indexName,
-        type: 'attribute',
-        body: attributeSchema
-      }).then(res3 => {
-        console.dir(res3, { depth: null, colors: true })
-        db.indices.putMapping({
-          index: indexName,
-          type: 'cms_page',
-          body: pageSchema
-        }).then(res4 => {
-          console.dir(res4, { depth: null, colors: true })
-          db.indices.putMapping({
-            index: indexName,
-            type: 'cms_block',
-            body: blockSchema
-          }).then(res5 => {
-            console.dir(res5, { depth: null, colors: true })
-            db.indices.putMapping({
-              index: indexName,
-              type: 'category',
-              body: categorySchema
-            }).then(res6 => {
-              console.dir(res6, { depth: null, colors: true })
-              next()
-            })
-          })
-        })
-      }).catch(err3 => {
-        throw new Error(err3)
-      })
-    }).catch(err2 => {
-      throw new Error(err2)
-    })
-  }).catch(err1 => {
-    console.error(err1)
-    next(err1)
-  })
-}
-
 module.exports = {
-  putMappings,
   putAlias,
   createIndex,
   deleteIndex,

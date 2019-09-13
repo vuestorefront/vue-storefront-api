@@ -1,16 +1,16 @@
 version: '3.0'
 services:
-  es1:
-    container_name: elasticsearch
+  elasticsearch7:
+    container_name: elasticsearch7
     build: docker/elasticsearch7/
     volumes:
-      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./docker/elasticsearch7/data:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
-      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      ES_JAVA_OPTS: "-Xmx2g -Xms2g"
 
   kibana:
     build: docker/kibana/
@@ -19,7 +19,7 @@ services:
     ports:
       - '5601:5601'
     depends_on:
-      - es1
+      - elasticsearch7
 
   redis:
     image: 'redis:4-alpine'

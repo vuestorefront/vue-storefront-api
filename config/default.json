@@ -21,8 +21,6 @@
     "host": "localhost",
     "port": 9200,
     "protocol": "http",
-    "user": "elastic",
-    "password": "changeme",
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
@@ -32,12 +30,13 @@
     "indexTypes": [
       "product",
       "category",
-      "cms",
+      "block",
+      "page",
       "attribute",
       "taxrule",
       "review"
     ],
-    "apiVersion": "5.6"
+    "apiVersion": "8.6"
   },
   "redis": {
     "host": "localhost",

@@ -11,6 +11,7 @@ src/config.json
 config/local.json
 config/certs/*.pem
 var/magento2-sample-data/
+var/*
 .migrate
 *.iml
 /docker/elasticsearch/data/

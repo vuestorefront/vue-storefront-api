@@ -3,13 +3,9 @@ let config = require('config')
 let kue = require('kue')
 let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }))
 
-let es = require('elasticsearch')
+let es = require('@elastic/elasticsearch')
 const esConfig = {
-  host: {
-    host: config.elasticsearch.host,
-    port: config.elasticsearch.port,
-    protocol: config.elasticsearch.protocol
-  },
+  node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
   log: 'debug',
   apiVersion: config.elasticsearch.apiVersion,
   requestTimeout: 1000 * 60 * 60,
