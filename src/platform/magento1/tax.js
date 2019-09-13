@@ -84,14 +84,14 @@ class TaxProxy extends AbstractTaxProxy {
 
         const client = new es.Client(esConfig)
         const esQuery = {
-          index: this._indexName,
+          index: parseInt(this._config.elasticsearch.apiVersion <= 5) ? this._indexName : `${this._indexName}_taxrule`,
           body: bodybuilder()
         }
-        if (parseInt(this._config.elasticsearch.apiVersion <=5)) {
+        if (parseInt(this._config.elasticsearch.apiVersion <= 5)) {
           esQuery.type = 'taxrule'
         }
-    
-        client.search(esQuery).then((taxClasses) => { // we're always trying to populate cache - when online
+
+        client.search(esQuery).then(({ body: taxClasses }) => { // we're always trying to populate cache - when online
           inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
           for (let item of productList) {
             const isActive = checkIfTaxWithUserGroupIsActive(inst._storeConfigTax)

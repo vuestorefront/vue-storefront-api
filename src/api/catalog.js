@@ -85,7 +85,7 @@ export default ({config, db}) => function (req, res, body) {
     delete parsedQuery._source_include
     delete parsedQuery.request
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + `${indexName}_${entityType}` + '/_search?' + queryString.stringify(parsedQuery)
-  }  
+  }
 
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url

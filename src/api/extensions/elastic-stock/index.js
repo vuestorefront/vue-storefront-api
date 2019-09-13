@@ -36,11 +36,11 @@ module.exports = ({
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     }
-    if (parseInt(config.elasticsearch.apiVersion <=5)) {
+    if (parseInt(config.elasticsearch.apiVersion <= 5)) {
       esQuery.type = 'product'
     }
-    
-    return getElasticClient(config).search(esQuery).then((products) => { // we're always trying to populate cache - when online
+
+    return getElasticClient(config).search(esQuery).then(({ body: products }) => { // we're always trying to populate cache - when online
       console.log(products)
       return products.hits.hits.map(el => {
         return el._source.stock

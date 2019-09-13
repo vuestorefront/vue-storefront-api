@@ -15,7 +15,7 @@ async function listAttributes (attributes, context, rootValue, _sourceInclude) {
     body: query,
     _sourceInclude
   };
-  if (parseInt(config.elasticsearch.apiVersion <=5)) {
+  if (parseInt(config.elasticsearch.apiVersion <= 5)) {
     esQuery.type = config.elasticsearch.indexTypes[3]
   }
 
