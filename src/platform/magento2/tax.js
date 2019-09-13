@@ -91,7 +91,7 @@ class TaxProxy extends AbstractTaxProxy {
         }
         console.log('QR', esQuery)
         client.search(esQuery).then(({ body: taxClasses }) => { // we're always trying to populate cache - when online
-        inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
+          inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
           for (let item of productList) {
             const isActive = checkIfTaxWithUserGroupIsActive(inst._storeConfigTax)
             if (isActive) {
