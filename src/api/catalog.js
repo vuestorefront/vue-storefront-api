@@ -73,7 +73,19 @@ export default ({config, db}) => function (req, res, body) {
   }
 
   // pass the request to elasticsearch
-  let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+  let url
+  if (parseInt(config.elasticsearch.apiVersion) <= 5) { // legacy for ES 5
+    url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+  } else {
+    const queryString = require('query-string');
+    const parsedQuery = queryString.parseUrl(req.url).query
+    parsedQuery._source_includes = parsedQuery._source_include
+    parsedQuery._source_excludes = parsedQuery._source_exclude
+    delete parsedQuery._source_exclude
+    delete parsedQuery._source_include
+    delete parsedQuery.request
+    url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + `${indexName}_${entityType}` + '/_search?' + queryString.stringify(parsedQuery)
+  }  
 
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url

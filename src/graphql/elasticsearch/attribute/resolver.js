@@ -10,12 +10,16 @@ async function listAttributes (attributes, context, rootValue, _sourceInclude) {
     _sourceInclude = config.entities.attribute.includeFields
   }
 
-  const response = await client.search({
+  const esQuery = {
     index: getIndexName(context.req.url),
-    type: config.elasticsearch.indexTypes[3],
     body: query,
     _sourceInclude
-  });
+  };
+  if (parseInt(config.elasticsearch.apiVersion <=5)) {
+    esQuery.type = config.elasticsearch.indexTypes[3]
+  }
+
+  const response = await client.search(esQuery);
 
   return response;
 }
