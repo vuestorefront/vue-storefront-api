@@ -9,18 +9,6 @@ module.exports = ({
 }) => {
   let api = Router();
 
-  const getElasticClient = (config) => {
-    const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-      node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
-      apiVersion: config.elasticsearch.apiVersion,
-      requestTimeout: 5000
-    }
-    if (config.elasticsearch.user) {
-      esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
-    }
-    return new es.Client(esConfig)
-  }
-
 	const getStockList = (storeCode, skus) => {
 		let storeView = getCurrentStoreView(storeCode)
         const esQuery = adjustQuery({

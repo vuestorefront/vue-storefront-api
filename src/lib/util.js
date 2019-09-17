@@ -8,7 +8,7 @@ const algorithm = 'aes-256-ctr';
  */
 export function getCurrentStoreCode (req) {
   if (req.headers['x-vs-store-code']) {
-    return req.headers['x-vs-store']
+    return req.headers['x-vs-store-code']
   }
   if (req.query.storeCode) {
     return req.query.storeCode
@@ -21,10 +21,17 @@ export function getCurrentStoreCode (req) {
  * @param {string} storeCode 
  */
 export function getCurrentStoreView (storeCode = null) {
+  let storeView = { // current, default store
+    tax: config.tax,
+    i18n: config.i18n,
+    elasticsearch: config.elasticsearch,
+    storeCode: null,
+    storeId: config.defaultStoreCode && config.defaultStoreCode !== '' ? config.storeViews[config.defaultStoreCode].storeId : 1
+  }  
   if (storeCode && config.storeViews[storeCode]) {
     storeView = config.storeViews[storeCode]
   }
-  return config // main config is used as default storeview
+  return storeView // main config is used as default storeview
 }
 
 
