@@ -74,7 +74,7 @@ export default ({config, db}) => function (req, res, body) {
 
   // pass the request to elasticsearch
   let url
-  if (parseInt(config.elasticsearch.apiVersion) <= 5) { // legacy for ES 5
+  if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
   } else {
     const queryString = require('query-string');

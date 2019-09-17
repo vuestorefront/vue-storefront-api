@@ -36,7 +36,7 @@ module.exports = ({
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     }
-    if (parseInt(config.elasticsearch.apiVersion <= 5)) {
+    if (parseInt(config.elasticsearch.apiVersion) < 6) {
       esQuery.type = 'product'
     }
 

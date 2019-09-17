@@ -83,10 +83,10 @@ class TaxProxy extends AbstractTaxProxy {
 
         let client = new es.Client(esConfig)
         const esQuery = {
-          index: parseInt(this._config.elasticsearch.apiVersion <= 5) ? this._indexName : `${this._indexName}_taxrule`,
+          index: parseInt(this._config.elasticsearch.apiVersion) < 6 ? this._indexName : `${this._indexName}_taxrule`,
           body: bodybuilder()
         }
-        if (parseInt(this._config.elasticsearch.apiVersion <= 5)) {
+        if (parseInt(this._config.elasticsearch.apiVersion) < 6) {
           esQuery.type = 'taxrule'
         }
         console.log('QR', esQuery)
