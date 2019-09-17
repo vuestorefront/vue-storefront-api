@@ -2,6 +2,36 @@ const path = require('path')
 const _ = require('lodash')
 const fs = require('fs');
 const jsonFile = require('jsonfile')
+const es = require('elasticsearch')
+
+function adjustQuery(esQuery, entityType, config) {
+  if (parseInt(config.elasticsearch.apiVersion) < 6) {
+    esQuery.type = entityType
+  } else {
+    esQuery.index = `${esQuery.index}_${entityType}`
+  }
+  return esQuery
+}
+
+function getHits(result) {
+  if (result.body) { // differences between ES5 andd ES7
+    return result.bodyc
+  } else {
+    return result.hits.hits  
+  }
+}
+
+function getClient(config) {
+  const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
+    node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
+    apiVersion: config.elasticsearch.apiVersion,
+    requestTimeout: 5000
+  }
+  if (config.elasticsearch.user) {
+    esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
+  }
+  return new es.Client(esConfig)
+}
 
 function putAlias (db, originalName, aliasName, next) {
   let step2 = () => {
@@ -132,5 +162,8 @@ module.exports = {
   createIndex,
   deleteIndex,
   reIndex,
-  search
+  search,
+  adjustQuery,
+  getClient,
+  getHits
 }

@@ -1,8 +1,8 @@
 import AbstractTaxProxy from '../abstract/tax'
 import { calculateProductTax, checkIfTaxWithUserGroupIsActive, getUserGroupIdToUse } from '../../lib/taxcalc'
 import TierHelper from '../../helpers/priceTiers'
-const es = require('@elastic/elasticsearch')
-const bodybuilder = require('bodybuilder')
+import bodybuilder from bodybuilder
+import es from '../../lib/elastic'
 
 class TaxProxy extends AbstractTaxProxy {
   constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null, finalPriceInclTax = null) {
@@ -72,27 +72,14 @@ class TaxProxy extends AbstractTaxProxy {
       inst.applyTierPrices(productList, groupId)
 
       if (this._config.tax.calculateServerSide) {
-        const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-          node: `${this._config.elasticsearch.protocol}://${this._config.elasticsearch.host}:${this._config.elasticsearch.port}`,
-          log: 'debug',
-          apiVersion: this._config.elasticsearch.apiVersion,
-          requestTimeout: 5000
-        }
-        if (this._config.elasticsearch.user) {
-          esConfig.httpAuth = this._config.elasticsearch.user + ':' + this._config.elasticsearch.password
-        }
-
-        const client = new es.Client(esConfig)
-        const esQuery = {
-          index: parseInt(this._config.elasticsearch.apiVersion) < 6 ? this._indexName : `${this._indexName}_taxrule`,
+        const client = es.getClient(this._config)
+        const esQuery = es.adjustQuery({
+          index: this._indexName,
           body: bodybuilder()
-        }
-        if (parseInt(this._config.elasticsearch.apiVersion) < 6) {
-          esQuery.type = 'taxrule'
-        }
+        }, 'taxrule', this._config)
 
-        client.search(esQuery).then(({ body: taxClasses }) => { // we're always trying to populate cache - when online
-          inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
+        client.search(esQuery).then((result) => { // we're always trying to populate cache - when online
+          inst._taxClasses = es.getHits(result).map(el => { return el._source })
           for (let item of productList) {
             const isActive = checkIfTaxWithUserGroupIsActive(inst._storeConfigTax)
             if (isActive) {
