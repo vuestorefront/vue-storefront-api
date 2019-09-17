@@ -4,7 +4,7 @@ const fs = require('fs');
 const jsonFile = require('jsonfile')
 const es = require('elasticsearch')
 
-function adjustQuery(esQuery, entityType, config) {
+function adjustQuery (esQuery, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) {
     esQuery.type = entityType
   } else {
@@ -13,15 +13,15 @@ function adjustQuery(esQuery, entityType, config) {
   return esQuery
 }
 
-function getHits(result) {
+function getHits (result) {
   if (result.body) { // differences between ES5 andd ES7
     return result.bodyc
   } else {
-    return result.hits.hits  
+    return result.hits.hits
   }
 }
 
-function getClient(config) {
+function getClient (config) {
   const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
     node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
     apiVersion: config.elasticsearch.apiVersion,

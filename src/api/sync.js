@@ -1,5 +1,5 @@
 import { apiStatus } from '../lib/util'; import { Router } from 'express';
-import  * as redis  from '../lib/redis'
+import * as redis from '../lib/redis'
 
 export default ({ config, db }) => {
   let syncApi = Router();
@@ -8,7 +8,7 @@ export default ({ config, db }) => {
    * GET get stock item
    */
   syncApi.get('/order/:order_id', (req, res) => {
-	const redisClient = db.getRedisClient(config)
+    const redisClient = db.getRedisClient(config)
 
     redisClient.get('order$$id$$' + req.param('order_id'), (err, reply) => {
       const orderMetaData = JSON.parse(reply)
