@@ -4,8 +4,10 @@ services:
     container_name: elasticsearch7
     build: docker/elasticsearch7/
     environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m -XX:-UseConcMarkSweepGC
+                                        -XX:-UseCMSInitiatingOccupancyOnly
+                                        -XX:+UseG1GC
+                                        -XX:InitiatingHeapOccupancyPercent=75"
     ulimits:
       memlock:
         soft: -1
