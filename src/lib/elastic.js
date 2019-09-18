@@ -28,7 +28,7 @@ function getClient (config) {
     requestTimeout: 5000
   }
   if (config.elasticsearch.user) {
-    esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
+    esConfig.auth = config.elasticsearch.user + ':' + config.elasticsearch.password
   }
   return new es.Client(esConfig)
 }
