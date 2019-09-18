@@ -30,13 +30,13 @@
     "indexTypes": [
       "product",
       "category",
-      "block",
-      "page",
+      "cms_block",
+      "cms_page",
       "attribute",
       "taxrule",
       "review"
     ],
-    "apiVersion": "5.6"
+    "apiVersion": "7.1"
   },
   "redis": {
     "host": "localhost",

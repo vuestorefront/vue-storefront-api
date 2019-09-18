@@ -48,7 +48,6 @@ export default ({config, db}) => function (req, res, body) {
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
       requestBody = JSON.parse(decodeURIComponent(req.query.request))
-      console.log(requestBody)
     }
   } else {
     requestBody = req.body

@@ -1,20 +1,10 @@
 version: '3.0'
 services:
-  elasticsearch7:
+  es7:
     container_name: elasticsearch7
     build: docker/elasticsearch7/
-    environment:
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m -XX:-UseConcMarkSweepGC
-                                        -XX:-UseCMSInitiatingOccupancyOnly
-                                        -XX:+UseG1GC
-                                        -XX:InitiatingHeapOccupancyPercent=75"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1    
     volumes:
       - ./docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./docker/elasticsearch7/data:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'

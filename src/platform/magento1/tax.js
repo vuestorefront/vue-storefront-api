@@ -50,7 +50,7 @@ class TaxProxy extends AbstractTaxProxy {
     this._taxRegion = taxRegion
     this._sourcePriceInclTax = sourcePriceInclTax
     this._finalPriceInclTax = finalPriceInclTax
-    console.log('Taxes will be calculated for', taxCountry, taxRegion, sourcePriceInclTax)
+    console.debug('Taxes will be calculated for', taxCountry, taxRegion, sourcePriceInclTax)
     this.taxFor = this.taxFor.bind(this)
   }
 
