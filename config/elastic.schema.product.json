@@ -7,7 +7,7 @@
        "size": {"type": "integer"},
        "size_options": {"type": "integer"},
        "price": {"type": "float"},
-       "has_options": {"type": "boolean"},            
+       "has_options": {"type": "keyword"},            
        "special_price": {"type": "float"},
        "color": {"type": "integer"},
        "color_options": {"type": "integer"},
@@ -46,7 +46,7 @@
            "properties": {
                "url_key": {"type": "keyword"},
                "sku": {"type": "keyword"},
-               "has_options": {"type": "boolean"},
+               "has_options": {"type": "keyword"},
                "price": {"type": "float"},
                "special_price": {"type": "float"}
             }
