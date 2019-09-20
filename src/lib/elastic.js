@@ -54,7 +54,7 @@ function adjustQuery (esQuery, entityType, config) {
 
 function getHits (result) {
   if (result.body) { // differences between ES5 andd ES7
-    return result.bodyc
+    return result.body
   } else {
     return result.hits.hits
   }
@@ -136,7 +136,7 @@ function reIndex (db, fromIndexName, toIndexName, next) {
 }
 
 function createIndex (db, indexName, collectionName, next) {
-  let indexSchema = collectionName ? loadSchema(collectionName) : loadSchema('index');
+  let indexSchema = collectionName ? loadSchema(collectionName) : loadSchema('index', '5.6'); /** index schema is used only for 5.6 */
 
   const step2 = () => {
     db.indices.delete({
@@ -182,15 +182,17 @@ function createIndex (db, indexName, collectionName, next) {
  * Load the schema definition for particular entity type
  * @param {String} entityType
  */
-function loadSchema (entityType) {
+function loadSchema (entityType, apiVersion = '7.1') {
   const rootSchemaPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json')
   if (!fs.existsSync(rootSchemaPath)) {
     return null
   }
-  let elasticSchema = Object.assign({}, { mappings: jsonFile.readFileSync(rootSchemaPath) });
+  let schemaContent = jsonFile.readFileSync(rootSchemaPath)
+  let elasticSchema = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
   const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
   if (fs.existsSync(extensionsPath)) {
-    let elasticSchemaExtensions = Object.assign({}, { mappings: jsonFile.readFileSync(extensionsPath) });
+    schemaContent = jsonFile.readFileSync(extensionsPath) 
+    let elasticSchemaExtensions = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
     elasticSchema = _.merge(elasticSchema, elasticSchemaExtensions) // user extensions
   }
   return elasticSchema
@@ -198,12 +200,12 @@ function loadSchema (entityType) {
 
 // this is deprecated just for ES 5.6
 function putMappings (db, indexName, next) {
-  let productSchema = loadSchema('product');
-  let categorySchema = loadSchema('category');
-  let taxruleSchema = loadSchema('taxrule');
-  let attributeSchema = loadSchema('attribute');
-  let pageSchema = loadSchema('page');
-  let blockSchema = loadSchema('block');
+  let productSchema = loadSchema('product', '5.6');
+  let categorySchema = loadSchema('category', '5.6');
+  let taxruleSchema = loadSchema('taxrule', '5.6');
+  let attributeSchema = loadSchema('attribute', '5.6');
+  let pageSchema = loadSchema('cms_page', '5.6');
+  let blockSchema = loadSchema('cms_block', '5.6');
 
   db.indices.putMapping({
     index: indexName,
