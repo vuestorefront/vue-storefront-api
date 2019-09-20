@@ -156,6 +156,12 @@ NOTE: `npm` users will still have to install the dependencies individually in th
 
 ## Reviews
 To use review feature you need to install custom module for Magento 2: [Divante ReviewApi](https://github.com/DivanteLtd/magento2-review-api)
+By default new reviews will be added with status "Pending". 
+```json
+  "review": {
+    "defaultReviewStatus": 2 
+  },
+```
 
 ## Output Cache
 Vue Storefront API supports output cache for catalog operations. Cache is tagged and can by dynamically invalidated. Please find the details how to configure it [in our docs](https://docs.vuestorefront.io/guide/basics/ssr-cache.html).

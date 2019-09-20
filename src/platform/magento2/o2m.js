@@ -175,6 +175,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
                 'email': billingAddr.email,
                 'regionId': mappedBillingRegion.regionId,
                 'regionCode': mappedBillingRegion.regionCode,
+                'region': billingAddr.region,
                 'company': billingAddr.company,
                 'vatId': billingAddr.vat_id
               },
@@ -196,6 +197,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
               'email': shippingAddr.email,
               'regionId': mappedShippingRegion.regionId,
               'regionCode': mappedShippingRegion.regionCode,
+              'region': shippingAddr.region,
               'company': shippingAddr.company
             }
           } else {
