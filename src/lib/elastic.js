@@ -136,7 +136,7 @@ function reIndex (db, fromIndexName, toIndexName, next) {
 }
 
 function createIndex (db, indexName, collectionName, next) {
-  let indexSchema = loadSchema(collectionName);
+  let indexSchema = collectionName ? loadSchema(collectionName) : loadSchema('index');
 
   const step2 = () => {
     db.indices.delete({
@@ -196,6 +196,71 @@ function loadSchema (entityType) {
   return elasticSchema
 }
 
+// this is deprecated just for ES 5.6
+function putMappings(db, indexName, next) {
+  let productSchema = loadSchema('product');
+  let categorySchema = loadSchema('category');
+  let taxruleSchema = loadSchema('taxrule');
+  let attributeSchema = loadSchema('attribute');
+  let pageSchema = loadSchema('page');
+  let blockSchema = loadSchema('block');
+
+  db.indices.putMapping({
+    index: indexName,
+    type: "product",
+    body: productSchema
+  }).then(res1 => {
+    console.dir(res1, { depth: null, colors: true })
+
+    db.indices.putMapping({
+      index: indexName,
+      type: "taxrule",
+      body: taxruleSchema
+    }).then(res2 => {
+      console.dir(res2, { depth: null, colors: true })
+
+      db.indices.putMapping({
+        index: indexName,
+        type: "attribute",
+        body: attributeSchema
+      }).then(res3 => {
+        console.dir(res3, { depth: null, colors: true })
+        db.indices.putMapping({
+          index: indexName,
+          type: "cms_page",
+          body: pageSchema
+        }).then(res4 => {
+          console.dir(res4, { depth: null, colors: true })        
+          db.indices.putMapping({
+            index: indexName,
+            type: "cms_block",
+            body: blockSchema
+          }).then(res5 => {
+            console.dir(res5, { depth: null, colors: true })   
+            db.indices.putMapping({
+              index: indexName,
+              type: "category",
+              body: categorySchema
+            }).then(res6 => {
+              console.dir(res6, { depth: null, colors: true })
+              next()
+            })
+          })
+        })
+      }).catch(err3 => {
+        throw new Error(err3)
+      })
+    }).catch(err2 => {
+      throw new Error(err2)
+    })
+  }).catch(err1 => {
+    console.error(err1)
+    next(err1)
+  })
+}
+
+
+
 module.exports = {
   putAlias,
   createIndex,
@@ -205,5 +270,6 @@ module.exports = {
   adjustQuery,
   adjustBackendProxyUrl,
   getClient,
-  getHits
+  getHits,
+  putMappings
 }
