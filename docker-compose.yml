@@ -1,4 +1,4 @@
-version: '3.0'
+version: '2.0'
 services:
   es1:
     container_name: elasticsearch
@@ -7,6 +7,7 @@ services:
       memlock:
         soft: -1
         hard: -1    
+    mem_limit: 1g
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
@@ -14,7 +15,10 @@ services:
       - '9200:9200'
       - '9300:9300'
     environment:
-      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
 
   kibana:
     build: docker/kibana/
