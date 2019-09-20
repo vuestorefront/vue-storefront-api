@@ -36,7 +36,7 @@
       "taxrule",
       "review"
     ],
-    "apiVersion": "7.1"
+    "apiVersion": "5.6"
   },
   "redis": {
     "host": "localhost",
