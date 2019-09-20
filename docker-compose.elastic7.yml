@@ -3,6 +3,10 @@ services:
   es7:
     container_name: elasticsearch7
     build: docker/elasticsearch7/
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1    
     volumes:
       - ./docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:

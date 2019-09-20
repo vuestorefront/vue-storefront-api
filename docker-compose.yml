@@ -3,6 +3,10 @@ services:
   es1:
     container_name: elasticsearch
     build: docker/elasticsearch/
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1    
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./docker/elasticsearch/data:/usr/share/elasticsearch/data

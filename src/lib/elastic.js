@@ -191,7 +191,7 @@ function loadSchema (entityType, apiVersion = '7.1') {
   let elasticSchema = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
   const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
   if (fs.existsSync(extensionsPath)) {
-    schemaContent = jsonFile.readFileSync(extensionsPath) 
+    schemaContent = jsonFile.readFileSync(extensionsPath)
     let elasticSchemaExtensions = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
     elasticSchema = _.merge(elasticSchema, elasticSchemaExtensions) // user extensions
   }
