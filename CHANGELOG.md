@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `db` context object - passed to every api endpoint now has two usefull methods: `getElasticClient` and `getRedisClient` for accesing the data stores - @pkarw (#328)
 - The `lib/utils` got two new methods `getStoreCode(req: Express.Request)` and `getStoreView(code: string)` for getting the current multistore context from `vue-storefront` frontend requests - @pkarw
 
+### Removed
+- The `scripts/seo.js` tool has been removed, the legacy `migrations` scripts have been removed, the unused legacy extensions (`gls-parcelshop-dk`, `postnord-parcelshop-dk`) - @pkarw (#342)
+
 ### Fixed
 - The way Elastic and Redis clients have been fixed and code duplication removed across the app - @pkarw (#327)
 - The `product.price_*` fields have been normalized with the backward compatibility support (see `config.tax.deprecatedPriceFieldsSupport` which is by default true) - @pkarw (#289)
