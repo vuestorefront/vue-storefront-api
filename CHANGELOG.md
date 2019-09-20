@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.11.0-rc.1] - UNRELEASED
 
 ### Added
+- Experimental Elastic 7 support - @pkarw (#342)
 - Output cache support with tagging and cache invalidate requests forwarding - @pkarw (https://github.com/DivanteLtd/vue-storefront/issues/3367)
 - Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
 - mage2vs import now has optional `--generate-unique-url-keys` parameter which defaults to `false` to enable/disable the url key generation with name and id for categories - @rain2o (#232)

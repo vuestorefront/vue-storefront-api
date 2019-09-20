@@ -65,6 +65,68 @@ A [Kibana](https://www.elastic.co/products/kibana) service is available to explo
 
 At first access it will ask to specify an index pattern, insert `vue_storefront*`
 
+**Note:** Kibana is not provided with the Elastic 7 docker file. Please install it on your own when needed or check the [`es-head`](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm) Chrome plugin.
+
+## Elastic 7 support
+
+By default, Vue Storefront API docker files and config are based on Elastic 5.6. We plan to change the default Elastic version to 7 with the 1.11 stable release. As for now, the [Elastic 7 support](https://github.com/DivanteLtd/vue-storefront-api/pull/342) is marked as **experimental**. 
+
+**How to use it?**
+
+In order to use the new Elastic 7 please make sure your `vue-storefront-api` has been checked out from the [PR#342](https://github.com/DivanteLtd/vue-storefront-api/pull/342) branch.
+To start the Elastic 7 docker service please use the `docker-compose.elastic7.yml` file provided:
+
+```bash
+docker-compose -f docker-compose.elastic7.yml up
+```
+
+Then, please do change the `config/local.json` to start using the new Elastic API. Key properties in the `elasticsearch` section are: `indexTypes` and `apiVersion` (to be set to 7.1). If you're using the multistore configuration please make sure you adjusted the `storeViews.*.elasticsearch` section as well - per each separate store.
+
+```json
+  "elasticsearch": {
+    "host": "localhost",
+    "port": 9200,
+    "protocol": "http",
+    "min_score": 0.01,
+    "indices": [
+      "vue_storefront_catalog",
+      "vue_storefront_catalog_de",
+      "vue_storefront_catalog_it"
+    ],
+    "indexTypes": [
+      "product",
+      "category",
+      "cms_block",
+      "cms_page",
+      "attribute",
+      "taxrule",
+      "review"
+    ],
+    "apiVersion": "7.1"
+  }
+```
+
+Starting from [Elasitc 6 and 7](https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html) we can have **just single** document type per single index. Vue Storefront used to have `product`, `category` ... types defined in the `vue_storefront_catalog`.
+
+From now on, we're using the separate indexes per each entity type. The convention is: `${indexName}_${entityType}`. If your' **logical index name** is `vue_storefront_catalog` then it will be mapped to the **physical indexes** of: `vue_storefront_catalog_product`, `vue_storefront_catalog_category` ...
+
+To take the advantage of this new logical->physical index distinction we've provided new Elastic tools: `db7`, `migrate7`, `dump7`, `restore7` tools. They can be used exactly the same way [like the old tools](https://docs.vuestorefront.io/guide/data/database-tool.html) were. The only distinction is that they work on separate indexes.
+
+**Create new index**
+
+Before restoreing or importing data you might want to create a new Elastic index with the proper data types/schema applied. You can run just the `yarn db7 new` command in order to do that.
+
+**Restore the data**
+
+After you ran the docker file and have Elastic7 up and running you might want to:
+
+a) restore the demo data by running `yarn restore7` and `yarn restore7_it; yarn restore7_de` for default multistores. The data is restored from `var/catalog_product.json`, `var/catalog_category.json` and so on...
+
+b) import the data from Magento to proper physical indexes. To do so, currently you can do this only with [mage2vuestorefront](https://github.com/DivanteLtd/mage2vuestorefront/pull/96).
+
+**Note:** After 1.11 stable release (around November, 2019) we'll **replace** the standard tools: `db`, `migrate`, `dump`, `restore` with the Elastic 7 equivalents and it will become the default.
+
+
 ## API access
 Catalog API calls are compliant with ElasticSearch (it works like a filtering proxy to ES). More on ES queries: [ElasticSearch queries tutorial](http://okfnlabs.org/blog/2013/07/01/elasticsearch-query-tutorial.html)
 
