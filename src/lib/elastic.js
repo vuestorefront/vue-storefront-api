@@ -23,15 +23,13 @@ function _updateQueryStringParameter (uri, key, value) {
   }
 }
 
-
 function adjustIndexName (indexName, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) {
     return indexName
   } else {
     return `${indexName}_${entityType}`
-  }  
+  }
 }
-
 
 function adjustBackendProxyUrl (req, indexName, entityType, config) {
   let url
