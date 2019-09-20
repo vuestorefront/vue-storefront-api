@@ -53,7 +53,17 @@ class TaxProxy extends AbstractTaxProxy {
   }
 
   taxFor (product, groupId) {
-    return calculateProductTax(product, this._taxClasses, this._taxCountry, this._taxRegion, this._sourcePriceInclTax, this._deprecatedPriceFieldsSupport, this._finalPriceInclTax, groupId, this._storeConfigTax)
+    return calculateProductTax({
+      product,
+      taxClasses: this._taxClasses,
+      taxCountry: this._taxCountry,
+      taxRegion: this._taxRegion,
+      sourcePriceInclTax: this._sourcePriceInclTax,
+      deprecatedPriceFieldsSupport: this._deprecatedPriceFieldsSupport,
+      finalPriceInclTax: this._finalPriceInclTax,
+      userGroupId: groupId,
+      isTaxWithUserGroupIsActive: checkIfTaxWithUserGroupIsActive(this._storeConfigTax) && typeof groupId === 'number'
+    })
   }
 
   applyTierPrices (productList, groupId) {

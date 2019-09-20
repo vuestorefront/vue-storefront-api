@@ -20,7 +20,7 @@ function isSpecialPriceActive (fromDate, toDate) {
   }
 }
 
-export function updateProductPrices (product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true) {
+export function updateProductPrices ({ product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true }) {
   const rate_factor = parseFloat(rate.rate) / 100
   if (finalPriceInclTax) {
     product.final_price_incl_tax = parseFloat(product.final_price) // final price does include tax
@@ -206,11 +206,11 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false, 
   }
 }
 
-export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true, userGroupId = null, _storeConfigTax) {
+export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true, userGroupId = null, isTaxWithUserGroupIsActive }) {
   let rateFound = false
   if (product.tax_class_id > 0) {
     let taxClass
-    if (checkIfTaxWithUserGroupIsActive(_storeConfigTax) && typeof userGroupId === 'number') {
+    if (isTaxWithUserGroupIsActive) {
       taxClass = taxClasses.find((el) =>
         el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id)) >= 0 &&
           el.customer_tax_class_ids.indexOf(userGroupId) >= 0
@@ -222,7 +222,7 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
     if (taxClass) {
       for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
-          updateProductPrices(product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport)
+          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport })
           rateFound = true
           break
         }
@@ -230,7 +230,7 @@ export function calculateProductTax (product, taxClasses, taxCountry = 'PL', tax
     }
   }
   if (!rateFound) {
-    updateProductPrices(product, {rate: 0})
+    updateProductPrices({ product, rate: {rate: 0} })
 
     product.price_incl_tax = product.price
     product.price_tax = 0

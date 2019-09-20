@@ -21,8 +21,8 @@ module.exports = ({ config, db }) => {
       json: true,
       headers: { 'Authorization': 'apikey ' + config.extensions.mailchimp.apiKey }
     }, (error, response, body) => {
-      if (error) {
-        console.error(error)
+      if (error || response.statusCode !== 200) {
+        console.error(error, body)
         apiStatus(res, 'An error occured while accessing Mailchimp', 500)
       } else {
         apiStatus(res, body.status, 200)
@@ -46,8 +46,8 @@ module.exports = ({ config, db }) => {
       json: true,
       body: { members: [ { email_address: userData.email, status: config.extensions.mailchimp.userStatus } ], 'update_existing': true }
     }, (error, response, body) => {
-      if (error) {
-        console.error(error)
+      if (error || response.statusCode !== 200) {
+        console.error(error, body)
         apiStatus(res, 'An error occured while accessing Mailchimp', 500)
       } else {
         apiStatus(res, body.status, 200)
@@ -73,8 +73,8 @@ module.exports = ({ config, db }) => {
       json: true,
       body: { members: [ { email_address: userData.email, status: 'unsubscribed' } ], 'update_existing': true }
     }, (error, response, body) => {
-      if (error) {
-        console.error(error)
+      if (error || response.statusCode !== 200) {
+        console.error(error, body)
         apiStatus(res, 'An error occured while accessing Mailchimp', 500)
       } else {
         apiStatus(res, body.status, 200)
