@@ -197,7 +197,7 @@ function loadSchema (entityType) {
 }
 
 // this is deprecated just for ES 5.6
-function putMappings(db, indexName, next) {
+function putMappings (db, indexName, next) {
   let productSchema = loadSchema('product');
   let categorySchema = loadSchema('category');
   let taxruleSchema = loadSchema('taxrule');
@@ -207,39 +207,39 @@ function putMappings(db, indexName, next) {
 
   db.indices.putMapping({
     index: indexName,
-    type: "product",
+    type: 'product',
     body: productSchema
   }).then(res1 => {
     console.dir(res1, { depth: null, colors: true })
 
     db.indices.putMapping({
       index: indexName,
-      type: "taxrule",
+      type: 'taxrule',
       body: taxruleSchema
     }).then(res2 => {
       console.dir(res2, { depth: null, colors: true })
 
       db.indices.putMapping({
         index: indexName,
-        type: "attribute",
+        type: 'attribute',
         body: attributeSchema
       }).then(res3 => {
         console.dir(res3, { depth: null, colors: true })
         db.indices.putMapping({
           index: indexName,
-          type: "cms_page",
+          type: 'cms_page',
           body: pageSchema
         }).then(res4 => {
-          console.dir(res4, { depth: null, colors: true })        
+          console.dir(res4, { depth: null, colors: true })
           db.indices.putMapping({
             index: indexName,
-            type: "cms_block",
+            type: 'cms_block',
             body: blockSchema
           }).then(res5 => {
-            console.dir(res5, { depth: null, colors: true })   
+            console.dir(res5, { depth: null, colors: true })
             db.indices.putMapping({
               index: indexName,
-              type: "category",
+              type: 'category',
               body: categorySchema
             }).then(res6 => {
               console.dir(res6, { depth: null, colors: true })
@@ -258,8 +258,6 @@ function putMappings(db, indexName, next) {
     next(err1)
   })
 }
-
-
 
 module.exports = {
   putAlias,
