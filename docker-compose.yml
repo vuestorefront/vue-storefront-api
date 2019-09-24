@@ -1,4 +1,4 @@
-version: '2.0'
+version: '3.0'
 services:
   es1:
     container_name: elasticsearch
@@ -7,7 +7,6 @@ services:
       memlock:
         soft: -1
         hard: -1    
-    mem_limit: 1g
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
