@@ -2,7 +2,7 @@ const path = require('path')
 const _ = require('lodash')
 const fs = require('fs');
 const jsonFile = require('jsonfile')
-const es = require('elasticsearch')
+const es = require('@elastic/elasticsearch')
 
 function _updateQueryStringParameter (uri, key, value) {
   var re = new RegExp('([?&])' + key + '=.*?(&|#|$)', 'i');
