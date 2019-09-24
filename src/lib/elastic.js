@@ -125,6 +125,7 @@ function deleteIndex (db, indexName, next) {
 
 function reIndex (db, fromIndexName, toIndexName, next) {
   db.reindex({
+    wait_for_completion: true,
     waitForCompletion: true,
     body: {
       'source': {
