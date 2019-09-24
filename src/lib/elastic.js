@@ -61,7 +61,7 @@ function adjustQuery (esQuery, entityType, config) {
 
 function getHits (result) {
   if (result.body) { // differences between ES5 andd ES7
-    return result.body
+    return result.body.hits.hits
   } else {
     return result.hits.hits
   }
