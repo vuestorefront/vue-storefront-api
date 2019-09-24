@@ -21,8 +21,8 @@ class UserProxy extends AbstractUserProxy {
 
     return this.api.customers.me(requestToken)
   }
-  orderHistory (requestToken) {
-    return this.api.customers.orderHistory(requestToken)
+  orderHistory (requestToken, pageSize = 20, currentPage = 1) { 
+    return this.api.customers.orderHistory(requestToken, pageSize, currentPage)
   }
   resetPassword (emailData) {
     return this.api.customers.resetPassword(emailData)
