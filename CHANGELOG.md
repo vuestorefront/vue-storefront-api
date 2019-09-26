@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.11.0-rc.1] - UNRELEASED
 
 ### Added
-- Output cache support with tagging and cache invalidate requests forwarding - @pkarw (https://github.com/DivanteLtd/vue-storefront/issues/3367)
+- Output cache support with tagging and cache invalidate requests forwarding - @pkarw @resubaka (https://github.com/DivanteLtd/vue-storefront/issues/3367, #333)
 - Constant for Mailchimp subscription status - @KonstantinSoelch (#294)
 - mage2vs import now has optional `--generate-unique-url-keys` parameter which defaults to `false` to enable/disable the url key generation with name and id for categories - @rain2o (#232)
 - `extensions/elastic-stock` module added which is a drop-in replacement for `stock`; the difference is that it's getting the stock information from Elastic, not from e-Commerce backend directly; to use it - please just make sure your `config/local.json` file has `elastic-stock` in the `registeredExtensions` collection; then please make sure in the `vue-storefront` to change the `config.stock.ednpoint`  from `http://<your-api-host>/api/stock` to `http://<your-api-host>/api/ext/elastic-stock`
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `product.final_price` field is now being taken into product price calcualtion. Moreover, we've added the `config.tax.finalPriceIncludesTax` - which is set to `true` by default. All the `price`, `original_price` and `special_price` fields are calculated accordingly. It was required as Magento2 uses `final_price` to set the catalog pricing rules after-prices - @pkarw (#289)
 - Force ES connections to use protocol config option - @cewald (#303, #304)
 - Better handling of HTTP error codes provided by API client - #3151
+
+### Changed
+- Error responses for mailchimp - @andrzejewsky (#3337)
+- Replaced function arguments to object destructuring in `calculateProductTax` - @andrzejewsky (#3337)
 
 ## [1.10.0] - 2019.08.12
 
@@ -74,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support unicode characters in order requests - @lukeromanowicz (#201)
 - TravisCI configured for building and linting - @lukeromanowicz (#204)
 - Use Redis database from configuration in mage2vs - @Cyclonecode (#211)
-- Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220) 
+- Requests with invalid body result in HTTP code 400 instead of 500 - @AndreiBelokopytov (#220)
 - `src/models/order.schema.json` was moved to `src/models/order.schema.js` to support regex transformation - @lukeromanowicz (#201)
 
 ## [1.8.4] - 2019.04.17

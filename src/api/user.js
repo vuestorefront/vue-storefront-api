@@ -149,7 +149,11 @@ export default ({config, db}) => {
    */
   userApi.get('/order-history', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.orderHistory(req.query.token).then((result) => {
+    userProxy.orderHistory(
+			req.query.token,
+			req.query.pageSize || 20,
+			req.query.currentPage || 1
+		).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
       apiError(res, err);

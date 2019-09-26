@@ -18,6 +18,8 @@ export default ({config, db}) => {
     const reviewSchema = require('../models/review.schema')
     const validate = ajv.compile(reviewSchema)
 
+    req.body.review.review_status = config.review.defaultReviewStatus
+
     if (!validate(req.body)) {
       console.dir(validate.errors);
       apiStatus(res, validate.errors, 500);
