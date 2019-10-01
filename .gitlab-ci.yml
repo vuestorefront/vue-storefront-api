@@ -14,7 +14,7 @@ build:
   script:
     - cat config/local.json
     - echo "{\"auths\":{\"$REGISTRY_URL\":{\"username\":\"$REGISTRY_USER\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/dev/docker/Dockerfile --destination $REGISTRY_IMAGE:\${CI_COMMIT_SHA:0:8}
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/dev/docker/Dockerfile --destination $REGISTRY_IMAGE:${CI_COMMIT_SHA:0:8}
   only:
     - develop
     - master
