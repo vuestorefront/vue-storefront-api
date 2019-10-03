@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.11.0-rc.1] - UNRELEASED
+## [1.11.0-rc.1] - 2019.10.03
 
 ### Added
 - Output cache support with tagging and cache invalidate requests forwarding - @pkarw @resubaka (https://github.com/DivanteLtd/vue-storefront/issues/3367, #333)
