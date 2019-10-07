@@ -92,7 +92,7 @@ module.exports = ({ config, db }) => {
     return esClient().search({
       index: config.elasticsearch.indices[0],
       type: 'category',
-      size: 2000,
+      size: 5000,
       body: {
         '_source': ['id', 'url_path', 'slug', 'name'],
         'query': {
