@@ -10,7 +10,7 @@ This API extension get data from headless cms of choice.
 2. Add the configs to your `local.json`:
    ```json
    "extensions": {
-     …
+     ...
      "icmaaCms": {
        "service": "prismic", // prismic | storyblok
        "prismic": {
@@ -19,7 +19,13 @@ This API extension get data from headless cms of choice.
          "fallbackLanguage": "de-de"
        },
        "storyblok": {
-         "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXX"
+         "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXX",
+         "pluginFieldMap": [
+          { "key": "icmaa-single-option", "values": [ "selected" ] },
+          { "key": "icmaa-multi-option", "values": [ "selected" ] },
+          { "key": "icmaa-syntax-highlighter", "values": [ "data" ] },
+          ...
+        ]
        }
     }
   },

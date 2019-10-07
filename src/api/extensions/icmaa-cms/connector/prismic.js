@@ -4,26 +4,25 @@ import PrismicDOM from 'prismic-dom';
 import { objectKeysToCamelCase } from '../helpers/formatter'
 
 class PrismicConnector {
-
-  async api() {
-    return await Prismic.getApi(
+  async api () {
+    return Prismic.getApi(
       config.extensions.icmaaCms.prismic.apiEndpoint,
       { accessToken: config.extensions.icmaaCms.prismic.apiToken }
     )
   }
 
-  async fetch(type, uid, lang) {
+  async fetch (type, uid, lang) {
     let query = [ Prismic.Predicates.at('document.type', type) ]
     if (uid !== undefined) {
-      query.push( Prismic.Predicates.at('my.' + type + '.uid', uid) )
+      query.push(Prismic.Predicates.at('my.' + type + '.uid', uid))
     }
-    
+
     try {
       let api = await this.api();
       return await api.query(query, { lang: '*' })
         .then(response => {
           let result = false
-          
+
           if (lang !== undefined) {
             result = response.results.find(result => result.lang === lang)
           }
@@ -44,7 +43,7 @@ class PrismicConnector {
           }
 
           return data
-         })
+        })
         .catch(error => error)
     } catch (error) {
       return error

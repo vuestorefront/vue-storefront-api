@@ -1,11 +1,11 @@
 import config from 'config'
 import StoryblokClient from 'storyblok-js-client'
 import { objectKeysToCamelCase } from '../helpers/formatter'
-import { sortBy } from 'lodash';
+import { extractPluginValues } from '../helpers/formatter/storyblok'
+import { sortBy } from 'lodash'
 
 class StoryblokConnector {
-
-  api() {
+  api () {
     return new StoryblokClient({
       accessToken: config.extensions.icmaaCms.storyblok.accessToken,
       cache: {
@@ -15,13 +15,13 @@ class StoryblokConnector {
     })
   }
 
-  matchLanguage(lang) {
+  matchLanguage (lang) {
     lang = lang && lang !== 'default' ? lang.toLowerCase() : false
     this.lang = lang && config.icmaa.mandant ? `${config.icmaa.mandant}-${lang}` : lang
     return this.lang
   }
 
-  isJsonString(string) {
+  isJsonString (string) {
     try {
       return JSON.parse(string)
     } catch (e) {
@@ -29,30 +29,31 @@ class StoryblokConnector {
     }
   }
 
-  async fetch(type, uid, lang) {
+  async fetch (type, uid, lang) {
     try {
       this.matchLanguage(lang)
       return this.api().get('cdn/stories', {
-        "starts_with": this.lang ? `${this.lang}/*` : "",
-        "filter_query": {
-          "component": { "in": type },
-          "identifier": { "in": uid },
+        'starts_with': this.lang ? `${this.lang}/*` : '',
+        'filter_query': {
+          'component': { 'in': type },
+          'identifier': { 'in': uid }
         }
       })
-      .then(response => {
-        let { content } = response.data.stories.shift() || { content: {} }
-        objectKeysToCamelCase(content)
-        return content
-      }).catch(error => {
-        console.log(error)
-      })
+        .then(response => {
+          let { content } = response.data.stories.shift() || { content: {} }
+          objectKeysToCamelCase(content)
+          extractPluginValues(content)
+          return content
+        }).catch(error => {
+          console.log(error)
+        })
     } catch (error) {
       return error
     }
   }
 
-  async search(type, q, lang) {
-    let queryObject = { "identifier": { "in": q } }
+  async search (type, q, lang) {
+    let queryObject = { 'identifier': { 'in': q } }
     if (this.isJsonString(q)) {
       queryObject = this.isJsonString(q)
     }
@@ -60,14 +61,15 @@ class StoryblokConnector {
     try {
       this.matchLanguage(lang)
       return this.api().get('cdn/stories', {
-        "starts_with": this.lang ? `${this.lang}/*` : "",
-        "filter_query": {
-          "component": { "in": type },
+        'starts_with': this.lang ? `${this.lang}/*` : '',
+        'filter_query': {
+          'component': { 'in': type },
           ...queryObject
         }
-      })
-      .then(response => {
-        return response.data.stories.map(story => objectKeysToCamelCase(story.content))
+      }).then(response => {
+        return response.data.stories
+          .map(story => objectKeysToCamelCase(story.content))
+          .map(story => extractPluginValues(story))
       }).catch(error => {
         console.log(error)
       })
@@ -76,7 +78,7 @@ class StoryblokConnector {
     }
   }
 
-  createAttributeOptionArray(options, nameKey = 'label', valueKey = 'value', sortKey = 'sort_order') {
+  createAttributeOptionArray (options, nameKey = 'label', valueKey = 'value', sortKey = 'sort_order') {
     let result = []
     options.forEach(option => {
       result.push({
