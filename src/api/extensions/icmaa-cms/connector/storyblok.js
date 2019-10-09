@@ -1,7 +1,7 @@
 import config from 'config'
 import StoryblokClient from 'storyblok-js-client'
 import { objectKeysToCamelCase } from '../helpers/formatter'
-import { extractPluginValues } from '../helpers/formatter/storyblok'
+import { extractStoryContent, extractPluginValues } from '../helpers/formatter/storyblok'
 import { sortBy } from 'lodash'
 
 class StoryblokConnector {
@@ -40,7 +40,8 @@ class StoryblokConnector {
         }
       })
         .then(response => {
-          let { content } = response.data.stories.shift() || { content: {} }
+          const story = response.data.stories.shift() || { }
+          const content = extractStoryContent(story)
           objectKeysToCamelCase(content)
           extractPluginValues(content)
           return content
@@ -68,7 +69,8 @@ class StoryblokConnector {
         }
       }).then(response => {
         return response.data.stories
-          .map(story => objectKeysToCamelCase(story.content))
+          .map(story => extractStoryContent(story))
+          .map(story => objectKeysToCamelCase(story))
           .map(story => extractPluginValues(story))
       }).catch(error => {
         console.log(error)
