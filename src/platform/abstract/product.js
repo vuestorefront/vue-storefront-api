@@ -9,4 +9,4 @@ class AbstractProductProxy {
   }
 }
 
-export default AbstractProductProxy
+module.exports = AbstractProductProxy

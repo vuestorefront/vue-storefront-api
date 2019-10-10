@@ -8,4 +8,4 @@ class AbstractStockAlertProxy {
   }
 }
 
-export default AbstractStockAlertProxy
+module.exports = AbstractStockAlertProxy

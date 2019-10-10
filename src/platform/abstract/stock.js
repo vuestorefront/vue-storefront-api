@@ -46,4 +46,4 @@ class AbstractStockProxy {
   }
 }
 
-export default AbstractStockProxy
+module.exports = AbstractStockProxy

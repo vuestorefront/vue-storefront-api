@@ -9,4 +9,4 @@ class AbstractReviewProxy {
   }
 }
 
-export default AbstractReviewProxy
+module.exports = AbstractReviewProxy
