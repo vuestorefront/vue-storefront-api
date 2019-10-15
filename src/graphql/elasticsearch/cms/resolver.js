@@ -2,16 +2,16 @@ import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
 
-async function list (filter, currentPage, pageSize = 200, _sourceInclude, type) {
-  let query = buildQuery({ filter, currentPage, pageSize, _sourceInclude, type });
+async function list (filter, currentPage, pageSize = 200, _source_include, type) {
+  let query = buildQuery({ filter, currentPage, pageSize, _source_include, type });
 
   const response = await client.search({
     index: config.elasticsearch.indices[0],
     body: query,
     type,
-    _sourceInclude
+    _source_include
   });
-  const items = buildItems(response)
+  const items = buildItems(response.body)
 
   return items;
 }
