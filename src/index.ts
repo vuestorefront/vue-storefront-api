@@ -6,6 +6,7 @@ import initializeDb from './db';
 import middleware from './middleware';
 import { loadAdditionalCertificates } from './helpers/loadAdditionalCertificates'
 import api from './api';
+import apiv2 from './apiv2';
 import config from 'config';
 import img from './api/img';
 import invalidateCache from './api/invalidate'
@@ -40,6 +41,7 @@ initializeDb(db => {
 
   // api router
   app.use('/api', api({ config, db }));
+  app.use('/apiv2', apiv2({ config, db }));
   app.use('/img', img({ config, db }));
   app.use('/img/:width/:height/:action/:image', (req, res, next) => {
     console.log(req.params)

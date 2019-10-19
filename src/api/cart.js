@@ -5,18 +5,29 @@ import PlatformFactory from '../platform/factory';
 export default ({ config, db }) => {
   let cartApi = Router();
 
-  const _getProxy = (req) => {
+  const _getCartProxy = (req) => {
     const platform = config.platform
     const factory = new PlatformFactory(config, req)
     return factory.getAdapter(platform, 'cart')
   };
+
+  const _getStockProxy = (req) => {
+    const platform = config.platform
+    const factory = new PlatformFactory(config, req)
+    return factory.getAdapter(platform, 'stock')
+  }
+
+  const _getStockId = (storeCode) => {
+    let storeView = config.storeViews[storeCode]
+    return storeView ? storeView.msi.stockId : config.defaultStockId
+  }
 
   /**
    * POST create a cart
    * req.query.token - user token
    */
   cartApi.post('/create', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     cartProxy.create(req.query.token).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
@@ -33,7 +44,7 @@ export default ({ config, db }) => {
    *   quoteId: cartKey}
    */
   cartApi.post('/update', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     if (!req.body.cartItem) {
       return apiStatus(res, 'No cartItem element provided within the request body', 500)
     }
@@ -51,7 +62,7 @@ export default ({ config, db }) => {
    *   req.query.coupon - coupon
    */
   cartApi.post('/apply-coupon', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     if (!req.query.coupon) {
       return apiStatus(res, 'No coupon code provided', 500)
     }
@@ -68,7 +79,7 @@ export default ({ config, db }) => {
    *   req.query.cartId - cart Ids
    */
   cartApi.post('/delete-coupon', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     cartProxy.deleteCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
@@ -82,7 +93,7 @@ export default ({ config, db }) => {
    *   req.query.cartId - cart Ids
    */
   cartApi.get('/coupon', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     cartProxy.getCoupon(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
@@ -99,7 +110,7 @@ export default ({ config, db }) => {
    *   quoteId: cartKey}
    */
   cartApi.post('/delete', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     if (!req.body.cartItem) {
       return apiStatus(res, 'No cartItem element provided within the request body', 500)
     }
@@ -116,7 +127,7 @@ export default ({ config, db }) => {
    *   req.query.cartId - cartId
    */
   cartApi.get('/pull', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     cartProxy.pull(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
       apiStatus(res, result, 200);
@@ -131,7 +142,7 @@ export default ({ config, db }) => {
    *   req.query.cartId - cartId
    */
   cartApi.get('/totals', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     cartProxy.totals(req.query.token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
       apiStatus(res, result, 200);
@@ -147,7 +158,7 @@ export default ({ config, db }) => {
    *   req.body.address - shipping address object
    */
   cartApi.post('/shipping-methods', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     if (!req.body.address) {
       return apiStatus(res, 'No address element provided within the request body', 500)
@@ -165,7 +176,7 @@ export default ({ config, db }) => {
    *   req.query.cartId - cart ID if user is logged in, cart token if not
    */
   cartApi.get('/payment-methods', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     cartProxy.getPaymentMethods(req.query.token, req.query.cartId ? req.query.cartId : null).then((result) => {
       apiStatus(res, result, 200);
@@ -181,7 +192,7 @@ export default ({ config, db }) => {
    *   req.body.addressInformation - shipping address object
    */
   cartApi.post('/shipping-information', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     if (!req.body.addressInformation) {
       return apiStatus(res, 'No address element provided within the request body', 500)
@@ -200,7 +211,7 @@ export default ({ config, db }) => {
    *   req.body.shippingMethod - shipping and payment methods object
    */
   cartApi.post('/collect-totals', (req, res) => {
-    const cartProxy = _getProxy(req)
+    const cartProxy = _getCartProxy(req)
     res.setHeader('Cache-Control', 'no-cache, no-store');
     if (!req.body.methods) {
       return apiStatus(res, 'No shipping and payment methods element provided within the request body', 500)
@@ -210,6 +221,30 @@ export default ({ config, db }) => {
     }).catch(err => {
       apiError(res, err);
     })
+  })
+
+  // NEW API
+
+  cartApi.post('/add', async (req, res) => {
+    const cartProxy = _getCartProxy(req)
+    const stockProxy = _getStockProxy(req)
+    const products = req.body
+    const cartId = req.query.cartId ? req.query.cartId : null
+    const userToken = req.query.token || ''
+
+    for (let product of products) {
+      const stockResponse = await stockProxy.check({
+        sku: product.sku,
+        stockId: _getStockId(req.params.storeCode)
+      })
+
+      if (stockResponse.is_in_stock) {
+        await cartProxy.update(userToken, cartId, product)
+      }
+    }
+
+    const pullResponse = await cartProxy.pull(userToken, cartId, req.body)
+    apiStatus(res, pullResponse, 200);
   })
 
   return cartApi
