@@ -57,6 +57,7 @@
       "storeCode": "de",
       "disabled": false,
       "storeId": 3,
+      "websiteId": 1,
       "name": "German Store",
       "url": "/de",
       "elasticsearch": {
@@ -87,6 +88,7 @@
       "storeCode": "it",
       "disabled": false,
       "storeId": 4,
+      "websiteId": 1,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
