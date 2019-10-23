@@ -1,11 +1,7 @@
-import {
-  apiStatus
-} from '../../../lib/util';
-import {
-  Router
-} from 'express';
-const es = require('elasticsearch')
-const bodybuilder = require('bodybuilder')
+import { apiStatus } from '../../../lib/util';
+import { Router } from 'express';
+const es = require('elasticsearch');
+const bodybuilder = require('bodybuilder');
 
 module.exports = ({
   config,
@@ -22,15 +18,15 @@ module.exports = ({
       },
       apiVersion: config.elasticsearch.apiVersion,
       requestTimeout: 5000
-    }
+    };
     if (config.elasticsearch.user) {
       esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
     }
     return new es.Client(esConfig)
-  }
+  };
 
   const getStockList = (storeCode, skus) => {
-    let storeView = config
+    let storeView = config;
     if (storeCode && config.storeViews[storeCode]) {
       storeView = config.storeViews[storeCode]
     }
@@ -40,16 +36,16 @@ module.exports = ({
       type: 'product',
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
-    }
+    };
     return getElasticClient(config).search(esQuery).then((products) => { // we're always trying to populate cache - when online
-      console.log(products)
+      console.log(products);
       return products.hits.hits.map(el => {
         return el._source.stock
       })
     }).catch(err => {
       console.error(err)
     })
-  }
+  };
 
   /**
    * GET get stock item
@@ -68,7 +64,7 @@ module.exports = ({
     }).catch(err => {
       apiStatus(res, err, 500);
     })
-  })
+  });
 
   /**
    * GET get stock item - 2nd version with the query url parameter
@@ -86,7 +82,7 @@ module.exports = ({
     }).catch(err => {
       apiStatus(res, err, 500);
     })
-  })
+  });
 
   /**
    * GET get stock item list by skus (comma separated)
@@ -95,7 +91,7 @@ module.exports = ({
     if (!req.query.skus) {
       return apiStatus(res, 'skus parameter is required', 500);
     }
-    const skuArray = req.query.skus.split(',')
+    const skuArray = req.query.skus.split(',');
     getStockList(req.params.storeCode, skuArray).then((result) => {
       if (result && result.length > 0) {
         apiStatus(res, result, 200);
@@ -105,7 +101,7 @@ module.exports = ({
     }).catch(err => {
       apiStatus(res, err, 500);
     })
-  })
+  });
 
   return api
-}
+};
