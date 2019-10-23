@@ -38,7 +38,8 @@ module.exports = ({config, db}) => {
   cmsApi.get('/cmsPage/:id', (req, res) => {
     client.cmsData.getPage(req.params.id)
       .then((result) => {
-        apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
+        // just dump it to the browser, result = JSON object
+        apiStatus(res, result, 200);
       })
       .catch(err => {
         apiStatus(res, err, 500);
@@ -48,7 +49,8 @@ module.exports = ({config, db}) => {
   cmsApi.get('/cmsBlock/:id', (req, res) => {
     client.cmsData.getBlock(req.params.id)
       .then((result) => {
-        apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
+        // just dump it to the browser, result = JSON object
+        apiStatus(res, result, 200);
       })
       .catch(err => {
         apiStatus(res, err, 500);
@@ -58,7 +60,8 @@ module.exports = ({config, db}) => {
   cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
     client.cmsData.getPageIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
-        apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
+        // just dump it to the browser, result = JSON object
+        apiStatus(res, result, 200);
       })
       .catch(err => {
         apiStatus(res, err, 500);
@@ -68,7 +71,8 @@ module.exports = ({config, db}) => {
   cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', (req, res) => {
     client.cmsData.getBlockIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
-        apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
+        // just dump it to the browser, result = JSON object
+        apiStatus(res, result, 200);
       })
       .catch(err => {
         apiStatus(res, err, 500);
