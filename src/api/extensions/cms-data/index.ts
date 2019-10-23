@@ -4,8 +4,8 @@ import {Router} from 'express';
 const {Magento2Client} = require('magento2-rest-client');
 
 interface CmsRestInterface {
-  getPage: (id: string|number) => Promise<any>,
-  getBlock: (id: string|number) => Promise<any>,
+  getPage: (id: string | number) => Promise<any>,
+  getBlock: (id: string | number) => Promise<any>,
   getPageIdentifier: (identifier: string, storeId: string) => Promise<any>,
   getBlockIdentifier: (identifier: string, storeId: string) => Promise<any>
 }
@@ -32,48 +32,50 @@ module.exports = ({config, db}) => {
     } as CmsRestInterface;
   });
 
-  cmsApi.get('/cmsPage/:id', (req, res) => {
-    client.cmsData.getPage(req.params.id)
-      .then((result) => {
-        // just dump it to the browser, result = JSON object
-        apiStatus(res, result, 200);
-      })
-      .catch(err => {
-        apiStatus(res, err, 500);
-      })
+  cmsApi.get('/cmsPage/:id', async (req, res) => {
+    try {
+      const result = await client.cmsData.getPage(req.params.id);
+
+      apiStatus(res, result, 200);
+    } catch (err) {
+      apiStatus(res, err, 500);
+    }
   });
 
-  cmsApi.get('/cmsBlock/:id', (req, res) => {
-    client.cmsData.getBlock(req.params.id)
-      .then((result) => {
-        // just dump it to the browser, result = JSON object
-        apiStatus(res, result, 200);
-      })
-      .catch(err => {
-        apiStatus(res, err, 500);
-      })
+  cmsApi.get('/cmsBlock/:id', async (req, res) => {
+    try {
+      const result = await client.cmsData.getBlock(req.params.id);
+
+      apiStatus(res, result, 200);
+    } catch (err) {
+      apiStatus(res, err, 500);
+    }
   });
 
-  cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
-    client.cmsData.getPageIdentifier(req.params.identifier, req.params.storeId)
-      .then((result) => {
-        // just dump it to the browser, result = JSON object
-        apiStatus(res, result, 200);
-      })
-      .catch(err => {
-        apiStatus(res, err, 500);
-      })
+  cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', async (req, res) => {
+    try {
+      const result = await client.cmsData.getPageIdentifier(
+        req.params.identifier,
+        req.params.storeId
+      );
+
+      apiStatus(res, result, 200);
+    } catch (err) {
+      apiStatus(res, err, 500);
+    }
   });
 
-  cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', (req, res) => {
-    client.cmsData.getBlockIdentifier(req.params.identifier, req.params.storeId)
-      .then((result) => {
-        // just dump it to the browser, result = JSON object
-        apiStatus(res, result, 200);
-      })
-      .catch(err => {
-        apiStatus(res, err, 500);
-      })
+  cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', async (req, res) => {
+    try {
+      const result = await client.cmsData.getBlockIdentifier(
+        req.params.identifier,
+        req.params.storeId
+      );
+
+      apiStatus(res, result, 200);
+    } catch (err) {
+      apiStatus(res, err, 500);
+    }
   });
 
   return cmsApi
