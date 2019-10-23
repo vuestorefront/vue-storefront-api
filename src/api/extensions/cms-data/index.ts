@@ -9,6 +9,7 @@ module.exports = ({ config, db }) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsPage', (restClient) => {
       let module = {};
+      // @ts-ignore
       module.getPage = function () {
         return restClient.get('/snowdog/cmsPage/' + req.params.id);
       }
@@ -25,6 +26,7 @@ module.exports = ({ config, db }) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsBlock', (restClient) => {
       let module = {};
+      // @ts-ignore
       module.getBlock = function () {
         return restClient.get('/snowdog/cmsBlock/' + req.params.id);
       }
@@ -41,6 +43,7 @@ module.exports = ({ config, db }) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsPageIdentifier', (restClient) => {
       let module = {};
+      // @ts-ignore
       module.getPageIdentifier = function () {
         return restClient.get(`/snowdog/cmsPageIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
       }
@@ -57,6 +60,7 @@ module.exports = ({ config, db }) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsBlockIdentifier', (restClient) => {
       let module = {};
+      // @ts-ignore
       module.getBlockIdentifier = function () {
         return restClient.get(`/snowdog/cmsBlockIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
       }

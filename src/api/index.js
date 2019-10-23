@@ -46,12 +46,19 @@ export default ({ config, db }) => {
     let entryPoint
 
     try {
-      entryPoint = require('./extensions/' + ext)
+      entryPoint = require('./extensions/' + ext + '/index.ts');
     } catch (err) {
+      // console.error('a', err);
+
       try {
-        entryPoint = require(ext)
+        entryPoint = require('./extensions/' + ext)
       } catch (err) {
-        console.error(err)
+        // console.error('b', err);
+        try {
+          entryPoint = require(ext)
+        } catch (err) {
+          console.error('c', err)
+        }
       }
     }
 
