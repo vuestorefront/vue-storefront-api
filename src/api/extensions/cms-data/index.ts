@@ -1,7 +1,7 @@
 import {apiStatus} from '../../../lib/util';
 import {Router} from 'express';
 
-const Magento2Client = require('magento2-rest-client').Magento2Client
+const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 interface MagentoRestResponseInterface {
 }
@@ -34,7 +34,7 @@ module.exports = ({config, db}) => {
       .catch(err => {
         apiStatus(res, err, 500);
       })
-  })
+  });
 
   cmsApi.get('/cmsBlock/:id', (req, res) => {
     const client = Magento2Client(config.magento2.api);
@@ -53,7 +53,7 @@ module.exports = ({config, db}) => {
       .catch(err => {
         apiStatus(res, err, 500);
       })
-  })
+  });
 
   cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
     const client = Magento2Client(config.magento2.api);
@@ -63,7 +63,7 @@ module.exports = ({config, db}) => {
           return restClient.get(`/snowdog/cmsPageIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
         }
       };
-    })
+    });
 
     client.cmsPageIdentifier.getPageIdentifier()
       .then((result) => {
@@ -72,7 +72,7 @@ module.exports = ({config, db}) => {
       .catch(err => {
         apiStatus(res, err, 500);
       })
-  })
+  });
 
   cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', (req, res) => {
     const client = Magento2Client(config.magento2.api);
@@ -82,7 +82,7 @@ module.exports = ({config, db}) => {
           return restClient.get(`/snowdog/cmsBlockIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
         }
       };
-    })
+    });
 
     client.cmsBlockIdentifier.getBlockIdentifier()
       .then((result) => {
@@ -91,7 +91,7 @@ module.exports = ({config, db}) => {
       .catch(err => {
         apiStatus(res, err, 500);
       })
-  })
+  });
 
   return cmsApi
-}
+};
