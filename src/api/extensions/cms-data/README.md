@@ -6,7 +6,7 @@ It use `snowdog/module-cms-api` composer module so you have to install it in you
 in your `local.json` file you should register the extension:
 `"registeredExtensions": ["mailchimp-subscribe", "example-magento-api", "cms-data"],`
 
-The API endpoitns are:
+The API endpoints are:
 ```
 /api/ext/cms-data/cmsPage/:id
 /api/ext/cms-data/cmsBlock/:id
