@@ -11,7 +11,8 @@ module.exports = ({
   let api = Router();
 
   const getElasticClient = (config) => {
-    const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
+    // as we're runing tax calculation and other data, we need a ES indexer
+    const esConfig = {
       host: {
         host: config.elasticsearch.host,
         port: config.elasticsearch.port,
@@ -27,7 +28,7 @@ module.exports = ({
     return new es.Client(esConfig)
   };
 
-  const getStockList = (storeCode: string, skus: string[]) => {
+  const getStockList = async (storeCode: string, skus: string[]) => {
     let storeView = config;
     if (storeCode && config.storeViews[storeCode]) {
       storeView = config.storeViews[storeCode]
@@ -39,18 +40,17 @@ module.exports = ({
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     };
-    return getElasticClient(config)
-      .search(esQuery)
-      // we're always trying to populate cache - when online
-      .then((products) => {
-        console.log(products);
-        return products.hits.hits.map(el => {
-          return el._source.stock
-        })
+
+    try {
+      const products = await getElasticClient(config).search(esQuery);
+
+      console.log(products);
+      return products.hits.hits.map(el => {
+        return el._source.stock
       })
-      .catch(err => {
-        console.error(err)
-      })
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   /**
