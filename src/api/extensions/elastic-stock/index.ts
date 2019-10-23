@@ -38,13 +38,16 @@ module.exports = ({
       index: storeView.elasticsearch.indexName, // current index name
       type: 'product',
       _source_includes: ['stock'],
-      body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
+      body: bodybuilder()
+        .filter('terms', 'visibility', [2, 3, 4])
+        .andFilter('term', 'status', 1)
+        .andFilter('terms', 'sku', skus)
+        .build()
     };
 
     try {
       const products = await getElasticClient(config).search(esQuery);
 
-      console.log(products);
       return products.hits.hits.map(el => {
         return el._source.stock
       })
@@ -57,8 +60,10 @@ module.exports = ({
    * GET get stock item
    */
   api.get('/check/:sku', async (req, res) => {
-    const sku = req.params.sku;
-    const storeCode = req.params.storeCode;
+    const {
+      sku,
+      storeCode
+    } = req.params;
 
     if (!sku) {
       return apiStatus(res, 'sku parameter is required', 500);
