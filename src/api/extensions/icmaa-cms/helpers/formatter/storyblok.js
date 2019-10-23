@@ -2,7 +2,7 @@ import pick from 'lodash/pick'
 import config from 'config'
 
 const pluginMap = config.extensions.icmaaCms.storyblok.pluginFieldMap
-const metaFieldsToTransport = ['uuid', 'published_at', 'created_at', 'first_published_at']
+const metaFieldsToTransport = [{'name': 'uname'}, 'uuid', 'published_at', 'created_at', 'first_published_at']
 
 const getFieldMap = (key) => pluginMap.find(m => m.key === key)
 
@@ -27,6 +27,12 @@ export const extractStoryContent = (object) => {
   }
 
   let content = object.content
-  metaFieldsToTransport.forEach(f => { content[f] = object[f] })
+  metaFieldsToTransport.forEach((f) => {
+    if (typeof f === 'object') {
+      content[Object.values(f)[0]] = object[Object.keys(f)[0]]
+    } else {
+      content[f] = object[f]
+    }
+  })
   return content
 }
