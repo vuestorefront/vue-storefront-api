@@ -16,18 +16,27 @@ interface CmsRestInterface {
 module.exports = ({config, db}) => {
   let cmsApi = Router();
 
+  const client = Magento2Client(config.magento2.api);
+
+  client.addMethods('cmsData', (restClient) => {
+    return {
+      getPage: function (id: string|number) {
+        return restClient.get(`/snowdog/cmsPage/${id}`);
+      },
+      getBlock: function (id: string|number) {
+        return restClient.get(`/snowdog/cmsBlock/${id}`);
+      },
+      getPageIdentifier: function (identifier: string, storeId: string) {
+        return restClient.get(`/snowdog/cmsPageIdentifier/${identifier}/storeId/${storeId}`);
+      },
+      getBlockIdentifier: function (identifier: string, storeId: string) {
+        return restClient.get(`/snowdog/cmsBlockIdentifier/${identifier}/storeId/${storeId}`);
+      }
+    };
+  });
+
   cmsApi.get('/cmsPage/:id', (req, res) => {
-    const client = Magento2Client(config.magento2.api);
-
-    client.addMethods('cmsPage', (restClient) => {
-      return {
-        getPage: function (id: string|number) {
-          return restClient.get(`/snowdog/cmsPage/${id}`);
-        }
-      };
-    });
-
-    client.cmsPage.getPage(req.params.id)
+    client.cmsData.getPage(req.params.id)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
@@ -37,16 +46,7 @@ module.exports = ({config, db}) => {
   });
 
   cmsApi.get('/cmsBlock/:id', (req, res) => {
-    const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsBlock', (restClient) => {
-      return {
-        getBlock: function (id: string|number) {
-          return restClient.get(`/snowdog/cmsBlock/${id}`);
-        }
-      }
-    });
-
-    client.cmsBlock.getBlock(req.params.id)
+    client.cmsData.getBlock(req.params.id)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
@@ -56,16 +56,7 @@ module.exports = ({config, db}) => {
   });
 
   cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
-    const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsPageIdentifier', (restClient) => {
-      return {
-        getPageIdentifier: function (identifier: string, storeId: string) {
-          return restClient.get(`/snowdog/cmsPageIdentifier/${identifier}/storeId/${storeId}`);
-        }
-      };
-    });
-
-    client.cmsPageIdentifier.getPageIdentifier(req.params.identifier, req.params.storeId)
+    client.cmsData.getPageIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
@@ -75,16 +66,7 @@ module.exports = ({config, db}) => {
   });
 
   cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', (req, res) => {
-    const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsBlockIdentifier', (restClient) => {
-      return {
-        getBlockIdentifier: function (identifier: string, storeId: string) {
-          return restClient.get(`/snowdog/cmsBlockIdentifier/${identifier}/storeId/${storeId}`);
-        }
-      };
-    });
-
-    client.cmsBlockIdentifier.getBlockIdentifier(req.params.identifier, req.params.storeId)
+    client.cmsData.getBlockIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
