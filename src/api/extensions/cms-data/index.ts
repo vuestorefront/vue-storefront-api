@@ -8,7 +8,7 @@ interface MagentoRestResponseInterface {
 
 interface CmsRestInterface {
   getPage: (id: string|number) => Promise<MagentoRestResponseInterface>,
-  getBlock: () => Promise<MagentoRestResponseInterface>,
+  getBlock: (id: string|number) => Promise<MagentoRestResponseInterface>,
   getPageIdentifier: () => Promise<MagentoRestResponseInterface>,
   getBlockIdentifier: () => Promise<MagentoRestResponseInterface>
 }
@@ -40,13 +40,13 @@ module.exports = ({config, db}) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsBlock', (restClient) => {
       return {
-        getBlock: function () {
-          return restClient.get('/snowdog/cmsBlock/' + req.params.id);
+        getBlock: function (id: string|number) {
+          return restClient.get(`/snowdog/cmsBlock/${id}`);
         }
       }
     });
 
-    client.cmsBlock.getBlock()
+    client.cmsBlock.getBlock( req.params.id)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
