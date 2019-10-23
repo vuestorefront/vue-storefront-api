@@ -9,8 +9,8 @@ interface MagentoRestResponseInterface {
 interface CmsRestInterface {
   getPage: (id: string|number) => Promise<MagentoRestResponseInterface>,
   getBlock: (id: string|number) => Promise<MagentoRestResponseInterface>,
-  getPageIdentifier: () => Promise<MagentoRestResponseInterface>,
-  getBlockIdentifier: () => Promise<MagentoRestResponseInterface>
+  getPageIdentifier: (identifier: string, storeId: string) => Promise<MagentoRestResponseInterface>,
+  getBlockIdentifier: (identifier: string, storeId: string) => Promise<MagentoRestResponseInterface>
 }
 
 module.exports = ({config, db}) => {
@@ -46,7 +46,7 @@ module.exports = ({config, db}) => {
       }
     });
 
-    client.cmsBlock.getBlock( req.params.id)
+    client.cmsBlock.getBlock(req.params.id)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
@@ -59,13 +59,13 @@ module.exports = ({config, db}) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsPageIdentifier', (restClient) => {
       return {
-        getPageIdentifier: function () {
-          return restClient.get(`/snowdog/cmsPageIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
+        getPageIdentifier: function (identifier: string, storeId: string) {
+          return restClient.get(`/snowdog/cmsPageIdentifier/${identifier}/storeId/${storeId}`);
         }
       };
     });
 
-    client.cmsPageIdentifier.getPageIdentifier()
+    client.cmsPageIdentifier.getPageIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
@@ -78,13 +78,13 @@ module.exports = ({config, db}) => {
     const client = Magento2Client(config.magento2.api);
     client.addMethods('cmsBlockIdentifier', (restClient) => {
       return {
-        getBlockIdentifier: function () {
-          return restClient.get(`/snowdog/cmsBlockIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
+        getBlockIdentifier: function (identifier: string, storeId: string) {
+          return restClient.get(`/snowdog/cmsBlockIdentifier/${identifier}/storeId/${storeId}`);
         }
       };
     });
 
-    client.cmsBlockIdentifier.getBlockIdentifier()
+    client.cmsBlockIdentifier.getBlockIdentifier(req.params.identifier, req.params.storeId)
       .then((result) => {
         apiStatus(res, result, 200); // just dump it to the browser, result = JSON object
       })
