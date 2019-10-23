@@ -1,7 +1,7 @@
 import {apiStatus} from '../../../lib/util';
 import {Router} from 'express';
 
-const Magento2Client = require('magento2-rest-client').Magento2Client;
+const {Magento2Client} = require('magento2-rest-client');
 
 interface MagentoRestResponseInterface {
 }
