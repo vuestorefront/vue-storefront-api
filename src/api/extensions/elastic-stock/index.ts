@@ -20,12 +20,13 @@ module.exports = ({
       requestTimeout: 5000
     };
     if (config.elasticsearch.user) {
+      // @ts-ignore
       esConfig.httpAuth = config.elasticsearch.user + ':' + config.elasticsearch.password
     }
     return new es.Client(esConfig)
   };
 
-  const getStockList = (storeCode, skus) => {
+  const getStockList = (storeCode: string, skus: string[]) => {
     let storeView = config;
     if (storeCode && config.storeViews[storeCode]) {
       storeView = config.storeViews[storeCode]
@@ -37,25 +38,32 @@ module.exports = ({
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     };
-    return getElasticClient(config).search(esQuery).then((products) => { // we're always trying to populate cache - when online
-      console.log(products);
-      return products.hits.hits.map(el => {
-        return el._source.stock
+    return getElasticClient(config)
+      .search(esQuery)
+      // we're always trying to populate cache - when online
+      .then((products) => {
+        console.log(products);
+        return products.hits.hits.map(el => {
+          return el._source.stock
+        })
       })
-    }).catch(err => {
-      console.error(err)
-    })
+      .catch(err => {
+        console.error(err)
+      })
   };
 
   /**
    * GET get stock item
    */
   api.get('/check/:sku', (req, res) => {
-    if (!req.params.sku) {
+    const sku = req.params.sku;
+    const storeCode = req.params.storeCode;
+
+    if (!sku) {
       return apiStatus(res, 'sku parameter is required', 500);
     }
 
-    getStockList(req.params.storeCode, [req.params.sku]).then((result) => {
+    getStockList(storeCode, [sku]).then((result) => {
       if (result && result.length > 0) {
         apiStatus(res, result[0], 200);
       } else {
@@ -70,10 +78,14 @@ module.exports = ({
    * GET get stock item - 2nd version with the query url parameter
    */
   api.get('/check', (req, res) => {
-    if (!req.query.sku) {
+    const sku = req.query.sku;
+    const storeCode = req.params.storeCode;
+
+    if (!sku) {
       return apiStatus(res, 'sku parameter is required', 500);
     }
-    getStockList(req.params.storeCode, [req.query.sku]).then((result) => {
+
+    getStockList(storeCode, [sku]).then((result) => {
       if (result && result.length > 0) {
         apiStatus(res, result[0], 200);
       } else {
@@ -91,8 +103,9 @@ module.exports = ({
     if (!req.query.skus) {
       return apiStatus(res, 'skus parameter is required', 500);
     }
-    const skuArray = req.query.skus.split(',');
-    getStockList(req.params.storeCode, skuArray).then((result) => {
+    const skus = req.query.skus.split(',');
+    const storeCode = req.params.storeCode;
+    getStockList(storeCode, skus).then((result) => {
       if (result && result.length > 0) {
         apiStatus(res, result, 200);
       } else {
