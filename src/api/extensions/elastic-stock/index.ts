@@ -1,5 +1,6 @@
-import { apiStatus } from '../../../lib/util';
-import { Router } from 'express';
+import {apiStatus} from '../../../lib/util';
+import {Router} from 'express';
+
 const es = require('elasticsearch');
 const bodybuilder = require('bodybuilder');
 
@@ -55,7 +56,7 @@ module.exports = ({
   /**
    * GET get stock item
    */
-  api.get('/check/:sku', (req, res) => {
+  api.get('/check/:sku', async (req, res) => {
     const sku = req.params.sku;
     const storeCode = req.params.storeCode;
 
@@ -63,21 +64,22 @@ module.exports = ({
       return apiStatus(res, 'sku parameter is required', 500);
     }
 
-    getStockList(storeCode, [sku]).then((result) => {
+    try {
+      const result = await getStockList(storeCode, [sku]);
       if (result && result.length > 0) {
         apiStatus(res, result[0], 200);
       } else {
         apiStatus(res, 'No stock information for given sku', 500);
       }
-    }).catch(err => {
+    } catch (err) {
       apiStatus(res, err, 500);
-    })
+    }
   });
 
   /**
    * GET get stock item - 2nd version with the query url parameter
    */
-  api.get('/check', (req, res) => {
+  api.get('/check', async (req, res) => {
     const sku = req.query.sku;
     const storeCode = req.params.storeCode;
 
@@ -85,35 +87,39 @@ module.exports = ({
       return apiStatus(res, 'sku parameter is required', 500);
     }
 
-    getStockList(storeCode, [sku]).then((result) => {
+    try {
+      const result = await getStockList(storeCode, [sku]);
       if (result && result.length > 0) {
         apiStatus(res, result[0], 200);
       } else {
         apiStatus(res, 'No stock information for given sku', 500);
       }
-    }).catch(err => {
+    } catch (err) {
       apiStatus(res, err, 500);
-    })
+    }
   });
 
   /**
    * GET get stock item list by skus (comma separated)
    */
-  api.get('/list', (req, res) => {
+  api.get('/list', async (req, res) => {
     if (!req.query.skus) {
       return apiStatus(res, 'skus parameter is required', 500);
     }
     const skus = req.query.skus.split(',');
     const storeCode = req.params.storeCode;
-    getStockList(storeCode, skus).then((result) => {
+
+    try {
+      const result = await getStockList(storeCode, skus);
+
       if (result && result.length > 0) {
         apiStatus(res, result, 200);
       } else {
         apiStatus(res, 'No stock information for given sku', 500);
       }
-    }).catch(err => {
+    } catch (err) {
       apiStatus(res, err, 500);
-    })
+    }
   });
 
   return api
