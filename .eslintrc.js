@@ -14,7 +14,7 @@ module.exports = {
   plugins: ['vue-storefront', '@typescript-eslint'],
   // add your custom rules here
   rules: {
-    '@typescript-eslint/no-var-requires': 1,
+
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/camelcase': 0,
     semi: 'off',
@@ -43,7 +43,8 @@ module.exports = {
     'vue-storefront/no-corepage-import': 'error',
     'vue-storefront/no-corepage': 'error',
     'no-console': 0,
-    'no-unused-vars': 1
+    'no-unused-vars': 1,
+    "@typescript-eslint/no-object-literal-type-assertion": 0
   },
   overrides: [
     {

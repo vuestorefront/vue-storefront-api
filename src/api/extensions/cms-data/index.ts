@@ -3,14 +3,11 @@ import {Router} from 'express';
 
 const {Magento2Client} = require('magento2-rest-client');
 
-interface MagentoRestResponseInterface {
-}
-
 interface CmsRestInterface {
-  getPage: (id: string|number) => Promise<MagentoRestResponseInterface>,
-  getBlock: (id: string|number) => Promise<MagentoRestResponseInterface>,
-  getPageIdentifier: (identifier: string, storeId: string) => Promise<MagentoRestResponseInterface>,
-  getBlockIdentifier: (identifier: string, storeId: string) => Promise<MagentoRestResponseInterface>
+  getPage: (id: string|number) => Promise<any>,
+  getBlock: (id: string|number) => Promise<any>,
+  getPageIdentifier: (identifier: string, storeId: string) => Promise<any>,
+  getBlockIdentifier: (identifier: string, storeId: string) => Promise<any>
 }
 
 module.exports = ({config, db}) => {
@@ -20,10 +17,10 @@ module.exports = ({config, db}) => {
 
   client.addMethods('cmsData', (restClient) => {
     return {
-      getPage: function (id: string|number) {
+      getPage: function (id: string | number) {
         return restClient.get(`/snowdog/cmsPage/${id}`);
       },
-      getBlock: function (id: string|number) {
+      getBlock: function (id: string | number) {
         return restClient.get(`/snowdog/cmsBlock/${id}`);
       },
       getPageIdentifier: function (identifier: string, storeId: string) {
@@ -32,7 +29,7 @@ module.exports = ({config, db}) => {
       getBlockIdentifier: function (identifier: string, storeId: string) {
         return restClient.get(`/snowdog/cmsBlockIdentifier/${identifier}/storeId/${storeId}`);
       }
-    };
+    } as CmsRestInterface;
   });
 
   cmsApi.get('/cmsPage/:id', (req, res) => {
