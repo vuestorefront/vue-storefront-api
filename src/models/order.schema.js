@@ -53,7 +53,7 @@ exports.default = {
             sku: {
               type: 'string',
               minLength: 1,
-              regexp: /[\p{L}\d_]+/u
+              regexp: '[\\p{L}\\d_\\d-]+'
             },
             qty: {
               type: 'number',
@@ -62,7 +62,7 @@ exports.default = {
             name: {
               type: 'string',
               minLength: 1,
-              regexp: /[\p{L}\d_]+/u
+              regexp: '[\\p{L}\\d_\\d-]+'
             },
             price: {
               type: 'number',
@@ -71,7 +71,7 @@ exports.default = {
             product_type: {
               type: 'string',
               minLength: 1,
-              regexp: /[\p{L}]+/u
+              regexp: '[\\p{L}]+'
             }
           }
         }
@@ -115,20 +115,20 @@ exports.default = {
             postcode: {
               type: 'string',
               minLength: 3,
-              regexp: /[\p{L}\d_]+/u
+              regexp: '[\\p{L}\\d_\\d-]+'
             },
             city: {
               type: 'string',
-              regexp: /[\p{L}]+/u
+              regexp: '[\\p{L}\\d-\\d ]+'
             },
             firstname: {
               type: 'string',
-              regexp: /[\p{L}]+/u,
+              regexp: '[\\p{L}]+',
               description: 'First name'
             },
             lastname: {
               type: 'string',
-              regexp: /[\p{L}]+/u,
+              regexp: '[\\p{L}]+',
               description: 'Last name'
             },
             email: {
@@ -178,20 +178,20 @@ exports.default = {
               postcode: {
                 type: 'string',
                 minLength: 3,
-                regexp: /[\p{L}\d_]+/u
+                regexp: '[\\p{L}\\d_\\d-]+'
               },
               city: {
                 type: 'string',
-                regexp: /[\p{L}]+/u
+                regexp: '[\\p{L}\\d-\\d ]+'
               },
               firstname: {
                 type: 'string',
-                regexp: /[\p{L}]+/u,
+                regexp: '[\\p{L}]+',
                 description: 'First name'
               },
               lastname: {
                 type: 'string',
-                regexp: /[\p{L}]+/u,
+                regexp: '[\\p{L}]+',
                 description: 'Last name'
               },
               email: {
