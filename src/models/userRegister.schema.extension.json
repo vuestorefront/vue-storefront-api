@@ -1,1 +1,27 @@
-{}
+{
+  "properties": {
+      "customer": {
+          "required": [
+              "gender",
+              "dob"
+          ],
+          "properties": {
+              "gender": {
+                  "type": "string",
+                  "pattern": "[a-zA-Z0-9]+"
+              },
+              "dob": {
+                  "type": "string",
+                  "format": "date"
+              },
+              "newsletter": {
+                "type": "boolean"
+              },
+              "cluster": {
+                "type": "string",
+                "pattern": "[a-zA-Z0-9]+"
+              }
+          }    
+      }
+  }
+}
