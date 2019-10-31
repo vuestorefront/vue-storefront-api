@@ -1,4 +1,4 @@
-import camelCase from 'lodash-es/camelCase'
+import camelCase from 'lodash/camelCase'
 
 function isSpecialPriceActive (fromDate, toDate) {
   if (!fromDate && !toDate) {
