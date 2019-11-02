@@ -17,7 +17,7 @@ class StoryblokConnector {
 
   matchLanguage (lang) {
     lang = lang && lang !== 'default' ? lang.toLowerCase() : false
-    this.lang = lang && config.icmaa.mandant ? `${config.icmaa.mandant}-${lang}` : lang
+    this.lang = lang && config.icmaa.mandant ? `${config.icmaa.mandant}_${lang}` : lang
     return this.lang
   }
 
