@@ -27,7 +27,8 @@ module.exports = ({ config, db }) => {
           .catch(error => apiStatus(res, error.message, 500))
         break
       case 'storyblok':
-        await storyblokConnector.fetch(req.query.type, req.query.uid, req.query.lang)
+        const { type, uid, lang } = req.query
+        await storyblokConnector.fetch({ type, uid, lang })
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
         break
@@ -44,7 +45,8 @@ module.exports = ({ config, db }) => {
     let serviceName = config.extensions.icmaaCms.service;
     switch (serviceName) {
       case 'storyblok':
-        await storyblokConnector.search(req.query.type, req.query.q, req.query.lang)
+        const { type, q, lang, fields } = req.query
+        await storyblokConnector.search({ type, q, lang, fields })
           .then(response => apiStatus(res, response, 200))
           .catch(error => apiStatus(res, error.message, 500))
         break

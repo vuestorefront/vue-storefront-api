@@ -2,7 +2,7 @@ import config from 'config'
 import StoryblokClient from 'storyblok-js-client'
 import { objectKeysToCamelCase } from '../helpers/formatter'
 import { extractStoryContent, extractPluginValues } from '../helpers/formatter/storyblok'
-import { sortBy } from 'lodash'
+import { sortBy, pick } from 'lodash'
 
 class StoryblokConnector {
   api () {
@@ -29,7 +29,7 @@ class StoryblokConnector {
     }
   }
 
-  async fetch (type, uid, lang) {
+  async fetch ({ type, uid, lang }) {
     try {
       this.matchLanguage(lang)
       return this.api().get('cdn/stories', {
@@ -53,7 +53,7 @@ class StoryblokConnector {
     }
   }
 
-  async search (type, q, lang) {
+  async search ({ type, q, lang, fields }) {
     let queryObject = { 'identifier': { 'in': q } }
     if (this.isJsonString(q)) {
       queryObject = this.isJsonString(q)
@@ -61,13 +61,13 @@ class StoryblokConnector {
 
     try {
       this.matchLanguage(lang)
-      return this.searchRequest(queryObject, type, 1)
+      return this.searchRequest({ queryObject, type, page: 1, fields })
     } catch (error) {
       return error
     }
   }
 
-  async searchRequest (queryObject, type, page = 1, results = []) {
+  async searchRequest ({ queryObject, type, page = 1, results = [], fields }) {
     return this.api().get('cdn/stories', {
       'page': page,
       'per_page': 100,
@@ -77,17 +77,21 @@ class StoryblokConnector {
         ...queryObject
       }
     }).then(response => {
-      const stories = response.data.stories
+      let stories = response.data.stories
         .map(story => extractStoryContent(story))
         .map(story => objectKeysToCamelCase(story))
         .map(story => extractPluginValues(story))
 
-      results = results.concat(stories)
+      if (fields && fields.length > 0) {
+        stories = stories.map(story => pick(story, fields.split(',')))
+      }
+
+      results = [].concat(results, stories)
       if (stories.length < 100) {
         return results
       }
 
-      return this.searchRequest(queryObject, type, page + 1, results)
+      return this.searchRequest({ queryObject, type, page: page + 1, results, fields })
     }).catch(error => {
       console.log(error)
     })
