@@ -61,23 +61,36 @@ class StoryblokConnector {
 
     try {
       this.matchLanguage(lang)
-      return this.api().get('cdn/stories', {
-        'starts_with': this.lang ? `${this.lang}/*` : '',
-        'filter_query': {
-          'component': { 'in': type },
-          ...queryObject
-        }
-      }).then(response => {
-        return response.data.stories
-          .map(story => extractStoryContent(story))
-          .map(story => objectKeysToCamelCase(story))
-          .map(story => extractPluginValues(story))
-      }).catch(error => {
-        console.log(error)
-      })
+      return this.searchRequest(queryObject, type, 1)
     } catch (error) {
       return error
     }
+  }
+
+  async searchRequest (queryObject, type, page = 1, results = []) {
+    return this.api().get('cdn/stories', {
+      'page': page,
+      'per_page': 100,
+      'starts_with': this.lang ? `${this.lang}/*` : '',
+      'filter_query': {
+        'component': { 'in': type },
+        ...queryObject
+      }
+    }).then(response => {
+      const stories = response.data.stories
+        .map(story => extractStoryContent(story))
+        .map(story => objectKeysToCamelCase(story))
+        .map(story => extractPluginValues(story))
+
+      results = results.concat(stories)
+      if (stories.length < 100) {
+        return results
+      }
+
+      return this.searchRequest(queryObject, type, page + 1, results)
+    }).catch(error => {
+      console.log(error)
+    })
   }
 
   createAttributeOptionArray (options, nameKey = 'label', valueKey = 'value', sortKey = 'sort_order') {
