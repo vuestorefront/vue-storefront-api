@@ -14,7 +14,7 @@ program
   .option('--input-index <inputIndex>', 'index to dump', 'vue_storefront_catalog')
   .option('--output-file <outputFile>', 'path to the output file', 'var/catalog.json')
   .action((cmd) => {
-    const input = `http://${config.host}:${config.port}/${cmd.inputIndex}`
+    const input = `${config.protocol}://${config.host}:${config.port}/${cmd.inputIndex}`
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
@@ -29,7 +29,7 @@ program
   .option('--output-index <outputIndex>', 'index to restore', 'vue_storefront_catalog_temp')
   .option('--input-file <inputFile>', 'path to the input file', 'var/catalog.json')
   .action((cmd) => {
-    const output = `http://${config.host}:${config.port}/${cmd.outputIndex}`
+    const output = `${config.protocol}://${config.host}:${config.port}/${cmd.outputIndex}`
 
     const child = spawnSync('node', [
       'node_modules/elasticdump/bin/elasticdump',
@@ -52,6 +52,6 @@ process.on('unhandledRejection', (reason, p) => {
   console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason)
 })
 
-process.on('uncaughtException', function(exception) {
+process.on('uncaughtException', function (exception) {
   console.log(exception)
 })
