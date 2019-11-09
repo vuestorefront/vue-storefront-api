@@ -1,9 +1,9 @@
 import AbstractStockAlertProxy from '../abstract/stock_alert';
 import { multiStoreConfig } from './util';
-import { Magento1Client } from './module/index';
 
 class StockAlertProxy extends AbstractStockAlertProxy {
   constructor (config, req){
+    const Magento1Client = require('magento1-vsbridge-client').Magento1Client;
     super(config, req)
     this.api = Magento1Client(multiStoreConfig(config.magento1.api, req));
   }

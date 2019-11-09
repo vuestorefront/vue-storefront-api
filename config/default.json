@@ -35,13 +35,18 @@
   "redis": {
     "host": "localhost",
     "port": 6379,
-    "db": 0
+    "db": 0,
+    "auth": false
   },
   "kue": {},
   "availableStores": [
     "de",
     "it"
   ],
+  "msi": {
+    "enabled": false,
+    "defaultStockId": 1
+  },
   "storeViews": {
     "multistore": true,
     "mapStoreUrlsFor": [
@@ -50,7 +55,7 @@
     ],
     "de": {
       "storeCode": "de",
-      "disabled": true,
+      "disabled": false,
       "storeId": 3,
       "name": "German Store",
       "url": "/de",
@@ -58,11 +63,14 @@
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_de"
       },
+      "msi": {
+        "stockId": 2
+      },
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+		    "sourcePriceIncludesTax": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -77,13 +85,16 @@
     },
     "it": {
       "storeCode": "it",
-      "disabled": true,
+      "disabled": false,
       "storeId": 4,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
         "host": "localhost:8080/api/catalog",
         "index": "vue_storefront_catalog_it"
+      },
+      "msi": {
+        "stockId": 2
       },
       "tax": {
         "defaultCountry": "IT",
@@ -126,7 +137,8 @@
     "mailchimp-subscribe",
     "example-magento-api",
     "cms-data",
-    "mail-service"
+    "mail-service",
+    "example-processor"
   ],
   "extensions": {
     "mailchimp": {
@@ -144,16 +156,16 @@
       },
       "targetAddressWhitelist": ["contributors@vuestorefront.io"],
       "secretString": "__THIS_IS_SO_SECRET__"
+    },
+    "example-processor": {
+      "resultProcessors": {
+        "product": "my-product-processor"
+      }
     }
   },
   "magento2": {
-    "url": "http://demo-magento2.vuestorefront.io/",
     "imgUrl": "http://demo-magento2.vuestorefront.io/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
-    "magentoUserName": "",
-    "magentoUserPassword": "",
-    "httpUserName": "",
-    "httpUserPassword": "",
     "api": {
       "url": "http://demo-magento2.vuestorefront.io/rest",
       "consumerKey": "byv3730rhoulpopcq64don8ukb8lf2gq",
@@ -163,8 +175,8 @@
     }
   },
   "magento1": {
-    "url": "http://magento-demo.local",
     "imgUrl": "http://magento-demo.local/media/catalog/product",
+    "assetPath": "",
     "magentoUserName": "",
     "magentoUserPassword": "",
     "httpUserName": "",
@@ -178,7 +190,6 @@
     }
   },
   "imageable": {
-    "namespace": "",
     "maxListeners": 512,
     "imageSizeLimit": 1024,
     "whitelist": {
@@ -197,8 +208,7 @@
       "queue": 2,
       "process": 4
     },
-    "simd": true,
-    "keepDownloads": true
+    "simd": true
   },
   "entities": {
       "category": {
