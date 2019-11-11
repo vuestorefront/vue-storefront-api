@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Error responses for mailchimp - @andrzejewsky (#3337)
 - Replaced function arguments to object destructuring in `calculateProductTax` - @andrzejewsky (#3337)
+- Refactor `taxcalc.js` similar to frontend - @gibkigonzo (#356)
 
 ## [1.10.0] - 2019.08.12
 
