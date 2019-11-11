@@ -11,11 +11,11 @@ const resolver = {
   }
 };
 
-async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _source_include, _source_exclude) {
   let _req = {
     query: {
-      _source_exclude: _sourceExclude,
-      _source_include: _sourceInclude
+      _source_exclude,
+      _source_include
     }
   }
 
@@ -34,26 +34,28 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
     index: esIndex,
     type: config.elasticsearch.indexTypes[0],
     body: query,
-    _sourceInclude,
-    _sourceExclude
+    _source_include,
+    _source_exclude
   });
 
-  if (esResponse && esResponse.hits && esResponse.hits.hits) {
+  const { body } = esResponse
+
+  if (body && body.hits && body.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
+    body.hits.hits = await esResultsProcessor(body, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
 
   // Process hits
   response.items = []
-  esResponse.hits.hits.forEach(hit => {
+  body.hits.hits.forEach(hit => {
     let item = hit._source
     item._score = hit._score
     response.items.push(item)
   });
 
-  response.total_count = esResponse.hits.total
+  response.total_count = body.hits.total
 
   // Process sort
   let sortOptions = []
@@ -66,7 +68,7 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
     )
   }
 
-  response.aggregations = esResponse.aggregations
+  response.aggregations = body.aggregations
   response.sort_fields = {}
   if (sortOptions.length > 0) {
     response.sort_fields.options = sortOptions
