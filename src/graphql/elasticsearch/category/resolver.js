@@ -6,7 +6,7 @@ import { getIndexName } from '../mapping'
 async function list (search, filter, currentPage, pageSize = 200, sort, context, rootValue, _source_include) {
   let query = buildQuery({ search, filter, currentPage, pageSize, sort, type: 'category' });
 
-  if (_source_include === undefined) {
+  if (!_source_include) {
     _source_include = config.entities.category.includeFields
   }
 
