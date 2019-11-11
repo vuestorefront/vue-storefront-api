@@ -6,7 +6,7 @@ import { getIndexName } from '../mapping'
 async function listAttributes (attributes, context, rootValue, _source_include) {
   let query = buildQuery({ filter: attributes, pageSize: 150, type: 'attribute' });
 
-  if (_source_include === undefined) {
+  if (!_source_include) {
     _source_include = config.entities.attribute.includeFields
   }
 
