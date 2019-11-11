@@ -19,7 +19,7 @@ Besides a big improvement for the shopping experience, we also want to create a 
 - Docker and Docker Compose
 
 Already included in `vue-storefront-api` Docker image (required locally, if you do not use containerization):
-- Node.js 8.x or higher
+- Node.js 10.x or higher
 - Yarn
 
 ## Installation
@@ -82,7 +82,7 @@ This backend is using ElasticSearch data formats popularized by [ElasticSuite fo
 Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
 
 ## Adding custom modules with own dependencies (Yarn only)
-When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependecies defined inside your custom module will be intaled when you execute `yarn` at project root level, so it's way esier and faster than installing all modules dependcies separetly.
+When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependencies defined inside your custom module will be installed when you execute `yarn` at project root level, so it's way easier and faster than installing all modules dependencies separately.
 
 To do this, define the `package.json` with your dependencies in your custom module:
 - `src/api/extensions/{your-custom-extension}/package.json` 
