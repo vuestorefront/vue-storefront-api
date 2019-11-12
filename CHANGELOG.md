@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `product.final_price` field is now being taken into product price calcualtion. Moreover, we've added the `config.tax.finalPriceIncludesTax` - which is set to `true` by default. All the `price`, `original_price` and `special_price` fields are calculated accordingly. It was required as Magento2 uses `final_price` to set the catalog pricing rules after-prices - @pkarw (#289)
 - Force ES connections to use protocol config option - @cewald (#303, #304)
 - Better handling of HTTP error codes provided by API client - #3151
+- Bugfix for `fs.existsSync` path in API endpoints for schema extensions (#363)
 
 ### Changed
 - Error responses for mailchimp - @andrzejewsky (#3337)
