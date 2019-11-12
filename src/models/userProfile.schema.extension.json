@@ -1,1 +1,46 @@
-{}
+{
+  "properties": {
+      "customer": {
+          "required": [
+              "gender",
+              "dob"
+          ],
+          "properties": {
+              "addresses": {
+                  "maxItems": 2,
+                  "items": {
+                      "properties": {
+                          "street": {
+                              "minItems": 1,
+                              "items": {
+                                "type": "string",
+                                "minLength": 0
+                              }
+                          },
+                          "postcode": {
+                            "type": ["number", "string"]
+                          },
+                          "telephone": {
+                            "type": ["number", "string"]
+                          }
+                      }
+                  }
+              },
+              "gender": {
+                  "type": "string",
+                  "pattern": "[a-zA-Z0-9]+"
+              },
+              "dob": {
+                  "type": ["null","string"]
+              },
+              "newsletter": {
+                "type": "boolean"
+              },
+              "cluster": {
+                "type": "string",
+                "pattern": "[a-zA-Z0-9]+"
+              }
+          }    
+      }
+  }
+}
