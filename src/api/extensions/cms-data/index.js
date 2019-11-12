@@ -3,15 +3,14 @@ import { Router } from 'express';
 const Magento2Client = require('magento2-rest-client').Magento2Client
 
 module.exports = ({ config, db }) => {
-
   let cmsApi = Router();
 
   cmsApi.get('/cmsPage/:id', (req, res) => {
     const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsPage', function (restClient) {
+    client.addMethods('cmsPage', (restClient) => {
       let module = {};
       module.getPage = function () {
-        return restClient.get('/snowdog/cmsPage/'+ req.params.id);
+        return restClient.get('/snowdog/cmsPage/' + req.params.id);
       }
       return module;
     })
@@ -24,10 +23,10 @@ module.exports = ({ config, db }) => {
 
   cmsApi.get('/cmsBlock/:id', (req, res) => {
     const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsBlock', function (restClient) {
+    client.addMethods('cmsBlock', (restClient) => {
       let module = {};
       module.getBlock = function () {
-        return restClient.get('/snowdog/cmsBlock/'+ req.params.id);
+        return restClient.get('/snowdog/cmsBlock/' + req.params.id);
       }
       return module;
     })
@@ -40,7 +39,7 @@ module.exports = ({ config, db }) => {
 
   cmsApi.get('/cmsPageIdentifier/:identifier/storeId/:storeId', (req, res) => {
     const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsPageIdentifier', function (restClient) {
+    client.addMethods('cmsPageIdentifier', (restClient) => {
       let module = {};
       module.getPageIdentifier = function () {
         return restClient.get(`/snowdog/cmsPageIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);
@@ -56,7 +55,7 @@ module.exports = ({ config, db }) => {
 
   cmsApi.get('/cmsBlockIdentifier/:identifier/storeId/:storeId', (req, res) => {
     const client = Magento2Client(config.magento2.api);
-    client.addMethods('cmsBlockIdentifier', function (restClient) {
+    client.addMethods('cmsBlockIdentifier', (restClient) => {
       let module = {};
       module.getBlockIdentifier = function () {
         return restClient.get(`/snowdog/cmsBlockIdentifier/${req.params.identifier}/storeId/${req.params.storeId}`);

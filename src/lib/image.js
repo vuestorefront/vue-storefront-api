@@ -8,7 +8,8 @@ sharp.counters(config.imageable.counters);
 sharp.simd(config.imageable.simd);
 
 export async function downloadImage (url) {
-  return await rp.get(url, { encoding: null });
+  const response = await rp.get(url, { encoding: null });
+  return response
 }
 
 export async function identify (buffer) {
@@ -19,7 +20,7 @@ export async function identify (buffer) {
   } catch (err) {
     console.log(err);
   }
-} 
+}
 
 export async function resize (buffer, width, height) {
   try {
