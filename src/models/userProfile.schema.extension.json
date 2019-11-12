@@ -34,11 +34,11 @@
                   "type": ["null","string"]
               },
               "newsletter": {
-                "type": "boolean"
+                  "type": "boolean"
               },
               "cluster": {
-                "type": "string",
-                "pattern": "[a-zA-Z0-9]+"
+                  "type": "string",
+                  "pattern": "[a-zA-Z0-9]+"
               }
           }    
       }
