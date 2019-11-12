@@ -21,7 +21,7 @@
                               "type": ["number", "string"]
                           },
                           "telephone": {
-                              "type": ["string", "null"]
+                              "type": ["number", "string", "null"]
                           },
                           "company": {
                               "type": ["string", "null"],
@@ -39,7 +39,7 @@
                   "pattern": "[a-zA-Z0-9]+"
               },
               "dob": {
-                  "type": ["null","string"]
+                  "type": ["string", "null"]
               },
               "newsletter": {
                   "type": "boolean"
