@@ -36,7 +36,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userRegisterSchema = require('../models/userRegister.schema.json')
     let userRegisterSchemaExtension = {};
-    if (fs.existsSync('../models/userRegister.schema.extension.json')) {
+    if (fs.existsSync('src/models/userRegister.schema.extension.json')) {
       userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
     }
     const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
@@ -150,10 +150,10 @@ export default ({config, db}) => {
   userApi.get('/order-history', (req, res) => {
     const userProxy = _getProxy(req)
     userProxy.orderHistory(
-			req.query.token,
-			req.query.pageSize || 20,
-			req.query.currentPage || 1
-		).then((result) => {
+      req.query.token,
+      req.query.pageSize || 20,
+      req.query.currentPage || 1
+    ).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
       apiError(res, err);
@@ -167,7 +167,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userProfileSchema = require('../models/userProfile.schema.json')
     let userProfileSchemaExtension = {};
-    if (fs.existsSync('../models/userProfile.schema.extension.json')) {
+    if (fs.existsSync('src/models/userProfile.schema.extension.json')) {
       userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
     }
     const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
