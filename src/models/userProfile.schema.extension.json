@@ -35,7 +35,7 @@
                   }
               },
               "gender": {
-                  "type": "string",
+                  "type": ["number","string"],
                   "pattern": "[a-zA-Z0-9]+"
               },
               "dob": {
