@@ -169,7 +169,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     }
   }
   if (!rateFound) {
-    updateProductPrices({ product, rate: {rate: 0} })
+    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport })
 
     product.price_incl_tax = product.price
     product.price_tax = 0
