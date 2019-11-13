@@ -7,7 +7,7 @@
           ],
           "properties": {
               "addresses": {
-                  "maxItems": 2,
+                  "maxItems": 999,
                   "items": {
                       "properties": {
                           "street": {
