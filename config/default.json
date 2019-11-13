@@ -2,7 +2,14 @@
   "server": {
     "host": "localhost",
     "port": 8080,
-    "searchEngine": "elasticsearch"
+    "searchEngine": "elasticsearch",
+    "useOutputCacheTagging": false,
+    "useOutputCache": false,
+    "outputCacheDefaultTtl": 86400,
+    "availableCacheTags": ["P", "C", "T", "A", "product", "category", "attribute", "taxrule"],
+    "invalidateCacheKey": "aeSu7aip",
+    "invalidateCacheForwarding": false,
+    "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag="
   },
   "orders": {
     "useServerQueue": false
@@ -14,8 +21,6 @@
     "host": "localhost",
     "port": 9200,
     "protocol": "http",
-    "user": "elastic",
-    "password": "changeme",
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
@@ -57,6 +62,7 @@
       "storeCode": "de",
       "disabled": false,
       "storeId": 3,
+      "websiteId": 1,
       "name": "German Store",
       "url": "/de",
       "elasticsearch": {
@@ -69,8 +75,12 @@
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
+        "deprecatedPriceFieldsSupport": true,
         "calculateServerSide": true,
-		    "sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false,
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Germany",
@@ -87,6 +97,7 @@
       "storeCode": "it",
       "disabled": false,
       "storeId": 4,
+      "websiteId": 1,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
@@ -100,7 +111,11 @@
         "defaultCountry": "IT",
         "defaultRegion": "",
         "calculateServerSide": true,
-		"sourcePriceIncludesTax": false
+        "sourcePriceIncludesTax": false,
+        "deprecatedPriceFieldsSupport": true,
+        "finalPriceIncludesTax": true,
+        "userGroupId": null,
+        "useOnlyDefaultUserGroupId": false
       },
       "i18n": {
         "fullCountryName": "Italy",
@@ -126,7 +141,14 @@
     "alwaysSyncPlatformPricesOver": false,
     "usePlatformTotals": true,
     "setConfigurableProductOptions": true,
-	"sourcePriceIncludesTax": false
+    "sourcePriceIncludesTax": false,
+    "deprecatedPriceFieldsSupport": true,
+    "finalPriceIncludesTax": true,
+    "userGroupId": null,
+    "useOnlyDefaultUserGroupId": false
+  },
+  "review": {
+    "defaultReviewStatus": 2 
   },
   "bodyLimit": "100kb",
   "corsHeaders": [
@@ -138,13 +160,15 @@
     "example-magento-api",
     "cms-data",
     "mail-service",
-    "example-processor"
+    "example-processor",
+    "elastic-stock"
   ],
   "extensions": {
     "mailchimp": {
       "listId": "e06875a7e1",
       "apiKey": "a9a3318ea7d30f5c5596bd4a78ae0985-us3",
-      "apiUrl": "https://us3.api.mailchimp.com/3.0"
+      "apiUrl": "https://us3.api.mailchimp.com/3.0",
+      "userStatus": "subscribed"
     },
     "mailService": {
       "transport": {
@@ -208,7 +232,22 @@
       "queue": 2,
       "process": 4
     },
-    "simd": true
+    "simd": true,
+    "caching": {
+      "active": false,
+      "type": "file",
+      "file": {
+        "path": "/tmp/vue-storefront-api"
+      },
+      "google-cloud-storage": {
+        "libraryOptions": {},
+        "bucket": "",
+        "prefix": "vue-storefront-api/image-cache"
+      }
+    },
+    "action": {
+      "type": "local"
+    }
   },
   "entities": {
       "category": {

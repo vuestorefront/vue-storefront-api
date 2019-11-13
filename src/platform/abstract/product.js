@@ -1,5 +1,5 @@
 class AbstractProductProxy {
-  constructor(config, req) {
+  constructor (config, req) {
     this._config = config
     this._request = req
   }
@@ -8,5 +8,6 @@ class AbstractProductProxy {
     throw new Error('ProductProxy::list must be implemented for specific platform')
   }
 }
+
 
 module.exports = AbstractProductProxy

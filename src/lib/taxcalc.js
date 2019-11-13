@@ -1,12 +1,14 @@
-function isSpecialPriceActive(fromDate, toDate) {
+import camelCase from 'lodash/camelCase'
+
+function isSpecialPriceActive (fromDate, toDate) {
+  if (!fromDate && !toDate) {
+    return true
+  }
+
   const now = new Date()
   fromDate = fromDate ? new Date(fromDate) : false
   toDate = toDate ? new Date(toDate) : false
 
-  if (!fromDate && !toDate) {
-    return true
-  }
-  
   if (fromDate && toDate) {
     return fromDate < now && toDate > now
   }
@@ -20,43 +22,96 @@ function isSpecialPriceActive(fromDate, toDate) {
   }
 }
 
-export function updateProductPrices (product, rate, sourcePriceInclTax = false) {
-  const rateFactor = parseFloat(rate.rate) / 100
-  product.price = parseFloat(product.price)
-  product.special_price = parseFloat(product.special_price)
+/**
+ * change object keys to camelCase
+ */
+function toCamelCase (obj = {}) {
+  return Object.keys(obj).reduce((accObj, currKey) => {
+    accObj[camelCase(currKey)] = obj[currKey]
+    return accObj
+  }, {})
+}
 
-  let priceExclTax = product.price
-  if (sourcePriceInclTax) {
-    priceExclTax = product.price / (1 + rateFactor)
-    product.price = priceExclTax
+/**
+ * Create price object with base price and tax
+ * @param price - product price which is used to extract tax value
+ * @param rateFactor - tax % in decimal
+ * @param isPriceInclTax - determines if price already include tax
+ */
+function createSinglePrice (price = 0, rateFactor = 0, isPriceInclTax) {
+  const _price = isPriceInclTax ? price / (1 + rateFactor) : price
+  const tax = _price * rateFactor
+
+  return { price: _price, tax }
+}
+
+/**
+ * assign price and tax to product with proper keys
+ * @param AssignPriceParams
+ */
+function assignPrice ({ product, target, price = 0, tax = 0, deprecatedPriceFieldsSupport = true }) {
+  let priceUpdate = {
+    [target]: price,
+    [`${target}_tax`]: tax,
+    [`${target}_incl_tax`]: price + tax
   }
 
-  product.priceTax = priceExclTax * rateFactor
-  product.priceInclTax = priceExclTax + product.priceTax
-
-  let specialPriceExclTax = product.special_price
-  if (sourcePriceInclTax) {
-    specialPriceExclTax = product.special_price / (1 + rateFactor)
-    product.special_price = specialPriceExclTax
+  if (deprecatedPriceFieldsSupport) {
+    /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
+    priceUpdate = Object.assign(priceUpdate, toCamelCase(priceUpdate))
+    /** END */
   }
 
-  product.specialPriceTax = specialPriceExclTax * rateFactor
-  product.specialPriceInclTax = specialPriceExclTax + product.specialPriceTax
+  Object.assign(product, priceUpdate)
+}
 
-  if (product.special_price && (product.special_price < product.price)) {
-    if (!isSpecialPriceActive(product.special_from_date, product.special_to_date)) {
-      product.special_price = 0 // out of the dates period
+export function updateProductPrices ({ product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true }) {
+  const rate_factor = parseFloat(rate.rate) / 100
+  const hasOriginalPrices = (
+    product.hasOwnProperty('original_price') &&
+    product.hasOwnProperty('original_final_price') &&
+    product.hasOwnProperty('original_special_price')
+  )
+  // build objects with original price and tax
+  // for first calculation use `price`, for next one use `original_price`
+  const priceWithTax = createSinglePrice(parseFloat(product.original_price || product.price), rate_factor, sourcePriceInclTax && !hasOriginalPrices)
+  const finalPriceWithTax = createSinglePrice(parseFloat(product.original_final_price || product.final_price), rate_factor, finalPriceInclTax && !hasOriginalPrices)
+  const specialPriceWithTax = createSinglePrice(parseFloat(product.original_special_price || product.special_price), rate_factor, sourcePriceInclTax && !hasOriginalPrices)
+
+  // save original prices
+  if (!hasOriginalPrices) {
+    assignPrice({product, target: 'original_price', ...priceWithTax, deprecatedPriceFieldsSupport})
+
+    product.original_final_price = finalPriceWithTax.price
+    product.original_special_price = specialPriceWithTax.price
+  }
+
+  // reset previous calculation
+  assignPrice({product, target: 'price', ...priceWithTax, deprecatedPriceFieldsSupport})
+  assignPrice({product, target: 'final_price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
+  assignPrice({product, target: 'special_price', ...specialPriceWithTax, deprecatedPriceFieldsSupport})
+
+  if (product.final_price) {
+    if (product.final_price < product.price) { // compare the prices with the product final price if provided; final prices is used in case of active catalog promo rules for example
+      if (product.final_price < product.special_price) { // for VS - special_price is any price lowered than regular price (`price`); in Magento there is a separate mechanism for setting the `special_prices`
+        assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport}) // if the `final_price` is lower than the original `special_price` - it means some catalog rules were applied over it
+      }
+      assignPrice({product, target: 'special_price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
     } else {
-      product.originalPrice = priceExclTax
-      product.originalPriceInclTax = product.priceInclTax
-      product.originalPriceTax = product.priceTax
+      assignPrice({product, target: 'price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
+    }
+  }
 
-      product.price = specialPriceExclTax
-      product.priceInclTax = product.specialPriceInclTax
-      product.priceTax = product.specialPriceTax
+  if (product.special_price && (product.special_price < product.original_price)) {
+    if (!isSpecialPriceActive(product.special_from_date, product.special_to_date)) {
+      // out of the dates period
+      assignPrice({product, target: 'special_price', price: 0, tax: 0, deprecatedPriceFieldsSupport})
+    } else {
+      assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport})
     }
   } else {
-    product.special_price = 0 // the same price as original; it's not a promotion
+    // the same price as original; it's not a promotion
+    assignPrice({product, target: 'special_price', price: 0, tax: 0, deprecatedPriceFieldsSupport})
   }
 
   if (product.configurable_children) {
@@ -66,93 +121,102 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
           configurableChild[opt.attribute_code] = opt.value
         }
       }
-      configurableChild.price = parseFloat(configurableChild.price)
-      configurableChild.special_price = parseFloat(configurableChild.special_price)
 
-      let priceExclTax = configurableChild.price
-      if (sourcePriceInclTax) {
-        priceExclTax = configurableChild.price / (1 + rateFactor)
-        configurableChild.price = priceExclTax
-      }
+      // update children prices
+      updateProductPrices({ product: configurableChild, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
 
-      configurableChild.priceTax = priceExclTax * rateFactor
-      configurableChild.priceInclTax = priceExclTax + configurableChild.priceTax
-
-      let specialPriceExclTax = parseFloat(configurableChild.special_price)
-
-      if (sourcePriceInclTax) {
-        specialPriceExclTax = configurableChild.special_price / (1 + rateFactor)
-        configurableChild.special_price = specialPriceExclTax
-      }
-
-      configurableChild.specialPriceTax = specialPriceExclTax * rateFactor
-      configurableChild.specialPriceInclTax = specialPriceExclTax + configurableChild.specialPriceTax
-
-      if (configurableChild.special_price && (configurableChild.special_price < configurableChild.price)) {
-        if (!isSpecialPriceActive(configurableChild.special_from_date, configurableChild.special_to_date)) {
-          configurableChild.special_price = 0 // out of the dates period
-        } else {
-          configurableChild.originalPrice = priceExclTax
-          configurableChild.originalPriceInclTax = configurableChild.priceInclTax
-          configurableChild.originalPriceTax = configurableChild.priceTax
-
-          configurableChild.price = specialPriceExclTax
-          configurableChild.priceInclTax = configurableChild.specialPriceInclTax
-          configurableChild.priceTax = configurableChild.specialPriceTax
-        }
-      } else {
-        configurableChild.special_price = 0
-      }
-
-      if (configurableChild.priceInclTax < product.priceInclTax || product.price === 0) { // always show the lowest price
-        product.priceInclTax = configurableChild.priceInclTax
-        product.priceTax = configurableChild.priceTax
-        product.price = configurableChild.price
-        product.special_price = configurableChild.special_price
-        product.specialPriceInclTax = configurableChild.specialPriceInclTax
-        product.specialPriceTax = configurableChild.specialPriceTax
-        product.originalPrice = configurableChild.originalPrice
-        product.originalPriceInclTax = configurableChild.originalPriceInclTax
-        product.originalPriceTax = configurableChild.originalPriceTax
+      if ((configurableChild.price_incl_tax <= product.price_incl_tax) || product.price === 0) { // always show the lowest price
+        assignPrice({
+          product,
+          target: 'price',
+          price: configurableChild.price,
+          tax: configurableChild.price_tax,
+          deprecatedPriceFieldsSupport
+        })
+        assignPrice({
+          product,
+          target: 'special_price',
+          price: configurableChild.special_price,
+          tax: configurableChild.special_price_tax,
+          deprecatedPriceFieldsSupport
+        })
       }
     }
   }
 }
 
-export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false) {
+export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true, userGroupId = null, isTaxWithUserGroupIsActive }) {
   let rateFound = false
   if (product.tax_class_id > 0) {
-    let taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
+    let taxClass
+    if (isTaxWithUserGroupIsActive) {
+      taxClass = taxClasses.find((el) =>
+        el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id)) >= 0 &&
+          el.customer_tax_class_ids.indexOf(userGroupId) >= 0
+      )
+    } else {
+      taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
+    }
+
     if (taxClass) {
       for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
-          updateProductPrices(product, rate, sourcePriceInclTax)
+          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport })
           rateFound = true
-          console.debug('Tax rate ' + rate.code + ' = ' + rate.rate + '% found for ' + taxCountry + ' / ' + taxRegion)
           break
         }
       }
-    } else {
-      console.debug('No such tax class id: ' + product.tax_class_id)
     }
-  } else  {
-    console.debug('No  tax class set for: ' + product.sku)
   }
   if (!rateFound) {
-    console.log('No such tax class id: ' + product.tax_class_id + ' or rate not found for ' + taxCountry + ' / ' + taxRegion)
-    updateProductPrices(product, {rate: 0})
+    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport })
 
-    product.priceInclTax = product.price
-    product.priceTax = 0
-    product.specialPriceInclTax = 0
-    product.specialPriceTax = 0
+    product.price_incl_tax = product.price
+    product.price_tax = 0
+    product.special_price_incl_tax = 0
+    product.special_price_tax = 0
+
+    if (deprecatedPriceFieldsSupport) {
+      /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
+      product.priceInclTax = product.price
+      product.priceTax = 0
+      product.specialPriceInclTax = 0
+      product.specialPriceTax = 0
+      /** END */
+    }
+
     if (product.configurable_children) {
       for (let configurableChildren of product.configurable_children) {
-        configurableChildren.priceInclTax = configurableChildren.price
-        configurableChildren.priceTax = 0
-        configurableChildren.specialPriceInclTax = 0
-        configurableChildren.specialPriceTax = 0
+        configurableChildren.price_incl_tax = configurableChildren.price
+        configurableChildren.price_tax = 0
+        configurableChildren.special_price_incl_tax = 0
+        configurableChildren.special_price_tax = 0
+
+        if (deprecatedPriceFieldsSupport) {
+          /** BEGIN @deprecated - inconsitent naming kept just for the backward compatibility */
+          configurableChildren.priceInclTax = configurableChildren.price
+          configurableChildren.priceTax = 0
+          configurableChildren.specialPriceInclTax = 0
+          configurableChildren.specialPriceTax = 0
+          /** END */
+        }
       }
     }
   }
+}
+
+export function checkIfTaxWithUserGroupIsActive (configTax) {
+  if (typeof configTax.userGroupId === 'number') {
+    return true
+  }
+
+  return false
+}
+
+export function getUserGroupIdToUse (userGroupId, configTax) {
+  if (configTax.useOnlyDefaultUserGroupId) {
+    return configTax.userGroupId
+  }
+
+  return userGroupId
 }

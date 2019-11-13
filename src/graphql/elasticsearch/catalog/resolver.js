@@ -11,8 +11,13 @@ const resolver = {
   }
 };
 
-async function list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
-  const { req, res } = context;
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _source_include, _source_exclude) {
+  let _req = {
+    query: {
+      _source_exclude,
+      _source_include
+    }
+  }
 
   let query = buildQuery({
     filter: filter,
@@ -23,36 +28,38 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     type: 'product'
   });
 
-  let esIndex  = getIndexName(req.url)
+  let esIndex = getIndexName(context.req.url)
 
   let esResponse = await client.search({
     index: esIndex,
     type: config.elasticsearch.indexTypes[0],
     body: query,
-    _sourceInclude,
-    _sourceExclude
+    _source_include,
+    _source_exclude
   });
 
-  if (esResponse && esResponse.hits && esResponse.hits.hits) {
+  const { body } = esResponse
+
+  if (body && body.hits && body.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], esIndex, req, res);
+    body.hits.hits = await esResultsProcessor(body, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
 
   // Process hits
   response.items = []
-  esResponse.hits.hits.forEach(hit => {
+  body.hits.hits.forEach(hit => {
     let item = hit._source
     item._score = hit._score
     response.items.push(item)
   });
 
-  response.total_count = esResponse.hits.total
+  response.total_count = body.hits.total
 
   // Process sort
   let sortOptions = []
-  for (var sortAttribute in sort){
+  for (var sortAttribute in sort) {
     sortOptions.push(
       {
         label: sortAttribute,
@@ -61,7 +68,7 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     )
   }
 
-  response.aggregations = esResponse.aggregations
+  response.aggregations = body.aggregations
   response.sort_fields = {}
   if (sortOptions.length > 0) {
     response.sort_fields.options = sortOptions

@@ -1,11 +1,11 @@
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 
-function identity(value) {
+function identity (value) {
   return value;
 }
 
-function parseLiteral(ast, variables) {
+function parseLiteral (ast, variables) {
   switch (ast.kind) {
     case Kind.STRING:
     case Kind.BOOLEAN:

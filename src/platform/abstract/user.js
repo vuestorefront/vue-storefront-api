@@ -1,11 +1,11 @@
 class AbstractUserProxy {
-  constructor(config, req) {
+  constructor (config, req) {
     this._config = config
     this._request = req
   }
 
   /**
-   * 
+   *
    * EXAMPLE INPUT:
    * {
    *       "customer": {
@@ -15,9 +15,9 @@ class AbstractUserProxy {
    *       },
    *       "password": "!@#foearwato"
    *  }
-   * 
+   *
    * EXAMPLE OUTPUT:
-   * 
+   *
    *  {
    *       "code": 200,
    *       "result": {
@@ -35,36 +35,36 @@ class AbstractUserProxy {
    *           "disable_auto_group_change": 0
    *       }
    *   }
-   * @param {*} userData 
+   * @param {*} userData
    */
-  register (userData) { 
-      throw new Error('UserProxy::register must be implemented for specific platform')
+  register (userData) {
+    throw new Error('UserProxy::register must be implemented for specific platform')
   }
-  
+
   /**
    * EXAMPLE INPUT:
-   * 
-   *    { 
+   *
+   *    {
    *        "username": "pkarwatka@divante.pl",
    *        "password": "********"
    *    }
-   * 
+   *
    * EXAMPLE OUTPUT:
    * {
    *        "code": 200,
    *        "result": "3tx80s4f0rhkoonqe4ifcoloktlw9glo"
    *    }
    */
-  login (userData) { 
-      throw new Error('UserProxy::login must be implemented for specific platform')
+  login (userData) {
+    throw new Error('UserProxy::login must be implemented for specific platform')
   }
 
   /**
    * EXAMPLE INPUT:
    * - just provide an consumer token from login method
-   * 
+   *
    * EXAMPLE OUTPUT:
-   * 
+   *
    * {
    *       "code": 200,
    *       "result": {
@@ -82,8 +82,8 @@ class AbstractUserProxy {
    *           "disable_auto_group_change": 0
    *       }
    *   }
-   * 
-   * } requestToken 
+   *
+   * } requestToken
    */
   me (requestToken) {
     throw new Error('UserProxy::me must be implemented for specific platform')

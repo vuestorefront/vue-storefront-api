@@ -82,7 +82,7 @@ This backend is using ElasticSearch data formats popularized by [ElasticSuite fo
 Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
 
 ## Adding custom modules with own dependencies (Yarn only)
-When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependecies defined inside your custom module will be intaled when you execute `yarn` at project root level, so it's way esier and faster than installing all modules dependcies separetly.
+When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependencies defined inside your custom module will be installed when you execute `yarn` at project root level, so it's way easier and faster than installing all modules dependencies separately.
 
 To do this, define the `package.json` with your dependencies in your custom module:
 - `src/api/extensions/{your-custom-extension}/package.json` 
@@ -94,6 +94,24 @@ NOTE: `npm` users will still have to install the dependencies individually in th
 
 ## Reviews
 To use review feature you need to install custom module for Magento 2: [Divante ReviewApi](https://github.com/DivanteLtd/magento2-review-api)
+By default new reviews will be added with status "Pending". 
+```json
+  "review": {
+    "defaultReviewStatus": 2 
+  },
+```
+
+## Output Cache
+Vue Storefront API supports output cache for catalog operations. Cache is tagged and can by dynamically invalidated. Please find the details how to configure it [in our docs](https://docs.vuestorefront.io/guide/basics/ssr-cache.html).
+
+You can manually clear the Redis cache for specific tags by running the following command:
+
+```bash
+npm run cache clear
+npm run cache clear -- --tag=product,category
+npm run cache clear -- --tag=P198
+npm run cache clear -- --tag=*
+```
 
 ## Running initial Magento2 import
 
@@ -140,6 +158,11 @@ You can use the following command to run a delta indexer for a specific storevie
 ```
 yarn mage2vs productsdelta --store-code=de
 ```
+
+## Self signed certificates
+
+Often in non production environment other services are using self signed certificates for secure connection.
+You can easily setup the application to trust them by putting them in config/certs directory.  
 
 License
 -------
