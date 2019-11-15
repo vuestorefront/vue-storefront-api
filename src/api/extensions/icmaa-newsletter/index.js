@@ -7,7 +7,7 @@ const Magento1Client = require('magento1-vsbridge-client').Magento1Client
 module.exports = ({ config }) => {
   let api = Router()
 
-  const newsletterUrl = 'newsletter/'
+  const urlPrefix = 'newsletter/'
 
   /**
    * Add new action to `magento1-vsbridge-client` and `newsletter` instance
@@ -16,15 +16,15 @@ module.exports = ({ config }) => {
     const client = Magento1Client(multiStoreConfig(config.magento1.api, req))
     client.addMethods('newsletter', (restClient) => {
       var module = {};
-      module[endpointKey] = function (userData) {
-        const url = newsletterUrl + endpointKey
-        return restClient[req.method.toLowerCase()](url, userData)
+      module[endpointKey] = function (reqData) {
+        const url = urlPrefix + endpointKey
+        return restClient[req.method.toLowerCase()](url, reqData)
           .then(data => {
             return data.code === 200 ? data.result : false
           });
       }
 
-      return module;
+      return module
     })
 
     return client
