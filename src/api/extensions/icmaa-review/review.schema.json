@@ -1,0 +1,49 @@
+{
+  "additionalProperties": true,
+  "required": [
+    "review"
+  ],
+  "properties": {
+    "review": {
+      "required": [
+        "product_id",
+        "name",
+        "email",
+        "title",
+        "detail",
+        "rating",
+        "review_entity",
+        "review_status"
+      ],
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "string"
+        },
+        "review_entity": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "integer"
+        },
+        "customer_id": {
+          "type": ["integer", "null"]
+        }
+      }
+    }
+  }
+}
