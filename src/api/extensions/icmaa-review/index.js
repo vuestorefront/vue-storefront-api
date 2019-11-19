@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { apiStatus } from '../../../lib/util'
 import { newMagentoClientAction } from 'icmaa/helpers'
+import GoogleRecaptcha from 'icmaa/helpers/googleRecaptcha'
 
 const Ajv = require('ajv')
 
@@ -10,6 +11,12 @@ module.exports = ({ config }) => {
   const urlPrefix = 'review/'
 
   api.post('/create', async (req, res) => {
+    const recaptcha = await GoogleRecaptcha(req.body.review.recaptcha, config)
+    if (recaptcha !== true) {
+      apiStatus(res, recaptcha, 500)
+      return
+    }
+
     const ajv = new Ajv();
     const reviewSchema = require('./review.schema.json')
     const validate = ajv.compile(reviewSchema)
