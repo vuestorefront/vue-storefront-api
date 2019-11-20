@@ -10,7 +10,10 @@ export const newMagentoClientAction = (moduleName = '', endpoint = '', urlPrefix
   client.addMethods(moduleName, (restClient) => {
     var module = {};
     module[endpoint] = function (reqData) {
-      const url = urlPrefix + endpoint
+      let url = urlPrefix + endpoint
+      if (req.query.token) {
+        url += `?token=${req.query.token}`
+      }
       return restClient[req.method.toLowerCase()](url, reqData)
         .then(data => {
           return data.code === 200 ? data.result : false
