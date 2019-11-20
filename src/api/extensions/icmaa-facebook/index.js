@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { apiStatus } from '../../../lib/util'
-import { newMagentoClientAction } from 'icmaa/helpers'
+import { newMagentoClientAction } from '../icmaa/helpers'
 
 module.exports = ({ config }) => {
   let api = Router()

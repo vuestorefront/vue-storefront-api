@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { apiStatus } from '../../../lib/util'
-import { newMagentoClientAction } from 'icmaa/helpers'
-import GoogleRecaptcha from 'icmaa/helpers/googleRecaptcha'
+import { newMagentoClientAction } from '../icmaa/helpers'
+import GoogleRecaptcha from '../icmaa/helpers/googleRecaptcha'
 
 const Ajv = require('ajv')
 
