@@ -11,10 +11,11 @@ export const newMagentoClientAction = (moduleName = '', endpoint = '', urlPrefix
     var module = {};
     module[endpoint] = function (reqData) {
       let url = urlPrefix + endpoint
-      if (req.query.token) {
-        url += `?token=${req.query.token}`
+      const token = req.query.token
+      if (token) {
+        url += `?token=${token}`
       }
-      return restClient[req.method.toLowerCase()](url, reqData)
+      return restClient[req.method.toLowerCase()](url, reqData, token)
         .then(data => {
           return data.code === 200 ? data.result : false
         });
