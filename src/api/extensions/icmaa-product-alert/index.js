@@ -9,7 +9,7 @@ module.exports = ({ config }) => {
 
   const stockAction = async (req, res) => {
     const client = newMagentoClientAction('productalert', 'stock', urlPrefix, config, req)
-    client.newsletter.subscribe(req.body)
+    client.productalert.stock(req.body)
       .then((result) => {
         apiStatus(res, result, 200)
       }).catch(err => {
@@ -19,6 +19,16 @@ module.exports = ({ config }) => {
 
   api.post('/stock', stockAction)
   api.delete('/stock', stockAction)
+
+  api.get('/stocklist', async (req, res) => {
+    const client = newMagentoClientAction('productalert', 'stocklist', urlPrefix, config, req)
+    client.productalert.stocklist(req.body)
+      .then((result) => {
+        apiStatus(res, result, 200)
+      }).catch(err => {
+        apiStatus(res, err, 500)
+      })
+  })
 
   return api
 }
