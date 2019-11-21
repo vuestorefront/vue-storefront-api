@@ -224,7 +224,7 @@ export default ({config, db}) => {
 	});
 
 	/**
-   * POST for changing user's password (old, keep for backward compatibility)
+   * POST for changing user's password after reset password with the token
    */
   userApi.post('/create-password', (req, res) => {
     
