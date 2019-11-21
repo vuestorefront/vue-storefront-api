@@ -232,7 +232,7 @@ export default ({config, db}) => {
       return apiStatus(res, 'email not provided', 500);
 		}
 		if (!req.body.resetToken) {
-      return apiStatus(res, 'token not provided', 500);
+      return apiStatus(res, 'resetToken not provided', 500);
     }
     if (!req.body.newPassword) {
       return apiStatus(res, 'newPassword not provided', 500);
