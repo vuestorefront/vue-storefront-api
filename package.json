@@ -70,7 +70,7 @@
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
     "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
-    "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
+    "magento1-vsbridge-client": "github:icmaa/magento1-vsbridge-client#feature/delete-actions-with-body",
     "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
     "md5": "^2.2.1",
     "merge-graphql-schemas": "^1.5.2",

@@ -4659,9 +4659,9 @@ lru-cache@^5.0.0:
     request "^2.88.0"
     sha1 "^1.1.1"
 
-"magento1-vsbridge-client@github:DivanteLtd/magento1-vsbridge-client":
+"magento1-vsbridge-client@github:icmaa/magento1-vsbridge-client#feature/delete-actions-with-body":
   version "0.1.0"
-  resolved "https://codeload.github.com/DivanteLtd/magento1-vsbridge-client/tar.gz/3420aacc9807576b2d6e3b64a2fa07c6181ec305"
+  resolved "https://codeload.github.com/icmaa/magento1-vsbridge-client/tar.gz/7d7a980feeb4037e52337d9cf4c5fe3da70f78a9"
   dependencies:
     oauth-1.0a "^1.0.1"
     request "^2.72.0"
