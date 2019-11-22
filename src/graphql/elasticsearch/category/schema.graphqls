@@ -1,3 +1,4 @@
+scalar DateTime
 type Query {
   categories (
     search: String @doc(description: "Performs a full-text search using the specified key words."),
@@ -6,7 +7,37 @@ type Query {
     currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
     sort: CategorySortInput @doc(description: "Specifies which attribute to sort on, and whether to return the results in ascending or descending order."),
     _sourceInclude: [String] @doc(description: "Specifies which attribute we include in result.")
-    ): ESResponse
+    ): Categories
+}
+
+type Categories @doc(description: "The Categories object is the top-level object returned in a category search") {
+    items: [Category] @doc(description: "An array of categories that match the specified search criteria")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query")
+    total_count: Int @doc(description: "The number of categories returned")
+}
+type Category @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    id: ID @doc(description: "An ID that uniquely identifies the category")
+    parent_id: ID @doc(description: "An ID that uniquely identifies the parent category")
+    description: String @doc(description: "An optional description of the category")
+    name: String @doc(description: "The display name of the category")
+    is_active: Boolean @doc(description: "Is active category")
+    path: String @doc(description: "Category Path")
+    path_in_store: String @doc(description: "Category path in store")
+    url_key: String @doc(description: "The url key assigned to the category")
+    url_path: String @doc(description: "The url path assigned to the category")
+    position: Int @doc(description: "The position of the category relative to other categories at the same level in tree")
+    level: Int @doc(description: "Indicates the depth of the category within the tree")
+    created_at: DateTime @doc(description: "Timestamp indicating when the category was created")
+    updated_at: DateTime @doc(description: "Timestamp indicating when the category was updated")
+    product_count: Int @doc(description: "The number of products in the category")
+    default_sort_by: String @doc(description: "The attribute to use for sorting")
+    children_data: [Category] @doc(description: "Children category data")
+    children_count: Int @doc(description: "Category children count")
+    available_sort_by: [String] @doc(description: "Available sorting option for category")
+    include_in_menu: Boolean @doc(description: "Include category to navigation menu")
+    display_mode: String @doc(description: "Category display mode")
+    is_anchor: Boolean @doc(description: "Is filter avalaible in category")
+    page_layout: String @doc(description: "Category page layout")
 }
 
 input CategoryFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {

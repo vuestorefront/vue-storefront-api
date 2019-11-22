@@ -1,8 +1,8 @@
 scalar JSON
+scalar Bool
 
 type Products @doc(description: "The Products object is the top-level object returned in a product search") {
-    items: JSON @doc(description: "An array of products that match the specified search criteria")
-    # items: [ProductInterface] // @TODO: update items to use [ProductInterface] type
+    items: [Product] @doc(description: "An array of products that match the specified search criteria")
     page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query")
     total_count: Int @doc(description: "The number of products returned")
     # filters: [LayerFilter] @doc(description: "Layered navigation filters array") // @TODO: add filters to response instead of aggregations
@@ -87,6 +87,50 @@ input ProductSortInput {
     country_of_manufacture: SortEnum @doc(description: "The product's country of origin")
     custom_layout: SortEnum @doc(description: "The name of a custom layout")
     gift_message_available: SortEnum @doc(description: "Indicates whether a gift message is available")
+}
+
+type Product @doc(description: "ProductFieldsInput defines the product fields to be used in the search.") {
+    visibility: Bool @doc(description: "The product visibility. Customers use this visibility to identify the product.")
+    status: Int  @doc(description: "The product status. Customers use this status to identify the product.")
+    name: String @doc(description: "The product name. Customers use this name to identify the product.")
+    sku: String @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
+    description: String @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
+    short_description: String @doc(description: "A short description of the product. Its use depends on the theme.")
+    price: Float @doc(description: "The price of an item")
+    special_price: Float @doc(description: "The discounted price of the product")
+    special_from_date: String @doc(description: "The beginning date that a product has a special price")
+    special_to_date: String @doc(description: "The end date that a product has a special price")
+    weight: Float @doc(description: "The weight of the item, in units defined by the store")
+    manufacturer: String @doc(description: "A number representing the product's manufacturer")
+    meta_title: String @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists")
+    meta_keyword: String @doc(description: "A comma-separated list of keywords that are visible only to search engines")
+    meta_description: String @doc(description: "A brief overview of the product for search results listings, maximum 255 characters")
+    image: String @doc(description: "The relative path to the main image on the product page")
+    small_image: String @doc(description: "The relative path to the small image, which is used on catalog pages")
+    thumbnail: String @doc(description: "The relative path to the product's thumbnail image")
+    tier_price: String @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    news_from_date: String @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
+    news_to_date: String @doc(description: "The end date for new product listings")
+    category_ids: [String] @doc(description: "Category ID the product belongs to")
+    required_options: Bool @doc(description: "Indicates whether the product has required options")
+    has_options: Bool @doc(description: "Indicates whether additional attributes have been created for the product")
+    image_label: String @doc(description: "The label assigned to a product image")
+    small_image_label: String @doc(description: "The label assigned to a product's small image")
+    thumbnail_label: String @doc(description: "The label assigned to a product's thumbnail image")
+    country_of_manufacture: String @doc(description: "The product's country of origin")
+    gift_message_available: Bool @doc(description: "Indicates whether a gift message is available")
+    final_price: Float @doc(description: "The final price of an item")
+    min_price: Float @doc(description:"The numeric minimal price of the product. Do not include the currency code.")
+    max_price: Float @doc(description:"The numeric maximal price of the product. Do not include the currency code.")
+    created_at: String @doc(description: "Timestamp indicating when the product was created")
+    updated_at: String @doc(description: "Timestamp indicating when the product was updated")
+    size: String @doc(description: "The product size. Customers use this size to identify the product.")
+    color: String @doc(description: "The product color. Customers use this color to identify the product.")
+    category: JSON @doc(description: "The product color. Customers use this color to identify the product.")
+    configurable_children: [Product] @doc(description: "Configurable product childrens")
+    stock: JSON @doc(description: "The product stock. Customers use this stock to identify the product.")
+    is_in_stock: Bool @doc(description: "Is product in stock")
+    keyword: String @doc(description: "keyword filter input")
 }
 
 input ProductFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
