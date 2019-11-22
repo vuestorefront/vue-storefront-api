@@ -7,7 +7,7 @@ import { getIndexName } from '../mapping'
 const resolver = {
   Query: {
     products: (_, { search, filter, sort, currentPage, pageSize, _sourceInclude, _sourceExclude }, context, rootValue) =>
-      list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude),
+      list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude)
   },
   Products: {
     items: (_, {}, context, rootValue) => { return _.items } // entry point for product extensions
