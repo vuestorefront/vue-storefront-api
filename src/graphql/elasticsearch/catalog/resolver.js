@@ -10,7 +10,7 @@ const resolver = {
       list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude)
   },
   Products: {
-    items: (_, {}, context, rootValue) => { return _.items } // entry point for product extensions
+    items: (_, { search }, context, rootValue) => { return _.items } // entry point for product extensions
   }
 };
 
