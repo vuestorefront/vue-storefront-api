@@ -94,7 +94,7 @@ function applyFilters (filter, query, type) {
     }
 
     if (hasCatalogFilters) {
-      query = query.orFilter('bool', (b) => attrFilterBuilder(b))
+      query = query.filterMinimumShouldMatch(1).orFilter('bool', (b) => attrFilterBuilder(b))
         .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrefix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
     }
 
