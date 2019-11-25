@@ -108,7 +108,7 @@ type Product @doc(description: "ProductFieldsInput defines the product fields to
     image: String @doc(description: "The relative path to the main image on the product page")
     small_image: String @doc(description: "The relative path to the small image, which is used on catalog pages")
     thumbnail: String @doc(description: "The relative path to the product's thumbnail image")
-    tier_price: String @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    tier_price: Float @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
     news_from_date: String @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
     news_to_date: String @doc(description: "The end date for new product listings")
     category_ids: [String] @doc(description: "Category ID the product belongs to")
