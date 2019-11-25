@@ -9,8 +9,7 @@
         "options": {
             "properties": {
                 "value": {
-                    "type": "text",
-                    "index": "not_analyzed"
+                    "type": "text"
                 }
             }
         }

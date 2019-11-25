@@ -17,7 +17,7 @@ program
     const tempIndex = originalIndex + '_' + Math.round(+new Date() / 1000)
 
     console.log(`** Creating temporary index ${tempIndex}`)
-    es.createIndex(common.db, tempIndex, (err) => {
+    es.createIndex(common.db, tempIndex, '', (err) => {
       if (err) {
         console.log(err)
       }
@@ -58,7 +58,7 @@ program
 
     console.log('** Hello! I am going to create NEW ES index')
     const indexName = cmd.indexName
-    es.createIndex(common.db, indexName, (err) => {
+    es.createIndex(common.db, indexName, '', (err) => {
       if (err) {
         console.log(err)
       }

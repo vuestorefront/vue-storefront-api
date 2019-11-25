@@ -13,10 +13,7 @@ class ProductProcessor {
   }
 
   process (items, groupId = null) {
-    console.debug('Entering ProductProcessor::process')
-
     const processorChain = []
-
     const platform = this._config.platform
     const factory = new PlatformFactory(this._config, this._req)
     const taxCountry = this._config.tax.defaultCountry

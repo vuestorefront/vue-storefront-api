@@ -1,6 +1,7 @@
 import jwt from 'jwt-simple';
 import request from 'request';
 import ProcessorFactory from '../processor/factory';
+import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
 
@@ -13,25 +14,6 @@ function _cacheStorageHandler (config, result, hash, tags) {
     ).catch((err) => {
       console.error(err)
     })
-  }
-}
-
-function _updateQueryStringParameter (uri, key, value) {
-  var re = new RegExp('([?&])' + key + '=.*?(&|#|$)', 'i');
-  if (uri.match(re)) {
-    if (value) {
-      return uri.replace(re, '$1' + key + '=' + value + '$2');
-    } else {
-      return uri.replace(re, '$1' + '$2');
-    }
-  } else {
-    var hash = '';
-    if (uri.indexOf('#') !== -1) {
-      hash = uri.replace(/.*#/, '#');
-      uri = uri.replace(/#.*/, '');
-    }
-    var separator = uri.indexOf('?') !== -1 ? '&' : '?';
-    return uri + separator + key + '=' + value + hash;
   }
 }
 
@@ -48,7 +30,6 @@ export default ({config, db}) => function (req, res, body) {
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
       requestBody = JSON.parse(decodeURIComponent(req.query.request))
-      console.log(requestBody)
     }
   } else {
     requestBody = req.body
@@ -73,12 +54,7 @@ export default ({config, db}) => function (req, res, body) {
   }
 
   // pass the request to elasticsearch
-  let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
-
-  if (!url.startsWith('http')) {
-    url = config.elasticsearch.protocol + '://' + url
-  }
-
+  const elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
   const userToken = requestBody.groupToken
 
   // Decode token and get group id
@@ -105,7 +81,7 @@ export default ({config, db}) => function (req, res, body) {
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
     request({ // do the elasticsearch request
-      uri: url,
+      uri: elasticBackendUrl,
       method: req.method,
       body: requestBody,
       json: true,
