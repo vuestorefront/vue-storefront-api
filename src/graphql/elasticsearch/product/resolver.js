@@ -11,6 +11,40 @@ const resolver = {
   },
   Products: {
     items: (_, { search }, context, rootValue) => { return _.items } // entry point for product extensions
+  },
+  Product: {
+    categories: (_, { search }, context, rootValue) => {
+      return _.category
+    },
+    /* TODO: We can extend our resolvers to meet the Magento2 GraphQL data model easily
+    breadcrumbs: (_, { search }, context, rootValue) => {
+      return _.category
+    },
+    price_range: (_, { search }, context, rootValue) => {
+      return {
+        minimum_price: {
+          regular_price: {},
+          final_price: {},
+          discount: {}
+        },
+        maximum_price: {
+          regular_price: {},
+          final_price: {},
+          discount: {}
+        }
+      }
+    },*/
+    media_gallery: (_, { search }, context, rootValue) => {
+      if (_.media_gallery) {
+        return _.media_gallery.map(mItem => {
+          return {
+            label: mItem.lab
+          }
+        })
+      } else {
+        return []
+      }
+    } // entry point for product extensions
   }
 };
 

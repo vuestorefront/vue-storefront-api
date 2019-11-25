@@ -4,7 +4,7 @@
 type Query {
     cmsPages (
         filter: CmsInput @doc(description: "An array of options for search criteria")
-    ): CmsPage @doc(description: "The CMS page query returns information about a CMS page")
+    ): CmsPages @doc(description: "The CMS page query returns information about a CMS page")
     cmsBlocks (
         filter: CmsInput @doc(description: "An array of options for search criteria")
     ): CmsBlocks @doc(description: "The CMS block query returns information about CMS blocks")
@@ -19,11 +19,11 @@ input CmsInput @doc(description: "ProductFilterInput defines the filters to be u
     store_id: FilterTypeInput @doc(description: "Store Id of the CMS entity")
 }
 
-type CmsPage @doc(description: "CMS pages information") {
-    items: [CmsPages] @doc(description: "An array of CMS pages")
+type CmsPages @doc(description: "CMS pages information") {
+    items: [CmsPage] @doc(description: "An array of CMS pages")
 }
 
-type CmsPages @doc(description: "CMS page defines all CMS page information") {
+type CmsPage @doc(description: "CMS page defines all CMS page information") {
     page_id: Int @doc(description: "Id of CMS page")
     title: String @doc(description: "CMS page title")
     identifier: String @doc(description: "URL key of CMS page")

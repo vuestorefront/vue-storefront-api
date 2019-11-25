@@ -126,11 +126,13 @@ type Product @doc(description: "ProductFieldsInput defines the product fields to
     updated_at: String @doc(description: "Timestamp indicating when the product was updated")
     size: String @doc(description: "The product size. Customers use this size to identify the product.")
     color: String @doc(description: "The product color. Customers use this color to identify the product.")
-    category: JSON @doc(description: "The product color. Customers use this color to identify the product.")
+    categories: [Category] @doc(description: "The product categories.")
+    category: [Category] @doc(description: "The product categories.")
     configurable_children: [Product] @doc(description: "Configurable product childrens")
     stock: JSON @doc(description: "The product stock. Customers use this stock to identify the product.")
     is_in_stock: Bool @doc(description: "Is product in stock")
     keyword: String @doc(description: "keyword filter input")
+    media_gallery: JSON @doc(description: "Media items assigned to this specific product")
 }
 
 input ProductFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
