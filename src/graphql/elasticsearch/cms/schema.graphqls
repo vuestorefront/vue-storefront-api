@@ -1,7 +1,7 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 
-type Query {
+extend type Query {
     cmsPages (
         filter: CmsInput @doc(description: "An array of options for search criteria")
     ): CmsPages @doc(description: "The CMS page query returns information about a CMS page")

@@ -1,8 +1,13 @@
+directive @doc(
+  description: String
+) on FIELD_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION | INPUT_OBJECT | OBJECT | ARGUMENT_DEFINITION
+
+
 type Query {
     customAttributeMetadata(
         attributes: AttributeInput!,
         _sourceInclude: [String] @doc(description: "Specifies which attribute we include in result.")
-    ): ESResponse
+    ): CustomAttributeMetadata
 }
 
 type CustomAttributeMetadata @doc(description: "CustomAttributeMetadata defines an array of attribute_codes and entity_types") {

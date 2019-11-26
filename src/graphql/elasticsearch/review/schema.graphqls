@@ -1,4 +1,4 @@
-type Query {
+extend type Query {
   reviews (
     search: String @doc(description: "Performs a full-text search using the specified key words."),
     filter: ReviewFilterInput @doc(description: "An array of categories that match the specified search criteria"),

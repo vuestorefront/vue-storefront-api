@@ -1,5 +1,5 @@
 scalar DateTime
-type Query {
+extend type Query {
   categories (
     search: String @doc(description: "Performs a full-text search using the specified key words."),
     filter: CategoryFilterInput @doc(description: "An array of categories that match the specified search criteria"),
@@ -45,7 +45,6 @@ input CategoryFilterInput @doc(description: "ProductFilterInput defines the filt
     id: FilterTypeInput @doc(description: "An ID that uniquely identifies the category")
     parent_id: FilterTypeInput @doc(description: "An ID that uniquely identifies the parent category")
     is_active: FilterTypeInput @doc(description: "Is active category")
-    path: FilterTypeInput @doc(description: "Category Path")
     url_key: FilterTypeInput @doc(description: "The url key assigned to the category")
     url_path: FilterTypeInput @doc(description: "The url path assigned to the category")
     position: FilterTypeInput @doc(description: "The position of the category relative to other categories at the same level in tree")
@@ -53,13 +52,9 @@ input CategoryFilterInput @doc(description: "ProductFilterInput defines the filt
     created_at: FilterTypeInput @doc(description: "Timestamp indicating when the category was created")
     updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the category was updated")
     product_count: FilterTypeInput @doc(description: "The number of products in the category")
-    default_sort_by: FilterTypeInput @doc(description: "The attribute to use for sorting")
     children_data: CategoryFilterInput @doc(description: "Children category data")
     children_count: FilterTypeInput @doc(description: "Category children count")
     include_in_menu: FilterTypeInput @doc(description: "Include category to navigation menu")
-    display_mode: FilterTypeInput @doc(description: "Category display mode")
-    is_anchor: FilterTypeInput @doc(description: "Is filter avalaible in category")
-    page_layout: FilterTypeInput @doc(description: "Category page layout")
 }
 
 input CategorySortInput {

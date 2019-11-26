@@ -1,5 +1,4 @@
 scalar JSON
-scalar Bool
 
 type Products @doc(description: "The Products object is the top-level object returned in a product search") {
     items: [Product] @doc(description: "An array of products that match the specified search criteria")
@@ -9,7 +8,7 @@ type Products @doc(description: "The Products object is the top-level object ret
     sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields")
 }
 
-type Query {
+extend type Query {
     products (
         search: String @doc(description: "Performs a full-text search using the specified key words."),
         filter: ProductFilterInput @doc(description: "Identifies which product attributes to search for and return."),
@@ -115,30 +114,56 @@ type Product @doc(description: "ProductFieldsInput defines the product fields to
     small_image: String @doc(description: "The relative path to the small image, which is used on catalog pages")
     thumbnail: String @doc(description: "The relative path to the product's thumbnail image")
     tier_price: Float @doc(description: "The price when tier pricing is in effect and the items purchased threshold has been reached")
+    tier_prices: [ProductTierPrice] @doc(description: "Product tier prices")
     news_from_date: String @doc(description: "The beginning date for new product listings, and determines if the product is featured as a new product")
     news_to_date: String @doc(description: "The end date for new product listings")
-    required_options: Bool @doc(description: "Indicates whether the product has required options")
-    has_options: Bool @doc(description: "Indicates whether additional attributes have been created for the product")
+    required_options: Boolean @doc(description: "Indicates whether the product has required options")
+    has_options: Boolean @doc(description: "Indicates whether additional attributes have been created for the product")
     image_label: String @doc(description: "The label assigned to a product image")
     small_image_label: String @doc(description: "The label assigned to a product's small image")
     thumbnail_label: String @doc(description: "The label assigned to a product's thumbnail image")
     country_of_manufacture: String @doc(description: "The product's country of origin")
-    gift_message_available: Bool @doc(description: "Indicates whether a gift message is available")
+    gift_message_available: Boolean @doc(description: "Indicates whether a gift message is available")
     created_at: String @doc(description: "Timestamp indicating when the product was created")
     updated_at: String @doc(description: "Timestamp indicating when the product was updated")
     size: String @doc(description: "The product size. Customers use this size to identify the product.")
-    size_options: String @doc(description: "The product sizes for all configurable_children variants. Customers use this size to identify the product.")
+    size_options: [String] @doc(description: "The product sizes for all configurable_children variants. Customers use this size to identify the product.")
     color: String @doc(description: "The product color. Customers use this color to identify the product.")
-    color_options: String @doc(description: "The product colors for all configurable_children variants. Customers use this color to identify the product.")
+    color_options: [String] @doc(description: "The product colors for all configurable_children variants. Customers use this color to identify the product.")
     category_ids: [String] @doc(description: "Category ID the product belongs to")    
     categories: [CategoryBinding] @doc(description: "The product categories.")
     category: [CategoryBinding] @doc(description: "The product categories.")
     configurable_children: [Product] @doc(description: "Configurable product childrens")
     stock: StockItem @doc(description: "The product stock. Customers use this stock to identify the product.")
-    is_in_stock: Bool @doc(description: "Is product in stock")
+    is_in_stock: Boolean @doc(description: "Is product in stock")
     keyword: String @doc(description: "keyword filter input")
     media_gallery: [MediaGalleryItem] @doc(description: "Media items assigned to this specific product")
+    configurable_options: [ConfigurableOption] @doc(description: "Configurable attributes for this product")
 }
+
+type ConfigurableOptionValue @doc(description: "One single option available for given cofigurable option") {
+    value_index: Int @doc(description: "Incremental value index")
+    label: String @doc(description: "Option label")
+}
+
+type ConfigurableOption @doc(description: "Product configurable option used for the cofnigurable products") {
+    id: ID @doc(description: "Configurable option id")
+    attribute_id: ID @doc(description: "Attribute id from the attribute collection")
+    attribute_code: String @doc(description: "Attribute code from the attribute collection")
+    label: String @doc(description: "Configurable option name - Size, Color ...")
+    position: Int @doc(description: "Configurable option position on the product page")
+    values: [ConfigurableOptionValue] @doc(description: "Available configurable options")
+    product_id: ID @doc(description: "Product Id this option is assigned to")
+}
+
+type ProductTierPrice @doc(description: "The ProductTierPrice object defines a tier price, which is a quantity discount offered to a specific customer group.") {
+    customer_group_id: String @doc(description: "The ID of the customer group.")
+    qty: Float @doc(description: "The number of items that must be purchased to qualify for tier pricing.")
+    value: Float @doc(description: "The price of the fixed price item.")
+    percentage_value: Float @doc(description: "The percentage discount of the item.")
+    website_id: Float @doc(description: "The ID assigned to the website.")
+}
+
 
 type MediaGalleryItem @doc(description: "Contains basic information about a product image or video.")  {
     image: String @doc(description: "The relative URL of the product image or video.")
@@ -170,7 +195,7 @@ input StockFilterInput @doc(description: "StockFilterInput defines the filters t
     qty: FilterTypeInput @doc(description: "Product quantity")
 }
 
-input CategoryFilterInput @doc(description: "CategoryFilterInput defines the filters to be used in the search for a product. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+input CategoryBindingFilterInput @doc(description: "CategoryBindingFilterInput defines the filters to be used in the search for a product. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
     category_id: FilterTypeInput @doc(description: "Category id")
 }
 
@@ -184,7 +209,7 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     special_from_date: FilterTypeInput @doc(description: "The beginning date that a product has a special price.")
     special_to_date: FilterTypeInput @doc(description: "The end date that a product has a special price.")
     weight: FilterTypeInput @doc(description: "The weight of the item, in units defined by the store.")
-    category: CategoryFilterInput @doc(description: "The category this product belongs to")
+    category: CategoryBindingFilterInput @doc(description: "The category this product belongs to")
     manufacturer: FilterTypeInput @doc(description: "A number representing the product's manufacturer.")
     meta_title: FilterTypeInput @doc(description: "A string that is displayed in the title bar and tab of the browser and in search results lists.")
     meta_keyword: FilterTypeInput @doc(description: "A comma-separated list of keywords that are visible only to search engines.")
@@ -229,18 +254,18 @@ type CategoryBinding @doc(description: "CategoryBinding defines the category anc
     path: ID @doc(description: "Category url path")
 }
 
-type LayerFilter {
-    name: String @doc(description: "Layered navigation filter name")
-    request_var: String @doc(description: "Request variable name for filter query")
-    filter_items_count: Int @doc(description: "Count of filter items in filter group")
-    filter_items: [LayerFilterItemInterface] @doc(description: "Array of filter items")
-}
+#type LayerFilter {
+#    name: String @doc(description: "Layered navigation filter name")
+#    request_var: String @doc(description: "Request variable name for filter query")
+#    filter_items_count: Int @doc(description: "Count of filter items in filter group")
+#    filter_items: [LayerFilterItemInterface] @doc(description: "Array of filter items")
+#}
 
-interface LayerFilterItemInterface {
-    label: String @doc(description: "Filter label")
-    value_string: String @doc(description: "Value for filter request variable to be used in query")
-    items_count: Int @doc(description: "Count of items by filter")
-}
+#interface LayerFilterItemInterface {
+#    label: String @doc(description: "Filter label")
+#    value_string: String @doc(description: "Value for filter request variable to be used in query")
+#    items_count: Int @doc(description: "Count of items by filter")
+#}
 
 #type LayerFilterItem implements LayerFilterItemInterface {
 #}
