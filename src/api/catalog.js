@@ -65,7 +65,7 @@ export default ({config, db}) => function (req, res, body) {
 	let url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
 
 	if (!url.startsWith('http')) {
-		url = 'http://' + url
+		url = config.elasticsearch.protocol + '://' + url
 	}
 
 	// Check price tiers
