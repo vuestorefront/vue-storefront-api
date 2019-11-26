@@ -53,6 +53,10 @@ const resolver = {
   Query: {
     categories: (_, { search, filter, currentPage, pageSize, sort, _sourceInclude }, context, rootValue) =>
       list(search, filter, currentPage, pageSize, sort, context, rootValue, _sourceInclude)
+  },
+  Category: {
+    children: (_, { search, filter, currentPage, pageSize, sort, _sourceInclude }, context, rootValue) =>
+      _.children_data
   }
 };
 

@@ -33,7 +33,7 @@ const resolver = {
           discount: {}
         }
       }
-    },*/
+    }, */
     media_gallery: (_, { search }, context, rootValue) => {
       if (_.media_gallery) {
         return _.media_gallery.map(mItem => {

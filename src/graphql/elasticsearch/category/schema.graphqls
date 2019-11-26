@@ -32,6 +32,7 @@ type Category @doc(description: "ProductFilterInput defines the filters to be us
     product_count: Int @doc(description: "The number of products in the category")
     default_sort_by: String @doc(description: "The attribute to use for sorting")
     children_data: [Category] @doc(description: "Children category data")
+    children: [Category] @doc(description: "Children category data")
     children_count: Int @doc(description: "Category children count")
     available_sort_by: [String] @doc(description: "Available sorting option for category")
     include_in_menu: Boolean @doc(description: "Include category to navigation menu")
