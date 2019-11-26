@@ -126,7 +126,7 @@ export default ({config, db}) => {
       return apiStatus(res, 'Invalid e-mail provided!', 500)
     }
 
-    userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId }).then((result) => {
+    userProxy.resetPassword({ email: req.body.email, template: 'email_reset', websiteId }).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
       apiError(res, err);

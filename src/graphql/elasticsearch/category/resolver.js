@@ -1,23 +1,23 @@
 import config from 'config';
 import client from '../client';
-import { buildQuery } from '../queryBuilder';
+import { buildQuery } from '../queryBuilder'
 import { getIndexName } from '../mapping'
+import { adjustQuery } from './../../../lib/elastic'
 
-async function list (search, filter, currentPage, pageSize = 200, sort, context, rootValue, _source_include) {
+async function list (search, filter, currentPage, pageSize = 200, sort, context, rootValue, _sourceIncludes) {
   let query = buildQuery({ search, filter, currentPage, pageSize, sort, type: 'category' });
 
-  if (!_source_include) {
-    _source_include = config.entities.category.includeFields
+  if (_sourceIncludes === undefined) {
+    _sourceIncludes = config.entities.category.includeFields
   }
 
-  const response = await client.search({
+  const response = await client.search(adjustQuery({
     index: getIndexName(context.req.url),
-    type: config.elasticsearch.indexTypes[1],
     body: query,
-    _source_include
-  });
+    _sourceIncludes
+  }, 'category', config));
 
-  return response;
+  return response.body;
 }
 
 const resolver = {

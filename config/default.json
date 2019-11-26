@@ -30,7 +30,8 @@
     "indexTypes": [
       "product",
       "category",
-      "cms",
+      "cms_block",
+      "cms_page",
       "attribute",
       "taxrule",
       "review"
