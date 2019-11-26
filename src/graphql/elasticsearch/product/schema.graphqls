@@ -5,15 +5,8 @@ type Products @doc(description: "The Products object is the top-level object ret
     items: [Product] @doc(description: "An array of products that match the specified search criteria")
     page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query")
     total_count: Int @doc(description: "The number of products returned")
-    # filters: [LayerFilter] @doc(description: "Layered navigation filters array") // @TODO: add filters to response instead of aggregations
     aggregations: JSON @doc(description: "Layered navigation filters array as aggregations")
     sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields")
-}
-
-type ESResponse {
-  hits: JSON
-  suggest: JSON
-  aggregations: JSON
 }
 
 type Query {
@@ -125,7 +118,9 @@ type Product @doc(description: "ProductFieldsInput defines the product fields to
     created_at: String @doc(description: "Timestamp indicating when the product was created")
     updated_at: String @doc(description: "Timestamp indicating when the product was updated")
     size: String @doc(description: "The product size. Customers use this size to identify the product.")
+    size_options: String @doc(description: "The product sizes for all configurable_children variants. Customers use this size to identify the product.")
     color: String @doc(description: "The product color. Customers use this color to identify the product.")
+    color_options: String @doc(description: "The product colors for all configurable_children variants. Customers use this color to identify the product.")
     category_ids: [String] @doc(description: "Category ID the product belongs to")    
     categories: [CategoryBinding] @doc(description: "The product categories.")
     category: [CategoryBinding] @doc(description: "The product categories.")
@@ -133,7 +128,19 @@ type Product @doc(description: "ProductFieldsInput defines the product fields to
     stock: StockItem @doc(description: "The product stock. Customers use this stock to identify the product.")
     is_in_stock: Bool @doc(description: "Is product in stock")
     keyword: String @doc(description: "keyword filter input")
-    media_gallery: JSON @doc(description: "Media items assigned to this specific product")
+    media_gallery: [MediaGalleryItem] @doc(description: "Media items assigned to this specific product")
+}
+
+type MediaGalleryItem @doc(description: "Contains basic information about a product image or video.")  {
+    image: String @doc(description: "The relative URL of the product image or video.")
+    pos: Int @doc(description: "Position in the gallery")
+    typ: String @doc(description: "Media type") @deprecated(reason: "Use `type` instead")
+    type: String @doc(description: "Media type")
+    url: String @doc(description: "The URL of the product image or video.")
+    lab: String @doc(description: "Media label") @deprecated(reason: "Use `label` instead")
+    label: String @doc(description: "The label of the product image or video.")
+    vid: JSON @doc(description: "The Video data.") @deprecated(reason: "Use `video` instead")
+    video: JSON @doc(description: "The Video data.")
 }
 
 type StockItem {
@@ -199,6 +206,10 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     is_in_stock: FilterTypeInput @doc(description: "Is product in stock")
     stock: StockFilterInput @doc(description: "Product stock information")
     status: FilterTypeInput @doc(description: "Product status information")
+    size: FilterTypeInput @doc(description: "The product size. Customers use this size to identify the product.")
+    size_options: FilterTypeInput @doc(description: "The product sizes for all configurable_children variants. Customers use this size to identify the product.")
+    color: FilterTypeInput @doc(description: "The product color. Customers use this color to identify the product.")
+    color_options: FilterTypeInput @doc(description: "The product colors for all configurable_children variants. Customers use this color to identify the product.")    
     or: ProductFilterInput @doc(description: "The keyword required to perform a logical OR comparison.")
 }
 
@@ -238,4 +249,10 @@ type SortFields @doc(description: "SortFields contains a default value for sort 
 enum SortEnum {
     ASC
     DESC
+}
+
+type ESResponse {
+  hits: JSON
+  suggest: JSON
+  aggregations: JSON
 }

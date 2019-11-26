@@ -3,6 +3,7 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import esResultsProcessor from './processor'
 import { getIndexName } from '../mapping'
+import { getCurrentPlatformConfig } from '../../../platform/helpers'
 
 const resolver = {
   Query: {
@@ -38,7 +39,13 @@ const resolver = {
       if (_.media_gallery) {
         return _.media_gallery.map(mItem => {
           return {
-            label: mItem.lab
+            image: mItem.image,
+            vid: mItem.vid,
+            typ: mItem.typ,
+            url: `${getCurrentPlatformConfig().imgUrl}${mItem.image}`,
+            label: mItem.lab,
+            video: mItem.vid,
+            type: mItem.typ
           }
         })
       } else {
