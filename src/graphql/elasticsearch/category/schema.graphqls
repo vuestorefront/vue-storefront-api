@@ -59,4 +59,5 @@ input CategorySortInput {
     display_mode: SortEnum @doc(description: "Category display mode")
     is_anchor: SortEnum @doc(description: "Is filter avalaible in category")
     page_layout: SortEnum @doc(description: "Category page layout")
+    _score: SortEnum @doc(description: "Category page layout")
 }

@@ -24,6 +24,10 @@ program
 
       console.log(`** Putting the mappings on top of ${tempIndex}`)
       es.putMappings(common.db, tempIndex, (err) => {
+        if (err) {
+          console.error(err.meta ? err.meta : err)
+        }
+
         console.log(`** We will reindex ${originalIndex} with the current schema`)
         es.reIndex(common.db, originalIndex, tempIndex, (err) => {
           if (err) {

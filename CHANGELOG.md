@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.11.0-rc.1] - UNRELEASED
+## [1.11.0-rc.2] - unreleased
+
+### Fixed
+
+- Fixed some smaller issues with graphql so that it is now working again with the fronted - #350
+
+
+## [1.11.0-rc.1] - 2019.10.03
 
 ### Added
 - Experimental Elastic 7 support - @pkarw (#342)
@@ -32,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Error responses for mailchimp - @andrzejewsky (#3337)
 - Replaced function arguments to object destructuring in `calculateProductTax` - @andrzejewsky (#3337)
+- Refactor `taxcalc.js` similar to frontend - @gibkigonzo (#356)
 
 ## [1.10.0] - 2019.08.12
 
@@ -49,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Sharp dependency has been updated. *It might require reinstalling yarn dependencies* - @lukeromanowicz
+- Replaced index property value `not_analyzed` with `true` for `options` field in attribute schema - @adityasharma7 (#334)
 
 ### Fixed
 - Missing `res` and `req` parameters are now passed to ProductProcessor - @jahvi (#218)
