@@ -1,6 +1,6 @@
 import config from 'config'
-import * as redis from '../src/lib/redis'
-import * as elastic from '../src/lib/elastic'
+import * as redis from './lib/redis'
+import * as elastic from './lib/elastic'
 
 export default callback => {
   // connect to a database if needed, then pass it to `callback`:

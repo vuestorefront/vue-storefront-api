@@ -16,9 +16,6 @@ async function listAttributes (attributes, context, rootValue, _sourceIncludes) 
     body: query,
     _sourceIncludes
   };
-  if (parseInt(config.elasticsearch.apiVersion) < 6) {
-    esQuery.type = config.elasticsearch.indexTypes[3]
-  }
 
   const response = await client.search(adjustQuery(esQuery, 'attribute', config));
 
