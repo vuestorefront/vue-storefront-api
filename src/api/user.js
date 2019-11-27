@@ -114,12 +114,14 @@ export default ({config, db}) => {
 	 */
 	userApi.post('/resetPassword', (req, res) => {
 		const userProxy = _getProxy(req)
+    const storeCode = req.query.storeCode;
+    const websiteId = config.storeViews[storeCode].websiteId;
 
 		if(!req.body.email) {
 			return apiStatus(res, "Invalid e-mail provided!", 500)
 		}
 
-		userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
+		userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: websiteId }).then((result) => {
 			apiStatus(res, result, 200);
 		}).catch(err=> {
 			apiError(res, err);
@@ -131,12 +133,14 @@ export default ({config, db}) => {
    */
   userApi.post('/reset-password', (req, res) => {
     const userProxy = _getProxy(req)
+    const storeCode = req.query.storeCode;
+    const websiteId = config.storeViews[storeCode].websiteId;
 
     if(!req.body.email) {
       return apiStatus(res, "Invalid e-mail provided!", 500)
     }
 
-    userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: 1 }).then((result) => {
+    userProxy.resetPassword({ email: req.body.email, template: "email_reset", websiteId: websiteId }).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err=> {
 		apiError(res, err);
