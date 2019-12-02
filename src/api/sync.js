@@ -1,4 +1,5 @@
-import { apiStatus, apiError } from '../lib/util'; import { Router } from 'express';
+import { apiStatus } from '../lib/util'; import { Router } from 'express';
+import * as redis from '../lib/redis'
 
 export default ({ config, db }) => {
   let syncApi = Router();
@@ -7,14 +8,7 @@ export default ({ config, db }) => {
    * GET get stock item
    */
   syncApi.get('/order/:order_id', (req, res) => {
-    const Redis = require('redis');
-    let redisClient = Redis.createClient(config.redis); // redis client
-    redisClient.on('error', (err) => { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-      redisClient = Redis.createClient(config.redis); // redis client
-    });
-    if (config.redis.auth) {
-      redisClient.auth(config.redis.auth);
-    }
+    const redisClient = db.getRedisClient(config)
 
     redisClient.get('order$$id$$' + req.param('order_id'), (err, reply) => {
       const orderMetaData = JSON.parse(reply)

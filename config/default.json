@@ -21,8 +21,6 @@
     "host": "localhost",
     "port": 9200,
     "protocol": "http",
-    "user": "elastic",
-    "password": "changeme",
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
@@ -32,7 +30,8 @@
     "indexTypes": [
       "product",
       "category",
-      "cms",
+      "cms_block",
+      "cms_page",
       "attribute",
       "taxrule",
       "review"
@@ -64,6 +63,7 @@
       "storeCode": "de",
       "disabled": false,
       "storeId": 3,
+      "websiteId": 1,
       "name": "German Store",
       "url": "/de",
       "elasticsearch": {
@@ -98,6 +98,7 @@
       "storeCode": "it",
       "disabled": false,
       "storeId": 4,
+      "websiteId": 1,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {

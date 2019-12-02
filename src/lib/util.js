@@ -2,6 +2,38 @@ import config from 'config';
 import crypto from 'crypto';
 const algorithm = 'aes-256-ctr';
 
+/**
+ * Get current store code from parameter passed from the vue storefront frotnend app
+ * @param {Express.Request} req
+ */
+export function getCurrentStoreCode (req) {
+  if (req.headers['x-vs-store-code']) {
+    return req.headers['x-vs-store-code']
+  }
+  if (req.query.storeCode) {
+    return req.query.storeCode
+  }
+  return null
+}
+
+/**
+ * Get the config.storeViews[storeCode]
+ * @param {string} storeCode
+ */
+export function getCurrentStoreView (storeCode = null) {
+  let storeView = { // current, default store
+    tax: config.tax,
+    i18n: config.i18n,
+    elasticsearch: config.elasticsearch,
+    storeCode: null,
+    storeId: config.defaultStoreCode && config.defaultStoreCode !== '' ? config.storeViews[config.defaultStoreCode].storeId : 1
+  }
+  if (storeCode && config.storeViews[storeCode]) {
+    storeView = config.storeViews[storeCode]
+  }
+  return storeView // main config is used as default storeview
+}
+
 /**  Creates a callback that proxies node callback style arguments to an Express Response object.
  *  @param {express.Response} res  Express HTTP Response
  *  @param {number} [status=200]  Status code to send on success

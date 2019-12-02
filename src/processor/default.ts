@@ -19,10 +19,7 @@ class HmacProcessor {
   }
 
   public process (items) {
-    console.debug('Entering HmacProcessor::process')
-
     const processorChain = []
-
     return new Promise((resolve, reject) => {
       const rs = items.map((item) => {
         if (this._req.query._source_exclude && this._req.query._source_exclude.indexOf('sgn') < 0) {

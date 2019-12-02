@@ -1,12 +1,4 @@
 import config from 'config';
-import elasticsearch from 'elasticsearch';
+import es from '../../lib/elastic'
 
-const client = new elasticsearch.Client({
-  host: {
-    host: config.elasticsearch.host,
-    port: config.elasticsearch.port,
-    protocol: config.elasticsearch.protocol
-  }
-});
-
-export default client;
+export default es.getClient(config)

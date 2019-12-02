@@ -18,6 +18,16 @@ function processNestedFieldFilter (attribute, value) {
   return processedFilter;
 }
 
+/**
+ *
+ * @param {Object} object
+ * @param {String} scope
+ * @returns {boolean}
+ */
+function checkIfObjectHasScope ({ object, scope }) {
+  return object.scope === scope || (Array.isArray(object.scope) && object.scope.find(scrope => scrope === scope));
+}
+
 function applyFilters (filter, query, type) {
   if (filter.length === 0) {
     return query
@@ -46,7 +56,7 @@ function applyFilters (filter, query, type) {
 
     // apply default filters
     appliedFilters.forEach((filter) => {
-      if (filter.scope === 'default' && Object.keys(filter.value).length) {
+      if (checkIfObjectHasScope({ object: filter, scope: 'default' }) && Object.keys(filter.value).length) {
         if (rangeOperators.every(rangeOperator => Object.prototype.hasOwnProperty.call(filter.value, rangeOperator))) {
           // process range filters
           query = query.filter('range', filter.attribute, filter.value);
@@ -67,7 +77,7 @@ function applyFilters (filter, query, type) {
     let attrFilterBuilder = (filterQr, attrPostfix = '') => {
       appliedFilters.forEach((catalogfilter) => {
         const valueKeys = Object.keys(catalogfilter.value);
-        if (catalogfilter.scope === 'catalog' && valueKeys.length) {
+        if (checkIfObjectHasScope({ object: catalogfilter, scope: 'catalog' }) && valueKeys.length) {
           const isRange = valueKeys.filter(value => rangeOperators.indexOf(value) !== -1)
           if (isRange.length) {
             let rangeAttribute = catalogfilter.attribute
@@ -94,7 +104,7 @@ function applyFilters (filter, query, type) {
     }
 
     if (hasCatalogFilters) {
-      query = query.orFilter('bool', (b) => attrFilterBuilder(b))
+      query = query.filterMinimumShouldMatch(1).orFilter('bool', (b) => attrFilterBuilder(b))
         .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrefix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
     }
 

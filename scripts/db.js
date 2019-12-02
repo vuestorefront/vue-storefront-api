@@ -17,13 +17,17 @@ program
     const tempIndex = originalIndex + '_' + Math.round(+new Date() / 1000)
 
     console.log(`** Creating temporary index ${tempIndex}`)
-    es.createIndex(common.db, tempIndex, (err) => {
+    es.createIndex(common.db, tempIndex, '', (err) => {
       if (err) {
         console.log(err)
       }
 
       console.log(`** Putting the mappings on top of ${tempIndex}`)
       es.putMappings(common.db, tempIndex, (err) => {
+        if (err) {
+          console.error(err.meta ? err.meta : err)
+        }
+
         console.log(`** We will reindex ${originalIndex} with the current schema`)
         es.reIndex(common.db, originalIndex, tempIndex, (err) => {
           if (err) {
@@ -58,7 +62,7 @@ program
 
     console.log('** Hello! I am going to create NEW ES index')
     const indexName = cmd.indexName
-    es.createIndex(common.db, indexName, (err) => {
+    es.createIndex(common.db, indexName, '', (err) => {
       if (err) {
         console.log(err)
       }
