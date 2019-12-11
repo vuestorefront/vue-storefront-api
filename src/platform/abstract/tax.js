@@ -17,4 +17,4 @@ class AbstractTaxProxy {
   }
 }
 
-export default AbstractTaxProxy
+module.exports = AbstractTaxProxy

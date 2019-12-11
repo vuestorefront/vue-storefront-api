@@ -18,4 +18,4 @@ class AbstractAddressProxy {
   }
 }
 
-export default AbstractAddressProxy
+module.exports = AbstractAddressProxy

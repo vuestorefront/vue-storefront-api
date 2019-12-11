@@ -96,4 +96,4 @@ class AbstractUserProxy {
   }
 }
 
-export default AbstractUserProxy
+module.exports = AbstractUserProxy
