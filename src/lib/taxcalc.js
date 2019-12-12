@@ -66,7 +66,6 @@ function assignPrice ({ product, target, price = 0, tax = 0, deprecatedPriceFiel
 }
 
 export function updateProductPrices ({ product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true }) {
-  console.log(finalPriceInclTax)
   const rate_factor = parseFloat(rate.rate) / 100
   const hasOriginalPrices = (
     product.hasOwnProperty('original_price') &&
