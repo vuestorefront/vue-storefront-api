@@ -101,11 +101,13 @@ export function updateProductPrices ({ product, rate, sourcePriceInclTax = false
 
   if (product.final_price) {
     if (product.final_price < product.price) { // compare the prices with the product final price if provided; final prices is used in case of active catalog promo rules for example
-      assignPrice({product, target: 'price', price: product.final_price, deprecatedPriceFieldsSupport})
-      if (product.final_price < product.special_price) { // for VS - special_price is any price lowered than regular price (`price`); in Magento there is a separate mechanism for setting the `special_prices`
-        assignPrice({product, target: 'price', price: product.special_price, deprecatedPriceFieldsSupport}) // if the `final_price` is lower than the original `special_price` - it means some catalog rules were applied over it
+      assignPrice({product, target: 'price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
+      if (product.special_price && product.final_price < product.special_price) { // for VS - special_price is any price lowered than regular price (`price`); in Magento there is a separate mechanism for setting the `special_prices`
+        assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport}) // if the `final_price` is lower than the original `special_price` - it means some catalog rules were applied over it
+        assignPrice({product, target: 'special_price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
+      } else {
+        assignPrice({product, target: 'price', ...finalPriceWithTax, deprecatedPriceFieldsSupport})
       }
-      assignPrice({product, target: 'special_price', price: product.final_price, deprecatedPriceFieldsSupport})
     }
   }
 
@@ -114,7 +116,7 @@ export function updateProductPrices ({ product, rate, sourcePriceInclTax = false
       // out of the dates period
       assignPrice({product, target: 'special_price', price: 0, tax: 0, deprecatedPriceFieldsSupport})
     } else {
-      assignPrice({product, target: 'price', price: product.special_price, deprecatedPriceFieldsSupport})
+      assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport})
     }
   } else {
     // the same price as original; it's not a promotion
@@ -168,7 +170,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     if (taxClass) {
       for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
-          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
           rateFound = true
           break
         }
@@ -176,7 +178,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     }
   }
   if (!rateFound) {
-    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
 
     product.price_incl_tax = product.price
     product.price_tax = 0

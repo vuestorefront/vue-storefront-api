@@ -144,7 +144,7 @@
     "setConfigurableProductOptions": true,
     "sourcePriceIncludesTax": false,
     "deprecatedPriceFieldsSupport": true,
-    "finalPriceIncludesTax": true,
+    "finalPriceIncludesTax": false,
     "userGroupId": null,
     "useOnlyDefaultUserGroupId": false
   },
