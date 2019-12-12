@@ -116,7 +116,7 @@ export function updateProductPrices ({ product, rate, sourcePriceInclTax = false
       // out of the dates period
       assignPrice({product, target: 'special_price', price: 0, tax: 0, deprecatedPriceFieldsSupport})
     } else {
-      assignPrice({product, target: 'price', price: product.special_price, deprecatedPriceFieldsSupport})
+      assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport})
     }
   } else {
     // the same price as original; it's not a promotion
@@ -170,7 +170,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     if (taxClass) {
       for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
-          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
           rateFound = true
           break
         }
@@ -178,7 +178,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     }
   }
   if (!rateFound) {
-    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
 
     product.price_incl_tax = product.price
     product.price_tax = 0
