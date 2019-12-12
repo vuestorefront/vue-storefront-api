@@ -66,6 +66,7 @@ function assignPrice ({ product, target, price = 0, tax = 0, deprecatedPriceFiel
 }
 
 export function updateProductPrices ({ product, rate, sourcePriceInclTax = false, deprecatedPriceFieldsSupport = false, finalPriceInclTax = true }) {
+  console.log(finalPriceInclTax)
   const rate_factor = parseFloat(rate.rate) / 100
   const hasOriginalPrices = (
     product.hasOwnProperty('original_price') &&
@@ -170,7 +171,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     if (taxClass) {
       for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
         if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
-          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+          updateProductPrices({ product, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
           rateFound = true
           break
         }
@@ -178,7 +179,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
     }
   }
   if (!rateFound) {
-    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport })
+    updateProductPrices({ product, rate: {rate: 0}, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
 
     product.price_incl_tax = product.price
     product.price_tax = 0
