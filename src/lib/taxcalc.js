@@ -116,7 +116,7 @@ export function updateProductPrices ({ product, rate, sourcePriceInclTax = false
       // out of the dates period
       assignPrice({product, target: 'special_price', price: 0, tax: 0, deprecatedPriceFieldsSupport})
     } else {
-      assignPrice({product, target: 'price', price: product.special_price, deprecatedPriceFieldsSupport})
+      assignPrice({product, target: 'price', ...specialPriceWithTax, deprecatedPriceFieldsSupport})
     }
   } else {
     // the same price as original; it's not a promotion
