@@ -1,16 +1,9 @@
 
-
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 const config = require('config')
-const Redis = require('redis');
-let redisClient = Redis.createClient(config.redis); // redis client
-redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-  redisClient = Redis.createClient(config.redis); // redis client
-});
-if (config.redis.auth) {
-  redisClient.auth(config.redis.auth);
-}
+const redis = require('../../lib/redis');
+const redisClient = redis.getClient(config)
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
@@ -18,12 +11,12 @@ const ajv = new Ajv(); // validator
 const merge = require('lodash/merge')
 const orderSchema = require('../../models/order.schema.js')
 let orderSchemaExtension = {}
-if(fs.existsSync('../../models/order.schema.extension.json')) {
+if (fs.existsSync('../../models/order.schema.extension.json')) {
   orderSchemaExtension = require('../../models/order.schema.extension.json')
 }
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
-function isNumeric(val) {
+function isNumeric (val) {
   return Number(parseFloat(val)).toString() === val;
 }
 
@@ -36,16 +29,16 @@ function isNumeric(val) {
  * @param {Object} config global CLI configuration
  * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
  */
-function processSingleOrder(orderData, config, job, done, logger = console) {
+function processSingleOrder (orderData, config, job, done, logger = console) {
   const TOTAL_STEPS = 4;
   const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
   let currentStep = 1;
 
   if (!validate(orderData)) { // schema validation of upcoming order
-    logger.error(THREAD_ID + " Order validation error!", validate.errors);
-    done(new Error('Error while validating order object',  validate.errors));
+    logger.error(THREAD_ID + ' Order validation error!', validate.errors);
+    done(new Error('Error while validating order object', validate.errors));
 
-    if(job) job.progress(currentStep++, TOTAL_STEPS);
+    if (job) job.progress(currentStep++, TOTAL_STEPS);
     return;
   }
   let isThisAuthOrder = parseInt(orderData.user_id) > 0
@@ -67,9 +60,9 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
   logger.info('> User Id', userId)
 
   let cartId = orderData.cart_id
-  const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId): ( cartId ? new Promise((resolve, reject) => {
-    resolve (cartId)
-  }): api.cart.create(null))
+  const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId) : (cartId ? new Promise((resolve, reject) => {
+    resolve(cartId)
+  }) : api.cart.create(null))
 
   logger.info(THREAD_ID + '> Cart Id', cartId)
 
@@ -80,11 +73,10 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
 
     // load current cart from the Magento to synchronize elements
     api.cart.pull(null, cartId, null, isThisAuthOrder).then((serverItems) => {
-
       const clientItems = orderData.products
       const syncPromises = []
 
-      logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id, product_option: item.product_option }}))
+      logger.info(THREAD_ID + '> Sync between clientItems', clientItems.map((item) => { return { sku: item.sku, qty: item.qty, server_item_id: item.server_item_id, product_option: item.product_option } }))
       logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
       for (const clientItem of clientItems) {
@@ -129,7 +121,7 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
       }
 
       Promise.all(syncPromises).then((results) => {
-        if(job) job.progress(currentStep++, TOTAL_STEPS);
+        if (job) job.progress(currentStep++, TOTAL_STEPS);
         logger.info(THREAD_ID + '< Server cart in sync')
         logger.debug(THREAD_ID + results)
 
@@ -154,123 +146,126 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
           }
 
           const billingAddressInfo = { // sum up totals
-            "address": {
-              "countryId": billingAddr.country_id,
-              "street": billingAddr.street,
-              "telephone": billingAddr.telephone,
-              "postcode": billingAddr.postcode,
-              "city": billingAddr.city,
-              "firstname": billingAddr.firstname,
-              "lastname": billingAddr.lastname,
-              "email": billingAddr.email,
-              "regionCode": mappedBillingRegion.regionCode,
-              "regionId": mappedBillingRegion.regionId,
-              "company": billingAddr.company,
-              "vatId": billingAddr.vat_id
+            'address': {
+              'countryId': billingAddr.country_id,
+              'street': billingAddr.street,
+              'telephone': billingAddr.telephone,
+              'postcode': billingAddr.postcode,
+              'city': billingAddr.city,
+              'firstname': billingAddr.firstname,
+              'lastname': billingAddr.lastname,
+              'email': billingAddr.email,
+              'regionCode': mappedBillingRegion.regionCode,
+              'regionId': mappedBillingRegion.regionId,
+              'company': billingAddr.company,
+              'vatId': billingAddr.vat_id
             }
           }
 
           const shippingAddressInfo = { // sum up totals
-            "addressInformation": {
-              "billingAddress": {
-                "countryId": billingAddr.country_id,
-                "street": billingAddr.street,
-                "telephone": billingAddr.telephone,
-                "postcode": billingAddr.postcode,
-                "city": billingAddr.city,
-                "firstname": billingAddr.firstname,
-                "lastname": billingAddr.lastname,
-                "email": billingAddr.email,
-                "regionId":  mappedBillingRegion.regionId,
-                "regionCode": mappedBillingRegion.regionCode,
-                "company": billingAddr.company,
-                "vatId": billingAddr.vat_id
+            'addressInformation': {
+              'billingAddress': {
+                'countryId': billingAddr.country_id,
+                'street': billingAddr.street,
+                'telephone': billingAddr.telephone,
+                'postcode': billingAddr.postcode,
+                'city': billingAddr.city,
+                'firstname': billingAddr.firstname,
+                'lastname': billingAddr.lastname,
+                'email': billingAddr.email,
+                'regionId': mappedBillingRegion.regionId,
+                'regionCode': mappedBillingRegion.regionCode,
+                'region': billingAddr.region,
+                'company': billingAddr.company,
+                'vatId': billingAddr.vat_id
               },
-              "shippingMethodCode": orderData.addressInformation.shipping_method_code,
-              "shippingCarrierCode": orderData.addressInformation.shipping_carrier_code,
-              "extensionAttributes": orderData.addressInformation.shippingExtraFields
+              'shippingMethodCode': orderData.addressInformation.shipping_method_code,
+              'shippingCarrierCode': orderData.addressInformation.shipping_carrier_code,
+              'extensionAttributes': orderData.addressInformation.shippingExtraFields
             }
           }
 
           if (typeof shippingAddr !== 'undefined' && shippingAddr !== null) {
-            shippingAddressInfo["addressInformation"]["shippingAddress"] = {
-              "countryId": shippingAddr.country_id,
-              "street": shippingAddr.street,
-              "telephone": shippingAddr.telephone,
-              "postcode": shippingAddr.postcode,
-              "city": shippingAddr.city,
-              "firstname": shippingAddr.firstname,
-              "lastname": shippingAddr.lastname,
-              "email": shippingAddr.email,
-              "regionId": mappedShippingRegion.regionId,
-              "regionCode": mappedShippingRegion.regionCode,
-              "company": shippingAddr.company
+            shippingAddressInfo['addressInformation']['shippingAddress'] = {
+              'countryId': shippingAddr.country_id,
+              'street': shippingAddr.street,
+              'telephone': shippingAddr.telephone,
+              'postcode': shippingAddr.postcode,
+              'city': shippingAddr.city,
+              'firstname': shippingAddr.firstname,
+              'lastname': shippingAddr.lastname,
+              'email': shippingAddr.email,
+              'regionId': mappedShippingRegion.regionId,
+              'regionCode': mappedShippingRegion.regionCode,
+              'region': shippingAddr.region,
+              'company': shippingAddr.company
             }
           } else {
-            shippingAddressInfo["addressInformation"]["shippingAddress"] = shippingAddressInfo["addressInformation"]["billingAddress"]
+            shippingAddressInfo['addressInformation']['shippingAddress'] = shippingAddressInfo['addressInformation']['billingAddress']
           }
 
           logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
           api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder).then((result) => {
             logger.info(THREAD_ID + '< Billing address assigned', result)
             logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
-            api.cart.shippingInformation(null, cartId,  shippingAddressInfo, isThisAuthOrder).then((result) => {
+            api.cart.shippingInformation(null, cartId, shippingAddressInfo, isThisAuthOrder).then((result) => {
               logger.info(THREAD_ID + '< Shipping address assigned', result)
 
-              if(job) job.progress(currentStep++, TOTAL_STEPS);
+              if (job) job.progress(currentStep++, TOTAL_STEPS);
 
               api.cart.order(null, cartId, {
-                "paymentMethod": {
-                  "method": orderData.addressInformation.payment_method_code,
-                  "additional_data": orderData.addressInformation.payment_method_additional
+                'paymentMethod': {
+                  'method': orderData.addressInformation.payment_method_code,
+                  'additional_data': orderData.addressInformation.payment_method_additional
                 }
               }, isThisAuthOrder).then(result => {
                 logger.info(THREAD_ID, result)
-                if(job) job.progress(currentStep++, TOTAL_STEPS);
+                if (job) job.progress(currentStep++, TOTAL_STEPS);
 
                 logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
                 logger.debug(THREAD_ID + result)
-                redisClient.set("order$$id$$" + orderData.order_id, JSON.stringify({
-                  platform_order_id: result,
-                  transmited: true,
-                  transmited_at: new Date(),
-                  platform: 'magento2',
-                  order: orderData
-                }));
-                redisClient.set("order$$totals$$" + orderData.order_id, JSON.stringify(result[1]));
+                if (orderData.order_id) {
+                  redisClient.set('order$$id$$' + orderData.order_id, JSON.stringify({
+                    platform_order_id: result,
+                    transmited: true,
+                    transmited_at: new Date(),
+                    platform: 'magento2',
+                    order: orderData
+                  }));
+                  redisClient.set('order$$totals$$' + orderData.order_id, JSON.stringify(result[1]));
+                }
                 let orderIncrementId = null;
                 api.orders.incrementIdById(result).then(result => {
                   orderIncrementId = result.increment_id
-                }).catch( err => {
+                }).catch(err => {
                   logger.warn('could not fetch increment_id for Order', err, typeof err)
                 }).finally(() => {
-                  if(job) job.progress(currentStep++, TOTAL_STEPS);
+                  if (job) job.progress(currentStep++, TOTAL_STEPS);
                   return done(null, { magentoOrderId: result, orderNumber: orderIncrementId, backendOrderId: result, transferedAt: new Date() });
                 })
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
-                if (job) job.attempts(6).backoff({ delay: 30*1000, type:'fixed' }).save()
+                if (job) job.attempts(6).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
                 return done(new Error('Error placing an order', err));
               })
             }).catch((errors) => {
               logger.error('Error while adding shipping address', errors)
-              if (job) job.attempts(3).backoff({ delay: 60*1000, type:'fixed' }).save()
+              if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
               return done(new Error('Error while adding shipping address', errors));
             })
           }).catch((errors) => {
             logger.error('Error while adding billing address', errors)
-            if (job) job.attempts(3).backoff({ delay: 60*1000, type:'fixed' }).save()
+            if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
             return done(new Error('Error while adding billing address', errors));
           })
         }).catch((errors) => {
           logger.error('Error while synchronizing country list', errors)
-          if (job) job.attempts(3).backoff({ delay: 30*1000, type:'fixed' }).save()
+          if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
           return done(new Error('Error while syncing country list', errors));
         })
-
       }).catch((errors) => {
         logger.error('Error while adding products', errors)
-        if (job) job.attempts(3).backoff({ delay: 30*1000, type:'fixed' }).save()
+        if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
         return done(new Error('Error while adding products', errors));
       })
     })
@@ -284,13 +279,13 @@ function processSingleOrder(orderData, config, job, done, logger = console) {
     if (isNumeric(cartId)) { // we have numeric id - assigned to the user provided
       api.cart.create(null, null).then((result) => {
         processCart(result)
-//      logger.info('< Assigning guest cart with the user')
-//      api.cart.assign(cartId, userId).then((subres) =>{
-//        console.info(subres)
-//        processCart(result)
-//      }).catch((err) => {
-//        logger.error(err)
-//      })
+        //      logger.info('< Assigning guest cart with the user')
+        //      api.cart.assign(cartId, userId).then((subres) =>{
+        //        console.info(subres)
+        //        processCart(result)
+        //      }).catch((err) => {
+        //        logger.error(err)
+        //      })
       }).catch(error => {
         logger.info(error)
         return done(new Error('Error while adding products', error));
