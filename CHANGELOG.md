@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `yarn dev:inspect` command and extract nodemon config to nodemon.json - @Tjitse-E, @cewald (#272, #279)
 - Include Magento Currency Code in mage2vs import and productsdelta if available - @rain2o (#281)
 - Better handling of HTTP error codes provided by API client - @pkarw (#3151)
+- Check message property instead of errorMessage in apiError function - @cdshotels-liborpansky (#378)
 
 ## [1.9.6] - 2019.07.11
 - Dependencies update to avoid lodash security issues.
