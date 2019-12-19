@@ -119,8 +119,8 @@ export default ({config, db}) => {
    */
   userApi.post('/reset-password', (req, res) => {
     const userProxy = _getProxy(req)
-    const storeCode = req.query.storeCode
-    const websiteId = config.storeViews[storeCode].websiteId
+    const { storeCode } = req.query
+    const websiteId = storeCode ? config.storeViews[storeCode].websiteId : undefined
 
     if (!req.body.email) {
       return apiStatus(res, 'Invalid e-mail provided!', 500)
