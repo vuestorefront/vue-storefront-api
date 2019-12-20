@@ -1,31 +1,23 @@
-import { apiStatus, apiError } from '../lib/util';import { Router } from 'express';
+import { apiStatus } from '../lib/util'; import { Router } from 'express';
+import * as redis from '../lib/redis'
 
 export default ({ config, db }) => {
+  let syncApi = Router();
 
-	let syncApi = Router();
+  /**
+   * GET get stock item
+   */
+  syncApi.get('/order/:order_id', (req, res) => {
+    const redisClient = db.getRedisClient(config)
 
-	/** 
-	 * GET get stock item
-	 */
-	syncApi.get('/order/:order_id', (req, res) => {
+    redisClient.get('order$$id$$' + req.param('order_id'), (err, reply) => {
+      const orderMetaData = JSON.parse(reply)
+      if (orderMetaData) {
+        orderMetaData.order = null // for security reasons we're just clearing out the real order data as it's set by `order_2_magento2.js`
+      }
+      apiStatus(res, err || orderMetaData, err ? 500 : 200);
+    })
+  })
 
-		const Redis = require('redis');
-		let redisClient = Redis.createClient(config.redis); // redis client
-		redisClient.on('error', function (err) { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-			redisClient = Redis.createClient(config.redis); // redis client
-		});
-		if (config.redis.auth) {
-			redisClient.auth(config.redis.auth);
-		}
-		
-		redisClient.get('order$$id$$' + req.param('order_id'), function (err, reply) {
-			const orderMetaData = JSON.parse(reply)
-			if (orderMetaData) {
-				orderMetaData.order = null // for security reasons we're just clearing out the real order data as it's set by `order_2_magento2.js`
-			}
-			apiStatus(res, err ? err : orderMetaData,  err ? 500 : 200);
-		})
-	})
-
-	return syncApi
+  return syncApi
 }

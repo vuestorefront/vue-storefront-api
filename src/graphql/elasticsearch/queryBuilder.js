@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import getMapping from './mapping'
 import config from 'config'
 
-function processNestedFieldFilter(attribute, value) {
+function processNestedFieldFilter (attribute, value) {
   let processedFilter = {
     'attribute': attribute,
     'value': value
@@ -18,9 +18,18 @@ function processNestedFieldFilter(attribute, value) {
   return processedFilter;
 }
 
-function applyFilters(filter, query, type) {
+/**
+ *
+ * @param {Object} object
+ * @param {String} scope
+ * @returns {boolean}
+ */
+function checkIfObjectHasScope ({ object, scope }) {
+  return object.scope === scope || (Array.isArray(object.scope) && object.scope.find(scrope => scrope === scope));
+}
 
-  if (filter.length == 0) {
+function applyFilters (filter, query, type) {
+  if (filter.length === 0) {
     return query
   }
   const rangeOperators = ['gt', 'lt', 'gte', 'lte', 'moreq', 'from', 'to']
@@ -46,8 +55,8 @@ function applyFilters(filter, query, type) {
     let hasCatalogFilters = false;
 
     // apply default filters
-    appliedFilters.forEach(function (filter) {
-      if (filter.scope == 'default' && Object.keys(filter.value).length) {
+    appliedFilters.forEach((filter) => {
+      if (checkIfObjectHasScope({ object: filter, scope: 'default' }) && Object.keys(filter.value).length) {
         if (rangeOperators.every(rangeOperator => Object.prototype.hasOwnProperty.call(filter.value, rangeOperator))) {
           // process range filters
           query = query.filter('range', filter.attribute, filter.value);
@@ -59,20 +68,20 @@ function applyFilters(filter, query, type) {
           }
           query = query.filter('terms', getMapping(filter.attribute), filter.value)
         }
-      } else if (filter.scope == 'catalog') {
+      } else if (filter.scope === 'catalog') {
         hasCatalogFilters = true;
       }
     })
 
     // apply catalog scope filters
     let attrFilterBuilder = (filterQr, attrPostfix = '') => {
-      appliedFilters.forEach(function (catalogfilter) {
+      appliedFilters.forEach((catalogfilter) => {
         const valueKeys = Object.keys(catalogfilter.value);
-        if (catalogfilter.scope == 'catalog' && valueKeys.length) {
-          const isRange = valueKeys.filter(value => -1 !== rangeOperators.indexOf(value))
+        if (checkIfObjectHasScope({ object: catalogfilter, scope: 'catalog' }) && valueKeys.length) {
+          const isRange = valueKeys.filter(value => rangeOperators.indexOf(value) !== -1)
           if (isRange.length) {
             let rangeAttribute = catalogfilter.attribute
-            if (rangeAttribute == 'price'){
+            if (rangeAttribute === 'price') {
               rangeAttribute = 'final_price'
             }
             // process range filters
@@ -95,15 +104,15 @@ function applyFilters(filter, query, type) {
     }
 
     if (hasCatalogFilters) {
-      query = query.orFilter('bool', (b) => attrFilterBuilder(b))
+      query = query.filterMinimumShouldMatch(1).orFilter('bool', (b) => attrFilterBuilder(b))
         .orFilter('bool', (b) => attrFilterBuilder(b, optionsPrefix).filter('match', 'type_id', 'configurable')); // the queries can vary based on the product type
     }
 
     // Add aggregations for filters
-    if (appliedFilters.length > 0 && type == 'product') {
+    if (appliedFilters.length > 0 && type === 'product') {
       for (let attrToFilter of appliedFilters) {
-        if (attrToFilter.scope == 'catalog') {
-          if (attrToFilter.attribute != 'price') {
+        if (attrToFilter.scope === 'catalog') {
+          if (attrToFilter.attribute !== 'price') {
             query = query.aggregation('terms', getMapping(attrToFilter.attribute))
             query = query.aggregation('terms', attrToFilter.attribute + optionsPrefix)
           } else {
@@ -125,8 +134,8 @@ function applyFilters(filter, query, type) {
   return query;
 }
 
-function applySearchQuery(search, query) {
-  if (search != '') {
+function applySearchQuery (search, query) {
+  if (search !== '') {
     query = query.andQuery('bool', b => b.orQuery('match_phrase_prefix', 'name', { query: search, boost: getBoosts('name'), slop: 2 })
       .orQuery('match_phrase', 'category.name', { query: search, boost: getBoosts('category.name') })
       .orQuery('match_phrase', 'short_description', { query: search, boost: getBoosts('short_description') })
@@ -141,9 +150,9 @@ function applySearchQuery(search, query) {
   return query;
 }
 
-function applySort(sort, query) {
+function applySort (sort, query) {
   if (sort) {
-    map(sort, function(value, key) {
+    map(sort, (value, key) => {
       query.sort(key, value);
     });
   }
@@ -151,7 +160,7 @@ function applySort(sort, query) {
   return query;
 }
 
-export function buildQuery({
+export function buildQuery ({
   filter = [],
   sort = '',
   currentPage = 1,
@@ -168,7 +177,7 @@ export function buildQuery({
   query = query.from((currentPage - 1) * pageSize).size(pageSize);
 
   let builtQuery = query.build()
-  if (search != '') {
+  if (search !== '') {
     builtQuery['min_score'] = config.elasticsearch.min_score
   }
 
