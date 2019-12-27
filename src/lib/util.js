@@ -85,7 +85,7 @@ export function apiStatus (res, result = 'OK', code = 200, meta = null) {
  */
 export function apiError (res, errorObj, code = 500) {
   const result = errorObj.message ? errorObj.message : (errorObj.errorMessage ? errorObj.errorMessage : errorObj);
-  const resultCode = errorObj.code ? errorObj.code : 500;
+  const resultCode = errorObj.code ? errorObj.code : code;
   return apiStatus(res, result, resultCode)
 }
 
