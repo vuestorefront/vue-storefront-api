@@ -4,6 +4,9 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
+import bodybuilder from 'bodybuilder'
+import { buildQueryBodyFromSearchQuery } from 'storefront-query-builder/lib'
+import SearchQuery from 'storefront-query-builder/lib/searchQuery'
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -26,13 +29,15 @@ export default ({config, db}) => function (req, res, body) {
     throw new Error('ERROR: ' + req.method + ' request method is not supported.')
   }
 
-  let requestBody = {}
+  let requestBody = req.body
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
       requestBody = JSON.parse(decodeURIComponent(req.query.request))
     }
-  } else {
-    requestBody = req.body
+  }
+
+  if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
+    requestBody = buildQueryBodyFromSearchQuery(config, bodybuilder(), new SearchQuery(requestBody))
   }
 
   const urlSegments = req.url.split('/');
