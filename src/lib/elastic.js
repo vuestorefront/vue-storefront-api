@@ -36,7 +36,7 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
     let urlWithRemovedParameters = (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
     if (req.query.request_format) {
-      urlWithRemovedParameters =  _updateQueryStringParameter(urlWithRemovedParameters, 'request_format', null)
+      urlWithRemovedParameters = _updateQueryStringParameter(urlWithRemovedParameters, 'request_format', null)
     }
 
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + urlWithRemovedParameters
