@@ -36,7 +36,54 @@
       "taxrule",
       "review"
     ],
-    "apiVersion": "5.6"
+    "apiVersion": "5.6",
+
+    "searchScoring": {
+      "attributes": {
+        "attribute_code": {
+          "scoreValues": { "attribute_value": { "weight": 1 } }
+        }
+      },
+      "fuzziness": 2,
+      "cutoff_frequency":  0.01,
+      "max_expansions": 3,
+      "minimum_should_match": "75%",
+      "prefix_length": 2,
+      "boost_mode": "multiply",
+      "score_mode": "multiply",
+      "max_boost": 100,
+      "function_min_score": 1
+    },
+    "searchableAttributes": {
+      "name": {
+        "boost": 4
+      },
+      "sku": {
+        "boost": 2
+      },
+      "category.name": {
+        "boost": 1
+      }
+    }
+  },
+  "products": {
+    "filterFieldMapping": {
+      "category.name": "category.name.keyword"
+    },
+    "filterAggregationSize": {
+      "default": 10,
+      "size": 10,
+      "color": 10
+    },    
+    "priceFilterKey": "final_price",
+    "priceFilters": {
+      "ranges": [
+        { "from": 0, "to": 50 },
+        { "from": 50, "to": 100 },
+        { "from": 100, "to": 150 },
+        { "from": 150 }
+      ]
+    }    
   },
   "redis": {
     "host": "localhost",

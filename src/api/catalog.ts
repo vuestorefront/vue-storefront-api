@@ -5,8 +5,7 @@ import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
 import bodybuilder from 'bodybuilder'
-import { buildQueryBodyFromSearchQuery } from 'storefront-query-builder/lib'
-import SearchQuery from 'storefront-query-builder/lib/searchQuery'
+import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -37,7 +36,7 @@ export default ({config, db}) => function (req, res, body) {
   }
 
   if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
-    requestBody = buildQueryBodyFromSearchQuery(config, bodybuilder(), new SearchQuery(requestBody))
+    requestBody = elasticsearch.buildQueryBodyFromSearchQuery(config, bodybuilder(), new SearchQuery(requestBody))
   }
 
   const urlSegments = req.url.split('/');
