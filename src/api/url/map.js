@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { apiStatus } from '../lib/util';
-import { buildMultiEntityUrl } from '../lib/elastic';
+import { apiStatus } from '../../lib/util';
+import { buildMultiEntityUrl } from '../../lib/elastic';
 import request from 'request';
 import get from 'lodash/get';
 
@@ -44,7 +44,7 @@ const checkFieldValueEquality = ({ config, response, value }) => {
 
 module.exports = ({ config }) => {
   const router = Router()
-  router.post('/map/:index', (req, res) => {
+  router.post('/:index', (req, res) => {
     const { url, excludeFields, includeFields } = req.body
     if (!url) {
       return apiStatus(res, 'Missing url', 500);
