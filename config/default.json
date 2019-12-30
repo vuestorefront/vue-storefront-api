@@ -282,5 +282,12 @@
     "description": 1,
     "sku": 1,
     "configurable_children.sku": 1
+  },
+  "urlModule": {
+    "map": {
+      "includeFields": ["url_path", "identifier", "id", "slug", "sku", "type_id"],
+      "searchedFields": ["url_path", "identifier"],
+      "searchedEntities": ["product", "category", "cms_page"]
+    }
   }
 }
