@@ -19,7 +19,7 @@ function _cacheStorageHandler (config, result, hash, tags) {
   }
 }
 
-export default ({config, db}) => function (req, res, body) {
+export default ({config, db}) => async function (req, res, body) {
   let groupId = null
 
   // Request method handling: exit if not GET or POST
@@ -36,7 +36,7 @@ export default ({config, db}) => function (req, res, body) {
   }
 
   if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
-    requestBody = elasticsearch.buildQueryBodyFromSearchQuery(config, bodybuilder(), new SearchQuery(requestBody))
+    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery(config, bodybuilder(), new SearchQuery(requestBody))
   }
 
   const urlSegments = req.url.split('/');
