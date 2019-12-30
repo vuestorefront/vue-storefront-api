@@ -19,12 +19,12 @@ function _cacheStorageHandler (config, result, hash, tags) {
   }
 }
 
-function _outputFormatter (responseBody, format = 'standard' ) {
+function _outputFormatter (responseBody, format = 'standard') {
   if (format === 'compact') { // simple formatter
     delete responseBody.took
     delete responseBody.timed_out
     delete responseBody._shards
-    if(responseBody.hits) {
+    if (responseBody.hits) {
       delete responseBody.hits.max_score
       responseBody.total = responseBody.hits.total
       responseBody.hits = responseBody.hits.hits.map(hit => {
