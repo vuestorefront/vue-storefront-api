@@ -3,8 +3,8 @@ import { sgnSrc } from '../lib/util'
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 
-function compactItem(item, fieldsToCompact) {
-  for (let [key, value]  of Object.entries(fieldsToCompact)){
+function compactItem (item, fieldsToCompact) {
+  for (let [key, value] of Object.entries(fieldsToCompact)) {
     item[value] = item[key]
     delete item[key]
   }
@@ -51,7 +51,7 @@ class ProductProcessor {
         throw Error('error with resultset for processor chaining')
       }
 
-      // compact price fields 
+      // compact price fields
       if (this._req.query.response_format === 'compact') {
         resultSet[0] = resultSet[0].map((item) => {
           const fieldsToCompress = this._config.products.fieldsToCompress
@@ -61,14 +61,13 @@ class ProductProcessor {
             item._source.configurable_children = item._source.configurable_children.map((subItem) => {
               if (subItem) {
                 fieldsToCompress.forEach(field => {
-                  if (item._source[field] === subItem[field])
-                  {
+                  if (item._source[field] === subItem[field]) {
                     delete subItem[field] // remove fields that are non distinct
                   }
                 })
               }
               return compactItem(subItem, fieldsToCompact)
-            })               
+            })
           }
           item._source = compactItem(item._source, fieldsToCompact)
           return compactItem(item, fieldsToCompact)
