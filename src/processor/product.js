@@ -5,8 +5,10 @@ const hmac = jwa('HS256');
 
 function compactItem (item, fieldsToCompact) {
   for (let [key, value] of Object.entries(fieldsToCompact)) {
-    item[value] = item[key]
-    delete item[key]
+    if (typeof item[key] !== 'undefined') {
+      item[value] = item[key]
+      delete item[key]
+    }
   }
   return item
 }
