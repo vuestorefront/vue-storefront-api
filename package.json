@@ -4,6 +4,9 @@
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
+  "engines": {
+    "node": ">=10.x"
+  },
   "scripts": {
     "dev": "nodemon",
     "dev:inspect": "nodemon --exec \"node --inspect -r ts-node/register src\"",

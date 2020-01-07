@@ -51,6 +51,17 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
   return url
 }
 
+/**
+ * similar to `adjustBackendProxyUrl`, builds multi-entity query url
+ */
+function buildMultiEntityUrl ({ config, includeFields = [], excludeFields = [] }) {
+  let url = `${config.elasticsearch.host}:${config.elasticsearch.port}/_search?_source_include=${includeFields.join(',')}&_source_exclude=${excludeFields.join(',')}`
+  if (!url.startsWith('http')) {
+    url = config.elasticsearch.protocol + '://' + url
+  }
+  return url
+}
+
 function adjustQuery (esQuery, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) {
     esQuery.type = entityType
@@ -261,5 +272,6 @@ module.exports = {
   getClient,
   getHits,
   adjustIndexName,
-  putMappings
+  putMappings,
+  buildMultiEntityUrl
 }
