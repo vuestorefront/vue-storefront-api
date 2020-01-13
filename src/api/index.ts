@@ -38,7 +38,7 @@ export default ({ config, db }) => {
   api.use('/sync', sync({ config, db }))
 
   // mount the url resource
-  api.use('/url', url({ config, db }))
+  api.use('/url', url({ config }))
 
   // perhaps expose some API metadata at the root
   api.get('/', (req, res) => {
