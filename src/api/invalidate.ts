@@ -4,9 +4,9 @@ import cache from '../lib/cache-instance'
 import request from 'request'
 
 function invalidateCache (req, res) {
-  if (config.server.useOutputCache) {
+  if (config.get('server.useOutputCache')) {
     if (req.query.tag && req.query.key) { // clear cache pages for specific query tag
-      if (req.query.key !== config.server.invalidateCacheKey) {
+      if (req.query.key !== config.get('server.invalidateCacheKey')) {
         console.error('Invalid cache invalidation key')
         apiStatus(res, 'Invalid cache invalidation key', 500)
         return
@@ -14,13 +14,13 @@ function invalidateCache (req, res) {
       console.log(`Clear cache request for [${req.query.tag}]`)
       let tags = []
       if (req.query.tag === '*') {
-        tags = config.server.availableCacheTags
+        tags = config.get('server.availableCacheTags')
       } else {
         tags = req.query.tag.split(',')
       }
       const subPromises = []
       tags.forEach(tag => {
-        if (config.server.availableCacheTags.indexOf(tag) >= 0 || config.server.availableCacheTags.find(t => {
+        if ((config.get('server.availableCacheTags') as [string]).indexOf(tag) >= 0 || (config.get('server.availableCacheTags') as [string]).find(t => {
           return tag.indexOf(t) === 0
         })) {
           subPromises.push(cache.invalidate(tag).then(() => {
@@ -36,9 +36,9 @@ function invalidateCache (req, res) {
         apiStatus(res, error, 500)
         console.error(error)
       })
-      if (config.server.invalidateCacheForwarding) { // forward invalidate request to the next server in the chain
-        if (!req.query.forwardedFrom && config.server.invalidateCacheForwardUrl) { // don't forward forwarded requests
-          request(config.server.invalidateCacheForwardUrl + req.query.tag + '&forwardedFrom=vs', {}, (err, res, body) => {
+      if (config.get('server.invalidateCacheForwarding')) { // forward invalidate request to the next server in the chain
+        if (!req.query.forwardedFrom && config.get('server.invalidateCacheForwardUrl')) { // don't forward forwarded requests
+          request(config.get('server.invalidateCacheForwardUrl') + req.query.tag + '&forwardedFrom=vs', {}, (err, res, body) => {
             if (err) { console.error(err); }
             try {
               if (body && JSON.parse(body).code !== 200) console.log(body);

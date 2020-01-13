@@ -43,7 +43,7 @@ export default ({ config, db }) => resource({
     console.log(JSON.stringify(incomingOrder))
 
     for (let product of req.body.products) {
-      let key = config.tax.calculateServerSide ? { priceInclTax: product.priceInclTax } : { price: product.price }
+      let key: { id?: string, sku?: string, priceInclTax?: number, price?: number } = config.tax.calculateServerSide ? { priceInclTax: product.priceInclTax } : { price: product.price }
       if (config.tax.alwaysSyncPlatformPricesOver) {
         key.id = product.id
       } else {
