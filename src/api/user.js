@@ -63,8 +63,8 @@ export default ({config, db}) => {
 
     userProxy.login(req.body).then((result) => {
       /**
-      * Second request for more user info
-      */
+       * Second request for more user info
+       */
       apiStatus(res, result, 200, {refreshToken: encryptToken(jwt.encode(req.body, config.authHashSecret ? config.authHashSecret : config.objHashSecret), config.authHashSecret ? config.authHashSecret : config.objHashSecret)});
     }).catch(err => {
       apiError(res, err);
@@ -107,10 +107,10 @@ export default ({config, db}) => {
       return apiStatus(res, 'Invalid e-mail provided!', 500)
     }
 
-    userProxy.resetPassword({ email: req.body.email, template: 'email_reset', websiteId: 1 }).then((result) => {
-      apiStatus(res, result, 200);
-    }).catch(err => {
-      apiError(res, err);
+    userProxy.resetPassword({ email: req.body.email, template: 'email_reset', websiteId: 1 }).catch(err => {
+      console.warn(err)
+    }).finally(() => {
+      apiStatus(res, 200);
     })
   });
 
@@ -126,10 +126,10 @@ export default ({config, db}) => {
       return apiStatus(res, 'Invalid e-mail provided!', 500)
     }
 
-    userProxy.resetPassword({ email: req.body.email, template: 'email_reset', websiteId }).then((result) => {
-      apiStatus(res, result, 200);
-    }).catch(err => {
-      apiError(res, err);
+    userProxy.resetPassword({ email: req.body.email, template: 'email_reset', websiteId }).catch(err => {
+      console.warn(err)
+    }).finally(() => {
+      apiStatus(res, 200);
     })
   });
 
