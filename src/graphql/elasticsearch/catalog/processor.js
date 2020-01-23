@@ -10,7 +10,7 @@ export default function esResultsProcessor (response, esRequest, entityType, ind
       resultProcessor = factory.getAdapter('default', indexName, esRequest, response) // get the default processor
     }
 
-    resultProcessor.process(response.hits.hits)
+    resultProcessor.process(response.body.hits.hits)
       .then((result) => {
         resolve(result)
       })
