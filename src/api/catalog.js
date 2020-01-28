@@ -4,6 +4,7 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
+import AttributeService from './attribute/service'
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -15,6 +16,20 @@ function _cacheStorageHandler (config, result, hash, tags) {
       console.error(err)
     })
   }
+}
+
+async function getProductsAttributesMetadata (body, config, indexName) {
+  const attributeListParam = Object.keys(body.aggregations)
+    .filter(key => body.aggregations[key].buckets.length) // leave only buckets with values
+    .reduce((acc, key) => {
+      const attributeCode = key.replace(/agg_terms_|agg_range_/, '')
+      return {
+        ...acc,
+        [attributeCode]: body.aggregations[key].buckets.map(bucket => bucket.key)
+      }
+    }, {})
+  const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+  return attributeList
 }
 
 export default ({config, db}) => function (req, res, body) {
@@ -103,11 +118,14 @@ export default ({config, db}) => function (req, res, body) {
         let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
 
         if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
-
         if (entityType === 'product') {
-          resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
+          resultProcessor.process(_resBody.hits.hits, groupId).then(async (result) => {
             _resBody.hits.hits = result
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
+            if (_resBody.aggregations) {
+              const attributesMetadata = await getProductsAttributesMetadata(_resBody, config, indexName)
+              _resBody.attribute_metadata = attributesMetadata.map(AttributeService.transformToMetadata)
+            }
             res.json(_resBody);
           }).catch((err) => {
             console.error(err)
