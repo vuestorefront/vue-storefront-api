@@ -120,7 +120,7 @@ function transformToMetadata ({
   }
 }
 
-module.exports = {
+export default {
   list,
   transformToMetadata
 }

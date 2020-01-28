@@ -33,16 +33,22 @@ function adjustIndexName (indexName, entityType, config) {
 
 function adjustBackendProxyUrl (req, indexName, entityType, config) {
   let url
+  const queryString = require('query-string');
+  const parsedQuery = queryString.parseUrl(req.url).query
+
   if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
-    url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+    delete parsedQuery.request
+    delete parsedQuery.request_format
+    delete parsedQuery.response_format
+    url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + indexName + '/' + entityType + '/_search?' + queryString.stringify(parsedQuery)
   } else {
-    const queryString = require('query-string');
-    const parsedQuery = queryString.parseUrl(req.url).query
     parsedQuery._source_includes = parsedQuery._source_include
     parsedQuery._source_excludes = parsedQuery._source_exclude
     delete parsedQuery._source_exclude
     delete parsedQuery._source_include
     delete parsedQuery.request
+    delete parsedQuery.request_format
+    delete parsedQuery.response_format
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
   }
   if (!url.startsWith('http')) {

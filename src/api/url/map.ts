@@ -42,7 +42,7 @@ const checkFieldValueEquality = ({ config, response, value }) => {
   return Boolean(isEqualValue)
 }
 
-module.exports = ({ config }) => {
+const map = ({ config }) => {
   const router = Router()
   router.post('/:index', (req, res) => {
     const { url, excludeFields, includeFields } = req.body
@@ -88,3 +88,5 @@ module.exports = ({ config }) => {
 
   return router
 }
+
+export default map
