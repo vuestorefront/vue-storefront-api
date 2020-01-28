@@ -122,90 +122,14 @@
     "auth": false
   },
   "kue": {},
-  "availableStores": [
-    "de",
-    "it"
-  ],
+  "availableStores": [],
   "msi": {
     "enabled": false,
     "defaultStockId": 1
   },
   "storeViews": {
     "multistore": true,
-    "mapStoreUrlsFor": [
-      "de",
-      "it"
-    ],
-    "de": {
-      "storeCode": "de",
-      "disabled": false,
-      "storeId": 3,
-      "websiteId": 1,
-      "name": "German Store",
-      "url": "/de",
-      "elasticsearch": {
-        "host": "localhost:8080/api/catalog",
-        "index": "vue_storefront_catalog_de"
-      },
-      "msi": {
-        "stockId": 2
-      },
-      "tax": {
-        "defaultCountry": "DE",
-        "defaultRegion": "",
-        "deprecatedPriceFieldsSupport": false,
-        "calculateServerSide": true,
-        "sourcePriceIncludesTax": false,
-        "finalPriceIncludesTax": true,
-        "userGroupId": null,
-        "useOnlyDefaultUserGroupId": false
-      },
-      "i18n": {
-        "fullCountryName": "Germany",
-        "fullLanguageName": "German",
-        "defaultLanguage": "DE",
-        "defaultCountry": "DE",
-        "defaultLocale": "de-DE",
-        "currencyCode": "EUR",
-        "currencySign": "EUR",
-        "dateFormat": "HH:mm D-M-YYYY"
-      }
-    },
-    "it": {
-      "storeCode": "it",
-      "disabled": false,
-      "storeId": 4,
-      "websiteId": 1,
-      "name": "Italian Store",
-      "url": "/it",
-      "elasticsearch": {
-        "host": "localhost:8080/api/catalog",
-        "index": "vue_storefront_catalog_it"
-      },
-      "msi": {
-        "stockId": 2
-      },
-      "tax": {
-        "defaultCountry": "IT",
-        "defaultRegion": "",
-        "calculateServerSide": true,
-        "sourcePriceIncludesTax": false,
-        "deprecatedPriceFieldsSupport": false,
-        "finalPriceIncludesTax": true,
-        "userGroupId": null,
-        "useOnlyDefaultUserGroupId": false
-      },
-      "i18n": {
-        "fullCountryName": "Italy",
-        "fullLanguageName": "Italian",
-        "defaultCountry": "IT",
-        "defaultLanguage": "IT",
-        "defaultLocale": "it-IT",
-        "currencyCode": "EUR",
-        "currencySign": "EUR",
-        "dateFormat": "HH:mm D-M-YYYY"
-      }
-    }
+    "mapStoreUrlsFor": []
   },
   "authHashSecret": "__SECRET_CHANGE_ME__",
   "objHashSecret": "__SECRET_CHANGE_ME__",
