@@ -85,15 +85,16 @@ function getHits (result) {
 }
 
 function getClient (config) {
-  const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-    node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
-    apiVersion: config.elasticsearch.apiVersion,
-    requestTimeout: 5000
-  }
+  let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
+  const node = `${protocol}://${host}:${port}`
+
+  let auth
   if (config.elasticsearch.user) {
-    esConfig.auth = config.elasticsearch.user + ':' + config.elasticsearch.password
+    const { user, password } = config.elasticsearch
+    auth = { username: user, password }
   }
-  return new es.Client(esConfig)
+
+  return new es.Client({ node, auth, apiVersion, requestTimeout })
 }
 
 function putAlias (db, originalName, aliasName, next) {

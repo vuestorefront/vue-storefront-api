@@ -21,6 +21,7 @@
     "host": "localhost",
     "port": 9200,
     "protocol": "http",
+    "requestTimeout": 5000,
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
