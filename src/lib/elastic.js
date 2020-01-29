@@ -91,7 +91,10 @@ function getClient (config) {
     requestTimeout: 5000
   }
   if (config.elasticsearch.user) {
-    esConfig.auth = config.elasticsearch.user + ':' + config.elasticsearch.password
+    esConfig.auth = {
+      username: config.elasticsearch.user,
+      password: config.elasticsearch.password
+    }
   }
   return new es.Client(esConfig)
 }
