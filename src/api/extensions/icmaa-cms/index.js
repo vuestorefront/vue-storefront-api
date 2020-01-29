@@ -3,15 +3,9 @@ import { Router } from 'express'
 
 import prismicConnector from './connector/prismic'
 import storyblokConnector from './connector/storyblok'
-import elasticsearch from 'elasticsearch'
+import { getClient as esClient } from '../../../lib/elastic'
 
 module.exports = ({ config, db }) => {
-  function esClient () {
-    let { host, port, protocol } = config.elasticsearch
-    const httpAuth = config.elasticsearch.user ? `${config.elasticsearch.user}:${config.elasticsearch.password}` : undefined
-    return new elasticsearch.Client({ host: { host, port, protocol }, httpAuth })
-  }
-
   let api = Router()
 
   api.get('/by-uid', async (req, res) => {
@@ -56,7 +50,7 @@ module.exports = ({ config, db }) => {
   })
 
   api.get('/attribute/:code', async (req, res) => {
-    return esClient().search({
+    return esClient(config).search({
       index: config.elasticsearch.indices[0],
       type: 'attribute',
       body: {
@@ -70,11 +64,12 @@ module.exports = ({ config, db }) => {
         }
       }
     }).then(response => {
-      if (response.hits.total === 0) {
+      const { body } = response
+      if (body.hits.total === 0) {
         return apiStatus(res, 'No attribute found', 400)
       }
 
-      const result = response.hits.hits[0]._source
+      const result = body.hits.hits[0]._source
       if (result && result.options) {
         switch (req.query.style) {
           case 'storyblok':
@@ -91,7 +86,7 @@ module.exports = ({ config, db }) => {
   })
 
   api.get('/categories', async (req, res) => {
-    return esClient().search({
+    return esClient(config).search({
       index: config.elasticsearch.indices[0],
       type: 'category',
       size: 5000,
@@ -107,13 +102,14 @@ module.exports = ({ config, db }) => {
         }
       }
     }).then(response => {
-      if (response.hits.total === 0) {
+      const { body } = response
+      if (body.hits.total === 0) {
         return apiStatus(res, 'No categories found', 400)
       }
 
-      if (response.hits.hits) {
+      if (body.hits.hits) {
         let results = []
-        response.hits.hits.forEach(category => {
+        body.hits.hits.forEach(category => {
           results.push(category._source)
         })
 
