@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed some smaller issues with graphql so that it is now working again with the fronted - #350
 - Replaced the old `crop` function call which has been removed from Sharp image processor - @grimasod (#381)
 - Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
-
+- Add product processor to new URL mapper endpoint #401 - @cewald (#401, #403)
 
 ## [1.11.0-rc.1] - 2019.10.03
 

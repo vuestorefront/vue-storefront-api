@@ -1,8 +1,9 @@
-import { Router } from 'express';
-import { apiStatus } from '../../lib/util';
-import { buildMultiEntityUrl } from '../../lib/elastic';
-import request from 'request';
-import get from 'lodash/get';
+import { Router } from 'express'
+import { apiStatus } from '../../lib/util'
+import { buildMultiEntityUrl } from '../../lib/elastic'
+import ProcessorFactory from '../../processor/factory'
+import request from 'request'
+import get from 'lodash/get'
 
 /**
  * Builds ES query based on config
@@ -47,7 +48,7 @@ const map = ({ config }) => {
   router.post('/:index', (req, res) => {
     const { url, excludeFields, includeFields } = req.body
     if (!url) {
-      return apiStatus(res, 'Missing url', 500);
+      return apiStatus(res, 'Missing url', 500)
     }
 
     const esUrl = buildMultiEntityUrl({
@@ -58,7 +59,7 @@ const map = ({ config }) => {
     const query = buildQuery({ value: url, config })
 
     // Only pass auth if configured
-    let auth = null;
+    let auth = null
     if (config.elasticsearch.user || config.elasticsearch.password) {
       auth = {
         user: config.elasticsearch.user,
@@ -76,13 +77,33 @@ const map = ({ config }) => {
     }, (_err, _res, _resBody) => {
       if (_err) {
         console.log(_err)
-        return apiStatus(res, new Error('ES search error'), 500);
+        return apiStatus(res, new Error('ES search error'), 500)
       }
       const responseRecord = _resBody.hits.hits[0]
       if (responseRecord && checkFieldValueEquality({ config, response: responseRecord, value: req.body.url })) {
-        return res.json(responseRecord)
+        if (responseRecord._type === 'product') {
+          const urlSegments = req.url.split('/')
+          const indexName = urlSegments[1]
+
+          const factory = new ProcessorFactory(config)
+          let resultProcessor = factory.getAdapter('product', indexName, req, res)
+          if (!resultProcessor) {
+            resultProcessor = factory.getAdapter('default', indexName, req, res)
+          }
+
+          resultProcessor
+            .process(_resBody.hits.hits, null)
+            .then(result => {
+              result = result.map(h => Object.assign(h, { _score: h._score }))
+              return res.json(result[0])
+            }).catch((err) => {
+              console.error(err)
+              return res.json()
+            })
+        } else {
+          return res.json(responseRecord)
+        }
       }
-      res.json()
     })
   })
 
