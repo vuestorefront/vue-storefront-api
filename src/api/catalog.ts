@@ -4,7 +4,7 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
-import AttributeService from './attribute/service'
+import AttributeService, { AttributeListParam } from './attribute/service'
 import bodybuilder from 'bodybuilder'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 
@@ -20,17 +20,45 @@ function _cacheStorageHandler (config, result, hash, tags) {
   }
 }
 
-async function getProductsAttributesMetadata (body, config, indexName): Promise<any> {
-  const attributeListParam = Object.keys(body.aggregations)
+/**
+ * Transforms ES aggregates into valid format for AttributeService - {[attribute_code]: [bucketId1, bucketId2]}
+ * @param body - products response body
+ * @param config - global config
+ * @param indexName - current indexName
+ */
+async function getProductsAttributesMetadata (body, config, indexName: string): Promise<any> {
+  const attributeListParam: AttributeListParam = Object.keys(body.aggregations)
     .filter(key => body.aggregations[key].buckets.length) // leave only buckets with values
     .reduce((acc, key) => {
-      const attributeCode = key.replace(/agg_terms_|agg_range_/, '')
-      return {
-        ...acc,
-        [attributeCode]: body.aggregations[key].buckets.map(bucket => bucket.key)
+      const attributeCode = key.replace(/^(agg_terms_|agg_range_)|(_options)$/g, '')
+      const bucketsIds = body.aggregations[key].buckets.map(bucket => bucket.key)
+
+      if (!acc[attributeCode]) {
+        acc[attributeCode] = []
       }
+
+      // there can be more then one attributes for example 'agg_terms_color' and 'agg_terms_color_options'
+      // we need to get buckets from both
+      acc[attributeCode] = [...new Set([...acc[attributeCode], ...bucketsIds])]
+
+      return acc
     }, {})
-  const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+
+  // find attribute list
+  const attributeList: any[] = await AttributeService.list(attributeListParam, config, indexName)
+
+  // add buckets for range attributes
+  Object.keys(body.aggregations)
+    .filter(key => key.match(/^(agg_range_)/g))
+    .forEach(key => {
+      const attributeCode = key.replace(/^(agg_range_)/g, '')
+      const buckets = body.aggregations[key].buckets
+      const attribute = attributeList.find(attr => attr.attribute_code === attributeCode)
+      if (attribute) {
+        attribute.buckets = buckets
+      }
+    })
+
   return attributeList
 }
 

@@ -4,14 +4,20 @@ import TagCache from 'redis-tag-cache'
 import get from 'lodash/get';
 import cache from '../../lib/cache-instance'
 
-interface AttributeListParam {
+export interface AttributeListParam {
   [key: string]: number[]
 }
 
-function getUri (config, indexName) {
+/**
+ * Build ES uri fro attributes
+ */
+function getUri (config, indexName: string): string {
   return `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}/${indexName}/attribute/_search`
 }
 
+/**
+ * Returns attributes from cache
+ */
 async function getAttributeFromCache (attributeCode: string, config) {
   if (config.server.useOutputCache && cache) {
     try {
@@ -26,6 +32,9 @@ async function getAttributeFromCache (attributeCode: string, config) {
   }
 }
 
+/**
+ * Save attributes in cache
+ */
 async function setAttributeInCache (attributeList, config) {
   if (config.server.useOutputCache && cache) {
     try {
@@ -41,36 +50,49 @@ async function setAttributeInCache (attributeList, config) {
   }
 }
 
+/**
+ * Returns attribute with only needed options
+ * @param attribute - attribute object
+ * @param optionsIds - list of only needed options ids
+ */
 function clearAttributeOpitons (attribute, optionsIds: number[]) {
   const stringOptionsIds = optionsIds.map(String)
   return {
     ...attribute,
-    options: (attribute.options || []).filter(option => stringOptionsIds.includes(option.value))
+    options: (attribute.options || []).filter(option => stringOptionsIds.includes(String(option.value)))
   }
 }
 
-function list (attributesParam: AttributeListParam, config, indexName) {
+function list (attributesParam: AttributeListParam, config, indexName: string): Promise<any[]> {
   return new Promise(async (resolve, reject) => {
+    // we start with all attributeCodes that are requested
     let attributeCodes = Object.keys(attributesParam)
 
+    // here we check if some of attribute are in cache
     const rawCachedAttributeList = await Promise.all(
       attributeCodes.map(attributeCode => getAttributeFromCache(attributeCode, config))
     )
 
     const cachedAttributeList = rawCachedAttributeList
+      .filter(Boolean) // remove empty results from cache.get
       .map((cachedAttribute, index) => {
         if (cachedAttribute) {
           const attributeOptionsIds = attributesParam[cachedAttribute.attribute_code]
-          attributeCodes.splice(index, 1) // side effect - reduce elements in needed attribute list
+
+          // side effect - we want to reduce starting 'attributeCodes' because some of them are in cache
+          attributeCodes.splice(index, 1)
+
+          // clear unused options
           return clearAttributeOpitons(cachedAttribute, attributeOptionsIds)
         }
       })
-      .filter(Boolean)
 
+    // if all requested attributes are in cache then we can return here
     if (!attributeCodes.length) {
-      return cachedAttributeList
+      return resolve(cachedAttributeList)
     }
 
+    // fetch attributes for rest attributeCodes
     request({
       uri: getUri(config, indexName),
       method: 'POST',
@@ -81,17 +103,29 @@ function list (attributesParam: AttributeListParam, config, indexName) {
         reject(err)
       }
       const fetchedAttributeList = get(body, 'hits.hits', []).map(hit => hit._source)
+
+      // save atrributes in cache
       await setAttributeInCache(fetchedAttributeList, config)
-      resolve(cachedAttributeList.concat(
-        fetchedAttributeList.map(fetchedAttribute => {
+
+      // cached and fetched attributes
+      const allAttributes = [
+        ...cachedAttributeList,
+        ...fetchedAttributeList.map(fetchedAttribute => {
           const attributeOptionsIds = attributesParam[fetchedAttribute.attribute_code]
+
+          // clear unused options
           return clearAttributeOpitons(fetchedAttribute, attributeOptionsIds)
-        }))
-      )
+        })
+      ]
+
+      return resolve(allAttributes)
     })
   })
 }
 
+/**
+ * Returns only needed data for filters in vsf
+ */
 function transformToMetadata ({
   is_visible_on_front,
   is_visible,
@@ -103,7 +137,8 @@ function transformToMetadata ({
   is_comparable,
   attribute_code,
   slug,
-  options
+  options = [],
+  buckets = []
 }) {
   return {
     is_visible_on_front,
@@ -116,7 +151,8 @@ function transformToMetadata ({
     is_comparable,
     attribute_code,
     slug,
-    options
+    options,
+    buckets
   }
 }
 
