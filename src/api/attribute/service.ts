@@ -1,8 +1,9 @@
 
-import request from 'request';
 import TagCache from 'redis-tag-cache'
 import get from 'lodash/get';
 import cache from '../../lib/cache-instance'
+import { adjustQuery, getClient as getElasticClient } from './../../lib/elastic'
+import bodybuilder from 'bodybuilder'
 
 export interface AttributeListParam {
   [key: string]: number[]
@@ -63,64 +64,63 @@ function clearAttributeOpitons (attribute, optionsIds: number[]) {
   }
 }
 
-function list (attributesParam: AttributeListParam, config, indexName: string): Promise<any[]> {
-  return new Promise(async (resolve, reject) => {
-    // we start with all attributeCodes that are requested
-    let attributeCodes = Object.keys(attributesParam)
+async function list (attributesParam: AttributeListParam, config, indexName: string): Promise<any[]> {
+  // we start with all attributeCodes that are requested
+  let attributeCodes = Object.keys(attributesParam)
 
-    // here we check if some of attribute are in cache
-    const rawCachedAttributeList = await Promise.all(
-      attributeCodes.map(attributeCode => getAttributeFromCache(attributeCode, config))
-    )
+  // here we check if some of attribute are in cache
+  const rawCachedAttributeList = await Promise.all(
+    attributeCodes.map(attributeCode => getAttributeFromCache(attributeCode, config))
+  )
 
-    const cachedAttributeList = rawCachedAttributeList
-      .filter(Boolean) // remove empty results from cache.get
-      .map((cachedAttribute, index) => {
-        if (cachedAttribute) {
-          const attributeOptionsIds = attributesParam[cachedAttribute.attribute_code]
+  const cachedAttributeList = rawCachedAttributeList
+    .filter(Boolean) // remove empty results from cache.get
+    .map((cachedAttribute, index) => {
+      if (cachedAttribute) {
+        const attributeOptionsIds = attributesParam[cachedAttribute.attribute_code]
 
-          // side effect - we want to reduce starting 'attributeCodes' because some of them are in cache
-          attributeCodes.splice(index, 1)
+        // side effect - we want to reduce starting 'attributeCodes' because some of them are in cache
+        attributeCodes.splice(index, 1)
 
-          // clear unused options
-          return clearAttributeOpitons(cachedAttribute, attributeOptionsIds)
-        }
-      })
-
-    // if all requested attributes are in cache then we can return here
-    if (!attributeCodes.length) {
-      return resolve(cachedAttributeList)
-    }
-
-    // fetch attributes for rest attributeCodes
-    request({
-      uri: getUri(config, indexName),
-      method: 'POST',
-      body: {'query': {'bool': {'filter': {'bool': {'must': [{'terms': {'attribute_code': attributeCodes}}]}}}}},
-      json: true
-    }, async (err, res, body) => {
-      if (err) {
-        reject(err)
+        // clear unused options
+        return clearAttributeOpitons(cachedAttribute, attributeOptionsIds)
       }
-      const fetchedAttributeList = get(body, 'hits.hits', []).map(hit => hit._source)
-
-      // save atrributes in cache
-      await setAttributeInCache(fetchedAttributeList, config)
-
-      // cached and fetched attributes
-      const allAttributes = [
-        ...cachedAttributeList,
-        ...fetchedAttributeList.map(fetchedAttribute => {
-          const attributeOptionsIds = attributesParam[fetchedAttribute.attribute_code]
-
-          // clear unused options
-          return clearAttributeOpitons(fetchedAttribute, attributeOptionsIds)
-        })
-      ]
-
-      return resolve(allAttributes)
     })
-  })
+
+  // if all requested attributes are in cache then we can return here
+  if (!attributeCodes.length) {
+    return cachedAttributeList
+  }
+
+  // fetch attributes for rest attributeCodes
+  try {
+    const query = adjustQuery({
+      index: indexName,
+      type: 'attribute',
+      body: bodybuilder().filter('terms', 'attribute_code', attributeCodes).build()
+    }, 'attribute', config)
+    const response = await getElasticClient(config).search(query)
+    const fetchedAttributeList = get(response.body, 'hits.hits', []).map(hit => hit._source)
+
+    // save atrributes in cache
+    await setAttributeInCache(fetchedAttributeList, config)
+
+    // cached and fetched attributes
+    const allAttributes = [
+      ...cachedAttributeList,
+      ...fetchedAttributeList.map(fetchedAttribute => {
+        const attributeOptionsIds = attributesParam[fetchedAttribute.attribute_code]
+
+        // clear unused options
+        return clearAttributeOpitons(fetchedAttribute, attributeOptionsIds)
+      })
+    ]
+
+    return allAttributes
+  } catch (err) {
+    console.error(err)
+    return []
+  }
 }
 
 /**
