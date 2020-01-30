@@ -10,13 +10,6 @@ export interface AttributeListParam {
 }
 
 /**
- * Build ES uri fro attributes
- */
-function getUri (config, indexName: string): string {
-  return `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}/${indexName}/attribute/_search`
-}
-
-/**
  * Returns attributes from cache
  */
 async function getAttributeFromCache (attributeCode: string, config) {
