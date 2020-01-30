@@ -4,7 +4,7 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
-import AttributeService, { AttributeListParam } from './attribute/service'
+import AttributeService from './attribute/service'
 import bodybuilder from 'bodybuilder'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 
@@ -18,36 +18,6 @@ function _cacheStorageHandler (config, result, hash, tags) {
       console.error(err)
     })
   }
-}
-
-/**
- * Transforms ES aggregates into valid format for AttributeService - {[attribute_code]: [bucketId1, bucketId2]}
- * @param body - products response body
- * @param config - global config
- * @param indexName - current indexName
- */
-async function getProductsAttributesMetadata (body, config, indexName: string): Promise<any> {
-  const attributeListParam: AttributeListParam = Object.keys(body.aggregations)
-    .filter(key => body.aggregations[key].buckets.length) // leave only buckets with values
-    .reduce((acc, key) => {
-      const attributeCode = key.replace(/^(agg_terms_|agg_range_)|(_options)$/g, '')
-      const bucketsIds = body.aggregations[key].buckets.map(bucket => bucket.key)
-
-      if (!acc[attributeCode]) {
-        acc[attributeCode] = []
-      }
-
-      // there can be more then one attributes for example 'agg_terms_color' and 'agg_terms_color_options'
-      // we need to get buckets from both
-      acc[attributeCode] = [...new Set([...acc[attributeCode], ...bucketsIds])]
-
-      return acc
-    }, {})
-
-  // find attribute list
-  const attributeList: any[] = await AttributeService.list(attributeListParam, config, indexName)
-
-  return attributeList
 }
 
 function _outputFormatter (responseBody, format = 'standard') {
@@ -161,8 +131,10 @@ export default ({config, db}) => async function (req, res, body) {
             _resBody.hits.hits = result
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
             if (_resBody.aggregations) {
-              const attributesMetadata = await getProductsAttributesMetadata(_resBody, config, indexName)
-              _resBody.attribute_metadata = attributesMetadata.map(AttributeService.transformToMetadata)
+              const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
+              // find attribute list
+              const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+              _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
             }
             res.json(_outputFormatter(_resBody, responseFormat));
           }).catch((err) => {

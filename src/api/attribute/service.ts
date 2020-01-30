@@ -10,6 +10,33 @@ export interface AttributeListParam {
 }
 
 /**
+ * Transforms ES aggregates into valid format for AttributeService - {[attribute_code]: [bucketId1, bucketId2]}
+ * @param body - products response body
+ * @param config - global config
+ * @param indexName - current indexName
+ */
+function transformAggsToAttributeListParam (aggregations): AttributeListParam {
+  const attributeListParam: AttributeListParam = Object.keys(aggregations)
+    .filter(key => aggregations[key].buckets.length) // leave only buckets with values
+    .reduce((acc, key) => {
+      const attributeCode = key.replace(/^(agg_terms_|agg_range_)|(_options)$/g, '')
+      const bucketsIds = aggregations[key].buckets.map(bucket => bucket.key)
+
+      if (!acc[attributeCode]) {
+        acc[attributeCode] = []
+      }
+
+      // there can be more then one attributes for example 'agg_terms_color' and 'agg_terms_color_options'
+      // we need to get buckets from both
+      acc[attributeCode] = [...new Set([...acc[attributeCode], ...bucketsIds])]
+
+      return acc
+    }, {})
+
+  return attributeListParam
+}
+
+/**
  * Returns attributes from cache
  */
 async function getAttributeFromCache (attributeCode: string, config) {
@@ -149,5 +176,6 @@ function transformToMetadata ({
 
 export default {
   list,
-  transformToMetadata
+  transformToMetadata,
+  transformAggsToAttributeListParam
 }
