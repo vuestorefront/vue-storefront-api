@@ -94,18 +94,20 @@ async function list (attributesParam: AttributeListParam, config, indexName: str
   )
 
   const cachedAttributeList = rawCachedAttributeList
-    .filter(Boolean) // remove empty results from cache.get
     .map((cachedAttribute, index) => {
       if (cachedAttribute) {
         const attributeOptionsIds = attributesParam[cachedAttribute.attribute_code]
 
-        // side effect - we want to reduce starting 'attributeCodes' because some of them are in cache
+        // side effect - we want to reduce starting 'attributeCodes' if some of them are in cache
         attributeCodes.splice(index, 1)
 
         // clear unused options
         return clearAttributeOpitons(cachedAttribute, attributeOptionsIds)
       }
     })
+    // remove empty results from cache.get
+    // this needs to be after .map because we want to have same indexes as are in attributeCodes
+    .filter(Boolean)
 
   // if all requested attributes are in cache then we can return here
   if (!attributeCodes.length) {
