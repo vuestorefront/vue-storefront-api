@@ -103,6 +103,8 @@ const map = ({ config }) => {
         } else {
           return res.json(responseRecord)
         }
+      } else {
+        return res.json()
       }
     })
   })
