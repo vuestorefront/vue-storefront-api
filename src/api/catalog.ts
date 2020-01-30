@@ -47,18 +47,6 @@ async function getProductsAttributesMetadata (body, config, indexName: string): 
   // find attribute list
   const attributeList: any[] = await AttributeService.list(attributeListParam, config, indexName)
 
-  // add buckets for range attributes
-  Object.keys(body.aggregations)
-    .filter(key => key.match(/^(agg_range_)/g))
-    .forEach(key => {
-      const attributeCode = key.replace(/^(agg_range_)/g, '')
-      const buckets = body.aggregations[key].buckets
-      const attribute = attributeList.find(attr => attr.attribute_code === attributeCode)
-      if (attribute) {
-        attribute.buckets = buckets
-      }
-    })
-
   return attributeList
 }
 

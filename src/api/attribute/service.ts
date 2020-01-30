@@ -137,8 +137,7 @@ function transformToMetadata ({
   is_comparable,
   attribute_code,
   slug,
-  options = [],
-  buckets = []
+  options = []
 }) {
   return {
     is_visible_on_front,
@@ -151,8 +150,7 @@ function transformToMetadata ({
     is_comparable,
     attribute_code,
     slug,
-    options,
-    buckets
+    options
   }
 }
 
