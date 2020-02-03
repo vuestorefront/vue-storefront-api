@@ -67,11 +67,13 @@ module.exports = ({ config }) => {
     const mailOptions = {
       from: userData.sourceAddress,
       to: userData.targetAddress,
-      subject: userData.subject,
-      text: userData.emailText
+      subject: userData.subject
     }
 
-    // Send email
+    const { emailText, emailHtml } = userData
+    userData.text = emailText || ''
+    if (emailHtml) userData.html = emailHtml
+
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
         apiStatus(res, error, 500)
