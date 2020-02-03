@@ -1,0 +1,12 @@
+{
+  "name": "icmaa-mailer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "cewald <c.ewald@impericon.com> and contributors",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "jwt-simple": "^0.5.1",
+    "nodemailer": "^4.6.8"
+  }
+}
