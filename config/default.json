@@ -19,6 +19,7 @@
   },
   "elasticsearch": {
     "host": "localhost",
+    "index": "vue_storefront_catalog",
     "port": 9200,
     "protocol": "http",
     "min_score": 0.01,
