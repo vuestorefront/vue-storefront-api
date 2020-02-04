@@ -64,15 +64,15 @@ module.exports = ({ config }) => {
     const auth = { user, pass }
     let transporter = NodeMailer.createTransport({ auth, host, port, secure })
 
+    const { text, html, replyTo } = userData
     const mailOptions = {
       from: userData.sourceAddress,
       to: userData.targetAddress,
-      subject: userData.subject
+      subject: userData.subject,
+      replyTo,
+      text,
+      html
     }
-
-    const { emailText, emailHtml } = userData
-    userData.text = emailText || ''
-    if (emailHtml) userData.html = emailHtml
 
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
