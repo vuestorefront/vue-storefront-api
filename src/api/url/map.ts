@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { apiStatus } from '../../lib/util';
+import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../lib/util';
 import { getClient as getElasticClient } from '../../lib/elastic'
 import get from 'lodash/get';
 
@@ -70,13 +70,13 @@ const checkFieldValueEquality = ({ config, result, value }) => {
 
 const map = ({ config }) => {
   const router = Router()
-  router.post('/:indexName', async (req, res) => {
+  router.post('/', async (req, res) => {
     const { url, excludeFields, includeFields } = req.body
     if (!url) {
       return apiStatus(res, 'Missing url', 500);
     }
 
-    const indexName = req.params.indexName
+    const indexName = getCurrentStoreView(getCurrentStoreCode(req)).elasticsearch.index
     const esQuery = {
       index: buildIndex({ indexName, config }), // current index name
       _source_includes: includeFields ? includeFields.concat(get(config, 'urlModule.map.includeFields', [])) : [],
