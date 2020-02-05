@@ -12,7 +12,7 @@ module.exports = ({
   const getStockList = (storeCode, skus) => {
     let storeView = getCurrentStoreView(storeCode)
     const esQuery = adjustQuery({
-      index: storeView.elasticsearch.indexName, // current index name
+      index: storeView.elasticsearch.index, // current index name
       type: 'product',
       _source_includes: ['stock'],
       body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()

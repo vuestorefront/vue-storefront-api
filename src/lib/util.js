@@ -84,7 +84,9 @@ export function apiStatus (res, result = 'OK', code = 200, meta = null) {
  *  @param {json} [result='OK']    Text message or result information object
  */
 export function apiError (res, errorObj, code = 500) {
-  return apiStatus(res, errorObj.errorMessage ? errorObj.errorMessage : errorObj, errorObj.code ? errorObj.code : 500)
+  const result = errorObj.message ? errorObj.message : (errorObj.errorMessage ? errorObj.errorMessage : errorObj);
+  const resultCode = errorObj.code ? errorObj.code : code;
+  return apiStatus(res, result, resultCode)
 }
 
 export function encryptToken (textToken, secret) {
