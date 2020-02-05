@@ -18,7 +18,7 @@
     "excludeDisabledProducts": false
   },
   "elasticsearch": {
-    "host": "localhost",
+    "host": "elasticsearch",
     "port": 9200,
     "protocol": "http",
     "min_score": 0.01,
