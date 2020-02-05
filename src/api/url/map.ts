@@ -87,14 +87,11 @@ const map = ({ config }) => {
 
     try {
       const esResponse = await getElasticClient(config).search(esQuery)
-      const result = get(esResponse, 'body.hits.hits[0]', null)
+      let result = get(esResponse, 'body.hits.hits[0]', null)
 
       if (result && checkFieldValueEquality({ config, result, value: req.body.url })) {
-        const esResponseBody = esResponse.body
-        if (esResponseBody._type === 'product') {
-          const urlSegments = req.url.split('/')
-          const indexName = urlSegments[1]
-
+        result = adjustResultType({ result, config, indexName })
+        if (result._type === 'product') {
           const factory = new ProcessorFactory(config)
           let resultProcessor = factory.getAdapter('product', indexName, req, res)
           if (!resultProcessor) {
@@ -102,16 +99,16 @@ const map = ({ config }) => {
           }
 
           resultProcessor
-            .process(esResponseBody.hits.hits, null)
-            .then(result => {
-              result = result.map(h => Object.assign(h, { _score: h._score }))
-              return res.json(result[0])
+            .process(esResponse.body.hits.hits, null)
+            .then(pResult => {
+              pResult = pResult.map(h => Object.assign(h, { _score: h._score }))
+              return res.json(pResult[0])
             }).catch((err) => {
               console.error(err)
               return res.json()
             })
         } else {
-          return res.json(adjustResultType({ result, config, indexName }))
+          return res.json(result)
         }
       } else {
         return res.json(null)
