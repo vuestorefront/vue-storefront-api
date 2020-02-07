@@ -130,7 +130,7 @@ export default ({config, db}) => async function (req, res, body) {
           resultProcessor.process(_resBody.hits.hits, groupId).then(async (result) => {
             _resBody.hits.hits = result
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-            if (_resBody.aggregations) {
+            if (_resBody.aggregations && config.entities.attribute.loadByAttributeMetadata) {
               const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
               // find attribute list
               const attributeList = await AttributeService.list(attributeListParam, config, indexName)

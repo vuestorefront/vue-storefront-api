@@ -69,7 +69,7 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
 
   response.aggregations = esResponse.aggregations
 
-  if (response.aggregations) {
+  if (response.aggregations && config.entities.attribute.loadByAttributeMetadata) {
     const attributeListParam = AttributeService.transformAggsToAttributeListParam(response.aggregations)
     const attributeList = await AttributeService.list(attributeListParam, config, esIndex)
     response.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
