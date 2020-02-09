@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `response_format` query parameter to the `/api/catalog` endpoint. Currently there is just one additional format supported: `response_format=compact`. When used, the response format got optimized by: a) remapping the results, removing the `_source` from the `hits.hits`; b) compressing the JSON fields names according to the `config.products.fieldsToCompact`; c) removing the JSON fields from the `product.configurable_children` when their values === parent product values; overall response size reduced over -70% - @pkarw
 - The support for `SearchQuery` instead of the ElasticSearch DSL as for the input to `/api/catalog` - using `storefront-query-builder` package - @pkarw - https://github.com/DivanteLtd/vue-storefront/issues/2167
 - Add ElasticSearch client support for HTTP authentication - @cewald (#397)
+- Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
 
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
@@ -24,11 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced the old `crop` function call which has been removed from Sharp image processor - @grimasod (#381)
 - Add product processor to new URL mapper endpoint #401 - @cewald (#401, #403)
 - Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
-
-### Added
-
-- Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
-
 
 ## [1.11.0-rc.1] - 2019.10.03
 
