@@ -67,7 +67,7 @@ if (req.url ~ "^\/api\/catalog\/") {
 ```
 
 I am caching request that starts with `/api/catalog/`. As you can see I cache both POST and GET.
-This is because in my project I use huge ES requests to compute Facted Filters. I would exceed HTTP GET limit.
+This is because in my project I use huge ES requests to compute Faceted Filters. I would exceed HTTP GET limit.
 
 Thanks to this line and `bodyaccess`, I can distinguish requests to the same URL by their body!
 ```vcl
@@ -98,7 +98,7 @@ sub vcl_backend_fetch {
 
 
 ### Caching Stock
-It might be a good idea to cache stock requests if you check it lifetime in VSF-PWA in visiblityChanged hook (product listing).
+It might be a good idea to cache stock requests if you check it often (filterUnavailableVariants, configurableChildrenStockPrefetchDynamic) in VSF-PWA in visiblityChanged hook (product listing).
 In one project when I have slow Magento - it reduced Time-To-Response from ~2s to ~70ms.
 
 ```vcl
@@ -136,7 +136,7 @@ to around ~50ms.
 How to do that?
 Inside `vcl_recv` add:
 ```vcl
-// As in my case I want to cache only GET requests 
+# As in my case I want to cache only GET requests 
 if (req.method == "GET") {
   # Countries for storecode GET - M2 - /directory/countries
   if (req.url ~ "^\/api\/ext\/directory\/") {
