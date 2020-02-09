@@ -221,11 +221,10 @@ export default ({config, db}) => {
    * POST for changing user's password after reset password with the token
    */
   userApi.post('/create-password', (req, res) => {
-    
     if (!req.body.email) {
       return apiStatus(res, 'email not provided', 500);
-		}
-		if (!req.body.resetToken) {
+    }
+    if (!req.body.resetToken) {
       return apiStatus(res, 'resetToken not provided', 500);
     }
     if (!req.body.newPassword) {
