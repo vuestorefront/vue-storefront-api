@@ -4,7 +4,7 @@
 E.g. when I used `docker network create some-net`, I have network with name `vuestorefrontapi_some-net`
 3. Open docker-compose.yml:
 At the end:
-```
+```yaml
 networks:
   vuestorefrontapi_some-net:
     external: true
@@ -13,7 +13,7 @@ Set vuestorefrontapi_some-net to your network name
 
 4. Check each `docker-compose` file and set proper network name.
 5. In the docker-compose.nodejs.yml it should not have a prefix, e.g:
-```
+```yaml
     networks:
       - some-net
 
@@ -24,17 +24,17 @@ networks:
 
 ### How does it work?
 1. I add output tags to the VSF-API response:
-```
+```js
 const tagsHeader = output.tags.join(' ')
 res.setHeader('X-VS-Cache-Tag', tagsHeader)
 ```
 
 2. After it invalidates cache in the Redis. I forward request to the:
-```
+```js
 http://${config.varnish.host}:${config.varnish.port}/
 ```
 With invalidate tag in headers:
-```
+```js
 headers: {
   "X-VS-Cache-Tag": tag
 }
@@ -44,7 +44,7 @@ I set Varnish invalidate method to `BAN` but you can change it in your config + 
 
 3. Configuration of BANning we have inside `docker/varnish/config.vcl` in `vcl_recv`. 
 It tries to BAN resource which has `X-VS-Cache-Tag` header:
-```
+```vcl
 # Logic for the ban, using the X-Cache-Tag header.
 if (req.http.X-VS-Cache-Tag) {
   ban("obj.http.X-VS-Cache-Tag ~ " + req.http.X-VS-Cache-Tag);
@@ -52,7 +52,7 @@ if (req.http.X-VS-Cache-Tag) {
 ```
 
 Below under BANning logic. I have to tell Varnish what to cache.
-```
+```vcl
 if (req.url ~ "^\/api\/catalog\/") {
   if (req.method == "POST") {
     # It will allow me to cache by req body in the vcl_hash
@@ -70,12 +70,12 @@ I am caching request that starts with `/api/catalog/`. As you can see I cache bo
 This is because in my project I use huge ES requests to compute Facted Filters. I would exceed HTTP GET limit.
 
 Thanks to this line and `bodyaccess`, I can distinguish requests to the same URL by their body!
-```
+```vcl
 std.cache_req_body(500KB);
 ```
 
 Then in `vcl_hash` I create hash for POST requests with `bodyaccess.hash_req_body()`:
-```
+```vcl
 sub vcl_hash {
     # To cache POST and PUT requests
     if (req.http.X-Body-Len) {
@@ -88,7 +88,7 @@ sub vcl_hash {
 
 By default, Varnish change each request to HTTP GET. We need to tell him to send POST requests to the VSF-API as POST - not GET.
 We will do it like that:
-```
+```vcl
 sub vcl_backend_fetch {
     if (bereq.http.X-Body-Len) {
         set bereq.method = "POST";
@@ -101,7 +101,7 @@ sub vcl_backend_fetch {
 It might be a good idea to cache stock requests if you check it lifetime in VSF-PWA in visiblityChanged hook (product listing).
 In one project when I have slow Magento - it reduced Time-To-Response from ~2s to ~70ms.
 
-```
+```vcl
 if (req.url ~ "^\/api\/stock\/") {
   if (req.method == "GET") {
     # M2 Stock
@@ -111,7 +111,7 @@ if (req.url ~ "^\/api\/stock\/") {
 ```
 
 Then in `vcl_backend_response` you should set safe TTL (Time to live) for your stock cache. I've set 15 minutes (900 seconds)
-```
+```vcl
 sub vcl_backend_response {
     # Set ban-lurker friendly custom headers.
     if (beresp.http.X-VS-Cache && beresp.http.X-VS-Cache ~ "Miss") {
@@ -135,7 +135,7 @@ to around ~50ms.
 
 How to do that?
 Inside `vcl_recv` add:
-```
+```vcl
 // As in my case I want to cache only GET requests 
 if (req.method == "GET") {
   # Countries for storecode GET - M2 - /directory/countries
@@ -173,7 +173,7 @@ If you would provide here `product` it would cache product's catalog. You should
 
 ### Banning permissions
 It will be allowed only from certain IPs. In my case I put here only VSF-API IP. But here we have `app` as Docker will resolve it as VSF-API IP:
-```
+```vcl
 acl purge {
   "app";   // IP which can BAN cache - it should be VSF-API's IP
 }
@@ -181,7 +181,7 @@ acl purge {
 
 ### What to cache
 We should provide to Varnish - IP & Port to cache, there we have it:
-```
+```vcl
 backend default {
   .host = "app";
   .port = "8080";
