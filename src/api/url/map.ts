@@ -1,7 +1,8 @@
-import { Router } from 'express';
-import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../lib/util';
+import { Router } from 'express'
+import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../lib/util'
 import { getClient as getElasticClient } from '../../lib/elastic'
-import get from 'lodash/get';
+import ProcessorFactory from '../../processor/factory'
+import get from 'lodash/get'
 
 const adjustQueryForOldES = ({ config }) => {
   const searchedEntities = get(config, 'urlModule.map.searchedEntities', [])
@@ -73,7 +74,7 @@ const map = ({ config }) => {
   router.post('/', async (req, res) => {
     const { url, excludeFields, includeFields } = req.body
     if (!url) {
-      return apiStatus(res, 'Missing url', 500);
+      return apiStatus(res, 'Missing url', 500)
     }
 
     const indexName = getCurrentStoreView(getCurrentStoreCode(req)).elasticsearch.index
@@ -86,16 +87,35 @@ const map = ({ config }) => {
 
     try {
       const esResponse = await getElasticClient(config).search(esQuery)
-      const result = get(esResponse, 'body.hits.hits[0]', null)
+      let result = get(esResponse, 'body.hits.hits[0]', null)
 
       if (result && checkFieldValueEquality({ config, result, value: req.body.url })) {
-        return res.json(adjustResultType({ result, config, indexName }))
-      }
+        result = adjustResultType({ result, config, indexName })
+        if (result._type === 'product') {
+          const factory = new ProcessorFactory(config)
+          let resultProcessor = factory.getAdapter('product', indexName, req, res)
+          if (!resultProcessor) {
+            resultProcessor = factory.getAdapter('default', indexName, req, res)
+          }
 
-      res.json(null)
+          resultProcessor
+            .process(esResponse.body.hits.hits, null)
+            .then(pResult => {
+              pResult = pResult.map(h => Object.assign(h, { _score: h._score }))
+              return res.json(pResult[0])
+            }).catch((err) => {
+              console.error(err)
+              return res.json()
+            })
+        } else {
+          return res.json(result)
+        }
+      } else {
+        return res.json(null)
+      }
     } catch (err) {
       console.error(err)
-      return apiStatus(res, new Error('ES search error'), 500);
+      return apiStatus(res, new Error('ES search error'), 500)
     }
   })
 
