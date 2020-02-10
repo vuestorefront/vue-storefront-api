@@ -36,7 +36,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userRegisterSchema = require('../models/userRegister.schema.json')
     let userRegisterSchemaExtension = {};
-    if (fs.existsSync('src/models/userRegister.schema.extension.json')) {
+    if (fs.existsSync('../models/userRegister.schema.extension.json')) {
       userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
     }
     const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
@@ -169,7 +169,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userProfileSchema = require('../models/userProfile.schema.json')
     let userProfileSchemaExtension = {};
-    if (fs.existsSync('src/models/userProfile.schema.extension.json')) {
+    if (fs.existsSync('../models/userProfile.schema.extension.json')) {
       userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
     }
     const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
