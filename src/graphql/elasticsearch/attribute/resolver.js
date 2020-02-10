@@ -2,20 +2,22 @@ import config from 'config';
 import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import { getIndexName } from '../mapping'
+import { adjustQuery } from './../../../lib/elastic'
 
-async function listAttributes (attributes, context, rootValue, _source_include) {
+async function listAttributes (attributes, context, rootValue, _sourceIncludes) {
   let query = buildQuery({ filter: attributes, pageSize: 150, type: 'attribute' });
 
-  if (!_source_include) {
-    _source_include = config.entities.attribute.includeFields
+  if (_sourceIncludes === undefined) {
+    _sourceIncludes = config.entities.attribute.includeFields
   }
 
-  const response = await client.search({
+  const esQuery = {
     index: getIndexName(context.req.url),
-    type: config.elasticsearch.indexTypes[3],
     body: query,
-    _source_include
-  });
+    _sourceIncludes
+  };
+
+  const response = await client.search(adjustQuery(esQuery, 'attribute', config));
 
   return response.body;
 }

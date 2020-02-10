@@ -2,14 +2,8 @@
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 const config = require('config')
-const Redis = require('redis');
-let redisClient = Redis.createClient(config.redis); // redis client
-redisClient.on('error', (err) => { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-  redisClient = Redis.createClient(config.redis); // redis client
-});
-if (config.redis.auth) {
-  redisClient.auth(config.redis.auth);
-}
+const redis = require('../../lib/redis');
+const redisClient = redis.getClient(config)
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
@@ -164,7 +158,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
               'regionCode': mappedBillingRegion.regionCode,
               'regionId': mappedBillingRegion.regionId,
               'company': billingAddr.company,
-              'vatId': billingAddr.vat_id
+              'vatId': billingAddr.vat_id,
+              'save_in_address_book': billingAddr.save_address
             }
           }
 
@@ -183,7 +178,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
                 'regionCode': mappedBillingRegion.regionCode,
                 'region': billingAddr.region,
                 'company': billingAddr.company,
-                'vatId': billingAddr.vat_id
+                'vatId': billingAddr.vat_id,
+                'save_in_address_book': billingAddr.save_address
               },
               'shippingMethodCode': orderData.addressInformation.shipping_method_code,
               'shippingCarrierCode': orderData.addressInformation.shipping_carrier_code,
@@ -204,7 +200,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
               'regionId': mappedShippingRegion.regionId,
               'regionCode': mappedShippingRegion.regionCode,
               'region': shippingAddr.region,
-              'company': shippingAddr.company
+              'company': shippingAddr.company,
+              'save_in_address_book': shippingAddr.save_address
             }
           } else {
             shippingAddressInfo['addressInformation']['shippingAddress'] = shippingAddressInfo['addressInformation']['billingAddress']
@@ -230,14 +227,16 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
 
                 logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
                 logger.debug(THREAD_ID + result)
-                redisClient.set('order$$id$$' + orderData.order_id, JSON.stringify({
-                  platform_order_id: result,
-                  transmited: true,
-                  transmited_at: new Date(),
-                  platform: 'magento2',
-                  order: orderData
-                }));
-                redisClient.set('order$$totals$$' + orderData.order_id, JSON.stringify(result[1]));
+                if (orderData.order_id) {
+                  redisClient.set('order$$id$$' + orderData.order_id, JSON.stringify({
+                    platform_order_id: result,
+                    transmited: true,
+                    transmited_at: new Date(),
+                    platform: 'magento2',
+                    order: orderData
+                  }));
+                  redisClient.set('order$$totals$$' + orderData.order_id, JSON.stringify(result[1]));
+                }
                 let orderIncrementId = null;
                 api.orders.incrementIdById(result).then(result => {
                   orderIncrementId = result.increment_id

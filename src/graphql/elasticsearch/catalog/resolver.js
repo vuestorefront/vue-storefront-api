@@ -3,6 +3,7 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import esResultsProcessor from './processor'
 import { getIndexName } from '../mapping'
+import { adjustQuery } from './../../../lib/elastic'
 
 const resolver = {
   Query: {
@@ -11,11 +12,11 @@ const resolver = {
   }
 };
 
-async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _source_include, _source_exclude) {
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
   let _req = {
     query: {
-      _source_exclude,
-      _source_include
+      _source_exclude: _sourceExclude,
+      _source_include: _sourceInclude
     }
   }
 
@@ -30,32 +31,29 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
 
   let esIndex = getIndexName(context.req.url)
 
-  let esResponse = await client.search({
+  let esResponse = await client.search(adjustQuery({
     index: esIndex,
-    type: config.elasticsearch.indexTypes[0],
     body: query,
-    _source_include,
-    _source_exclude
-  });
+    _sourceInclude,
+    _sourceExclude
+  }, 'product', config));
 
-  const { body } = esResponse
-
-  if (body && body.hits && body.hits.hits) {
+  if (esResponse && esResponse.body.hits && esResponse.body.hits.hits) {
     // process response result (caluclate taxes etc...)
-    body.hits.hits = await esResultsProcessor(body, _req, config.elasticsearch.indexTypes[0], esIndex);
+    esResponse.body.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
 
   // Process hits
   response.items = []
-  body.hits.hits.forEach(hit => {
+  esResponse.body.hits.hits.forEach(hit => {
     let item = hit._source
     item._score = hit._score
     response.items.push(item)
   });
 
-  response.total_count = body.hits.total
+  response.total_count = esResponse.body.hits.total
 
   // Process sort
   let sortOptions = []
@@ -68,7 +66,7 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
     )
   }
 
-  response.aggregations = body.aggregations
+  response.aggregations = esResponse.aggregations
   response.sort_fields = {}
   if (sortOptions.length > 0) {
     response.sort_fields.options = sortOptions

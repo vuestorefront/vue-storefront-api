@@ -19,8 +19,10 @@
   },
   "elasticsearch": {
     "host": "localhost",
+    "index": "vue_storefront_catalog",
     "port": 9200,
     "protocol": "http",
+    "requestTimeout": 5000,
     "min_score": 0.01,
     "indices": [
       "vue_storefront_catalog",
@@ -30,12 +32,89 @@
     "indexTypes": [
       "product",
       "category",
-      "cms",
+      "cms_block",
+      "cms_page",
       "attribute",
       "taxrule",
       "review"
     ],
-    "apiVersion": "5.6"
+    "apiVersion": "5.6",
+
+    "searchScoring": {
+      "attributes": {
+        "attribute_code": {
+          "scoreValues": { "attribute_value": { "weight": 1 } }
+        }
+      },
+      "fuzziness": 2,
+      "cutoff_frequency":  0.01,
+      "max_expansions": 3,
+      "minimum_should_match": "75%",
+      "prefix_length": 2,
+      "boost_mode": "multiply",
+      "score_mode": "multiply",
+      "max_boost": 100,
+      "function_min_score": 1
+    },
+    "searchableAttributes": {
+      "name": {
+        "boost": 4
+      },
+      "sku": {
+        "boost": 2
+      },
+      "category.name": {
+        "boost": 1
+      }
+    }
+  },
+  "products": {
+    "fieldsToCompress": ["max_regular_price", "max_price", "max_regular_price", "minimal_regular_price", "final_price", "price", "special_price", "original_final_price", "original_price", "original_special_price", "final_price_incl_tax", "price_incl_tax", "special_price_incl_tax", "final_price_tax", "price_tax", "special_price_tax", "image", "small_image", "thumbnail"],
+    "fieldsToCompact": {
+      "minimal_price": "mp",
+      "has_options": "ho",
+      "url_key": "u",
+      "status": "s",
+      "required_options": "ro",
+      "name": "nm",
+      "tax_class_id": "tci",
+      "description": "desc",
+      "minimal_regular_price": "mrp",
+      "final_price": "fp", 
+      "price": "p", 
+      "special_price": "sp",
+      "original_final_price": "ofp",
+      "original_price": "op",
+      "original_special_price": "osp",
+      "final_price_incl_tax": "fpit", 
+      "original_price_incl_tax": "opit",
+      "price_incl_tax": "pit",
+      "special_price_incl_tax": "spit", 
+      "final_price_tax": "fpt",
+      "price_tax": "pt",
+      "special_price_tax": "spt",
+      "original_price_tax": "opt",
+      "image": "i", 
+      "small_image": "si",
+      "thumbnail": "t"
+    },
+    "filterFieldMapping": {
+      "category.name": "category.name.keyword"
+    },
+    "filterAggregationSize": {
+      "default": 10,
+      "size": 10,
+      "color": 10
+    },    
+    "priceFilterKey": "final_price",
+    "priceFilters": {
+      "ranges": [
+        { "from": 0, "to": 50 },
+        { "from": 50, "to": 100 },
+        { "from": 100, "to": 150 },
+        { "from": 150 }
+      ]
+    }    
   },
   "redis": {
     "host": "localhost",
@@ -62,6 +141,7 @@
       "storeCode": "de",
       "disabled": false,
       "storeId": 3,
+      "websiteId": 1,
       "name": "German Store",
       "url": "/de",
       "elasticsearch": {
@@ -74,7 +154,7 @@
       "tax": {
         "defaultCountry": "DE",
         "defaultRegion": "",
-        "deprecatedPriceFieldsSupport": true,
+        "deprecatedPriceFieldsSupport": false,
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
         "finalPriceIncludesTax": true,
@@ -96,6 +176,7 @@
       "storeCode": "it",
       "disabled": false,
       "storeId": 4,
+      "websiteId": 1,
       "name": "Italian Store",
       "url": "/it",
       "elasticsearch": {
@@ -110,7 +191,7 @@
         "defaultRegion": "",
         "calculateServerSide": true,
         "sourcePriceIncludesTax": false,
-        "deprecatedPriceFieldsSupport": true,
+        "deprecatedPriceFieldsSupport": false,
         "finalPriceIncludesTax": true,
         "userGroupId": null,
         "useOnlyDefaultUserGroupId": false
@@ -140,8 +221,8 @@
     "usePlatformTotals": true,
     "setConfigurableProductOptions": true,
     "sourcePriceIncludesTax": false,
-    "deprecatedPriceFieldsSupport": true,
-    "finalPriceIncludesTax": true,
+    "deprecatedPriceFieldsSupport": false,
+    "finalPriceIncludesTax": false,
     "userGroupId": null,
     "useOnlyDefaultUserGroupId": false
   },
@@ -279,5 +360,12 @@
     "description": 1,
     "sku": 1,
     "configurable_children.sku": 1
+  },
+  "urlModule": {
+    "map": {
+      "includeFields": ["url_path", "identifier", "id", "slug", "sku", "type_id"],
+      "searchedFields": ["url_path", "identifier"],
+      "searchedEntities": ["product", "category", "cms_page"]
+    }
   }
 }
