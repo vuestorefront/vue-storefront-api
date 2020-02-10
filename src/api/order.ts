@@ -30,7 +30,7 @@ export default ({ config, db }) => resource({
     const orderSchema = require('../models/order.schema.js')
     let orderSchemaExtension = {}
     if (fs.existsSync('src/models/order.schema.extension.json')) {
-      orderSchemaExtension = require('../models/order.schema.extension.json')
+      orderSchemaExtension = require('src/models/order.schema.extension.json')
     }
     const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
 
