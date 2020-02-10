@@ -18,6 +18,11 @@ jobs:
       - yarn build
       node_js: '10'
 
+    - &unit
+      stage: Test
+      script: yarn test:unit
+      name: "NodeJS 10 unit tests"
+      node_js: "10"
     - <<: *build
       node_js: '12'
 

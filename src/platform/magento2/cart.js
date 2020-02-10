@@ -20,11 +20,11 @@ class CartProxy extends AbstractCartProxy {
     return this.api.cart.delete(customerToken, cartId, cartItem)
   }
 
-  pull (customerToken, cartId,  params) {
+  pull (customerToken, cartId, params) {
     return this.api.cart.pull(customerToken, cartId, params)
   }
 
-  totals (customerToken, cartId,  params) {
+  totals (customerToken, cartId, params) {
     return this.api.cart.totals(customerToken, cartId, params)
   }
 
@@ -44,11 +44,11 @@ class CartProxy extends AbstractCartProxy {
     return this.api.cart.collectTotals(customerToken, cartId, shippingMethod)
   }
 
-  applyCoupon (customerToken, cartId, coupon) { 
+  applyCoupon (customerToken, cartId, coupon) {
     return this.api.cart.applyCoupon(customerToken, cartId, coupon)
   }
 
-  deleteCoupon (customerToken, cartId) { 
+  deleteCoupon (customerToken, cartId) {
     return this.api.cart.deleteCoupon(customerToken, cartId)
   }
 

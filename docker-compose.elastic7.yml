@@ -1,0 +1,24 @@
+version: '3.0'
+services:
+  es7:
+    container_name: es7
+    build: docker/elasticsearch7/
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1    
+    volumes:
+      - ./docker/elasticsearch7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
+
+  redis:
+    image: 'redis:4-alpine'
+    ports:
+      - '6379:6379'

@@ -1,10 +1,10 @@
 import PlatformFactory from '../platform/factory'
+import { sgnSrc } from '../lib/util'
 const jwa = require('jwa');
 const hmac = jwa('HS256');
-import { sgnSrc } from '../lib/util'
 
 class ProductProcessor {
-  constructor(config, entityType, indexName, req, res) {
+  constructor (config, entityType, indexName, req, res) {
     this._config = config
     this._entityType = entityType
     this._indexName = indexName
@@ -13,10 +13,7 @@ class ProductProcessor {
   }
 
   process (items, groupId = null) {
-    console.debug('Entering ProductProcessor::process')
-
     const processorChain = []
-
     const platform = this._config.platform
     const factory = new PlatformFactory(this._config, this._req)
     const taxCountry = this._config.tax.defaultCountry
@@ -41,16 +38,14 @@ class ProductProcessor {
       }
     }
 
-    return Promise.all(processorChain).then(((resultSet) => {
-
+    return Promise.all(processorChain).then((resultSet) => {
       if (!resultSet || resultSet.length === 0) {
         throw Error('error with resultset for processor chaining')
       }
 
       if (this._req.query._source_exclude && this._req.query._source_exclude.indexOf('sgn') < 0) {
-        const rs = resultSet[0].map(((item) => {
-          if (!item._source)
-            return item
+        const rs = resultSet[0].map((item) => {
+          if (!item._source) { return item }
 
           const config = this._config
           let sgnObj = (config.tax.calculateServerSide === true) ? { priceInclTax: item._source.priceInclTax } : { price: item._source.price }
@@ -68,14 +63,14 @@ class ProductProcessor {
           }
 
           return item
-        }).bind(this))
+        })
 
         // return first resultSet
         return rs
       } else {
         return resultSet[0]
       }
-    }).bind(this))
+    })
   }
 }
 

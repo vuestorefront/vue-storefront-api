@@ -3,6 +3,7 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import esResultsProcessor from './processor'
 import { getIndexName } from '../mapping'
+import { adjustQuery } from './../../../lib/elastic'
 
 const resolver = {
   Query: {
@@ -11,8 +12,13 @@ const resolver = {
   }
 };
 
-async function list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
-  const { req, res } = context;
+async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
+  let _req = {
+    query: {
+      _source_exclude: _sourceExclude,
+      _source_include: _sourceInclude
+    }
+  }
 
   let query = buildQuery({
     filter: filter,
@@ -23,36 +29,35 @@ async function list(filter, sort, currentPage, pageSize, search, context, rootVa
     type: 'product'
   });
 
-  let esIndex  = getIndexName(req.url)
+  let esIndex = getIndexName(context.req.url)
 
-  let esResponse = await client.search({
+  let esResponse = await client.search(adjustQuery({
     index: esIndex,
-    type: config.elasticsearch.indexTypes[0],
     body: query,
     _sourceInclude,
     _sourceExclude
-  });
+  }, 'product', config));
 
-  if (esResponse && esResponse.hits && esResponse.hits.hits) {
+  if (esResponse && esResponse.body.hits && esResponse.body.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, config.elasticsearch.indexTypes[0], esIndex, req, res);
+    esResponse.body.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
 
   // Process hits
   response.items = []
-  esResponse.hits.hits.forEach(hit => {
+  esResponse.body.hits.hits.forEach(hit => {
     let item = hit._source
     item._score = hit._score
     response.items.push(item)
   });
 
-  response.total_count = esResponse.hits.total
+  response.total_count = esResponse.body.hits.total
 
   // Process sort
   let sortOptions = []
-  for (var sortAttribute in sort){
+  for (var sortAttribute in sort) {
     sortOptions.push(
       {
         label: sortAttribute,

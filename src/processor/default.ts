@@ -1,17 +1,16 @@
-import { Request, Response } from "express";
-import { IConfig } from "config";
+import { Request, Response } from 'express';
+import { IConfig } from 'config';
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 
 class HmacProcessor {
+  private _config: IConfig
+  private _entityType: any
+  private _indexName: any
+  private _req: Request
+  private _res: Response
 
-  _config: IConfig
-  _entityType: any
-  _indexName: any
-  _req: Request
-  _res: Response
-
-  constructor(config: IConfig, entityType: any, indexName: any, req: Request, res: Response){
+  public constructor (config: IConfig, entityType: any, indexName: any, req: Request, res: Response) {
     this._config = config
     this._entityType = entityType
     this._indexName = indexName
@@ -19,11 +18,8 @@ class HmacProcessor {
     this._res = res
   }
 
-  process (items) {
-    console.debug('Entering HmacProcessor::process')
-
+  public process (items) {
     const processorChain = []
-
     return new Promise((resolve, reject) => {
       const rs = items.map((item) => {
         if (this._req.query._source_exclude && this._req.query._source_exclude.indexOf('sgn') < 0) {
@@ -32,8 +28,8 @@ class HmacProcessor {
         return item
       })
 
-        // return first resultSet
-        resolve(rs)
+      // return first resultSet
+      resolve(rs)
     })
   }
 }
