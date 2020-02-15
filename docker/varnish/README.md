@@ -21,6 +21,7 @@ networks:
   some-net:
     driver: bridge
 ```
+You can find Docker Compose files with applied network settings inside docker/varnish/docker-compose
 
 ### How does it work?
 1. I add output tags to the VSF-API response:

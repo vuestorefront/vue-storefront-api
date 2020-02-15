@@ -17,6 +17,8 @@ services:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
+    networks:
+      - vuestorefrontapi_some-net
 
   kibana:
     build: docker/kibana/
@@ -26,11 +28,19 @@ services:
       - '5601:5601'
     depends_on:
       - es1
+    networks:
+      - vuestorefrontapi_some-net
 
   redis:
     image: 'redis:4-alpine'
     ports:
       - '6379:6379'
+    networks:
+      - vuestorefrontapi_some-net
 
 volumes:
   esdat1:
+
+networks:
+  vuestorefrontapi_some-net:
+    external: true
