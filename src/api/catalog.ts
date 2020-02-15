@@ -179,7 +179,7 @@ export default ({config, db}) => async function (req, res, body) {
         res.setHeader('X-VS-Cache', 'Hit')
         if (config.get('varnish.enabled')) {
           const tagsHeader = output.tags.join(' ')
-          res.setHeader('X-VS-Cache-Tags', tagsHeader)
+          res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
         res.json(output)

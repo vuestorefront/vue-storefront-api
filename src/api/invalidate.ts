@@ -12,7 +12,6 @@ function invalidateCache (req, res) {
     }
 
     if (req.query.tag) { // clear cache pages for specific query tag
-      
       console.log(`Clear cache request for [${req.query.tag}]`)
       let tags = []
       if (req.query.tag === '*') {
@@ -31,18 +30,19 @@ function invalidateCache (req, res) {
               request(
                 {
                   uri: `http://${config.get('varnish.host')}:${config.get('varnish.port')}/`,
-                  method: "BAN",
+                  method: 'BAN',
                   headers: {
                     // I should change Tags -> tag
-                    "X-VS-Cache-Tags": tag
+                    'X-VS-Cache-Tag': tag
                   }
                 },
                 (err, res, body) => {
-                  if (body && body.includes("200 Ban added")) {
+                  if (body && body.includes('200 Ban added')) {
                     console.log(
                       `Tags invalidated successfully for [${tag}] in the Varnish`
                     );
                   } else {
+                    console.log(body)
                     console.error(`Couldn't ban tag: ${tag} in the Varnish`);
                   }
                 }
@@ -77,13 +77,13 @@ function invalidateCache (req, res) {
         request(
           {
             uri: `http://${config.get('varnish.host')}:${config.get('varnish.port')}/`,
-            method: "BAN",
+            method: 'BAN',
             headers: {
-              "X-VS-Cache-Ext": ext
+              'X-VS-Cache-Ext': ext
             }
           },
           (err, res, body) => {
-            if (body && body.includes("200 Ban added")) {
+            if (body && body.includes('200 Ban added')) {
               console.log(
                 `Cache invalidated successfully for [${ext}] in the Varnish`
               );
@@ -95,7 +95,7 @@ function invalidateCache (req, res) {
       }
       apiStatus(
         res,
-        "Cache invalidation succeed",
+        'Cache invalidation succeed',
         200
       );
     } else {
