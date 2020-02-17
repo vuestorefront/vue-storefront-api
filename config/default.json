@@ -116,6 +116,12 @@
       ]
     }    
   },
+  "varnish": {
+    "host": "185.246.52.88",
+    "port": 80,
+    "method": "BAN",
+    "enabled": false
+  },
   "redis": {
     "host": "localhost",
     "port": 6379,

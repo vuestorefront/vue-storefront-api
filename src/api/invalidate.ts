@@ -5,12 +5,13 @@ import request from 'request'
 
 function invalidateCache (req, res) {
   if (config.get('server.useOutputCache')) {
-    if (req.query.tag && req.query.key) { // clear cache pages for specific query tag
-      if (req.query.key !== config.get('server.invalidateCacheKey')) {
-        console.error('Invalid cache invalidation key')
-        apiStatus(res, 'Invalid cache invalidation key', 500)
-        return
-      }
+    if (!req.query.key || req.query.key !== config.get('server.invalidateCacheKey')) {
+      console.error('Invalid cache invalidation key')
+      apiStatus(res, 'Invalid cache invalidation key', 500)
+      return
+    }
+
+    if (req.query.tag) { // clear cache pages for specific query tag
       console.log(`Clear cache request for [${req.query.tag}]`)
       let tags = []
       if (req.query.tag === '*') {
@@ -25,6 +26,28 @@ function invalidateCache (req, res) {
         })) {
           subPromises.push(cache.invalidate(tag).then(() => {
             console.log(`Tags invalidated successfully for [${tag}]`)
+            if (config.get('varnish.enabled')) {
+              request(
+                {
+                  uri: `http://${config.get('varnish.host')}:${config.get('varnish.port')}/`,
+                  method: 'BAN',
+                  headers: {
+                    // I should change Tags -> tag
+                    'X-VS-Cache-Tag': tag
+                  }
+                },
+                (err, res, body) => {
+                  if (body && body.includes('200 Ban added')) {
+                    console.log(
+                      `Tags invalidated successfully for [${tag}] in the Varnish`
+                    );
+                  } else {
+                    console.log(body)
+                    console.error(`Couldn't ban tag: ${tag} in the Varnish`);
+                  }
+                }
+              );
+            }
           }))
         } else {
           console.error(`Invalid tag name ${tag}`)
@@ -48,6 +71,33 @@ function invalidateCache (req, res) {
           });
         }
       }
+    } else if (config.get('varnish.enabled') && req.query.ext) {
+      const exts = req.query.ext.split(',')
+      for (let ext of exts) {
+        request(
+          {
+            uri: `http://${config.get('varnish.host')}:${config.get('varnish.port')}/`,
+            method: 'BAN',
+            headers: {
+              'X-VS-Cache-Ext': ext
+            }
+          },
+          (err, res, body) => {
+            if (body && body.includes('200 Ban added')) {
+              console.log(
+                `Cache invalidated successfully for [${ext}] in the Varnish`
+              );
+            } else {
+              console.error(`Couldn't ban extension: ${ext} in the Varnish`);
+            }
+          }
+        );
+      }
+      apiStatus(
+        res,
+        'Cache invalidation succeed',
+        200
+      );
     } else {
       apiStatus(res, 'Invalid parameters for Clear cache request', 500)
       console.error('Invalid parameters for Clear cache request')
