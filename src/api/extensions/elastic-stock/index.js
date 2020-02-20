@@ -15,7 +15,7 @@ module.exports = ({
       index: storeView.elasticsearch.index, // current index name
       type: 'product',
       _source_includes: ['stock'],
-      body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
+      body: bodybuilder().filter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     }, 'product', config)
     return getElasticClient(config).search(esQuery).then((products) => { // we're always trying to populate cache - when online
       return getHits(products).map(el => { return el._source.stock })
