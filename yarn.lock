@@ -1015,11 +1015,12 @@ body-parser@1.19.0, body-parser@^1.12.2, body-parser@^1.17.1, body-parser@^1.18.
     raw-body "2.4.0"
     type-is "~1.6.17"
 
-bodybuilder@2.2.13:
-  version "2.2.13"
-  resolved "https://registry.yarnpkg.com/bodybuilder/-/bodybuilder-2.2.13.tgz#82ced1c2144bd9ddce97c5d89fa13f7e24c40f8e"
+bodybuilder@2.2.21:
+  version "2.2.21"
+  resolved "https://registry.yarnpkg.com/bodybuilder/-/bodybuilder-2.2.21.tgz#1a7a5d31189cf10a6fbd87668ac8aa386ac8cc38"
+  integrity sha512-Ys0Cas7ri7dcv3f62HwB2Lclk2oBCv86pakuEs4liK6hhL9ikTEairZ700k4VHD7vgvr2CW2Kogh4E5Ivmkg2A==
   dependencies:
-    lodash "^4.9.0"
+    lodash "^4.17.11"
 
 boxen@^1.2.1:
   version "1.3.0"
@@ -4114,7 +4115,7 @@ lodash.unescape@4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/lodash.unescape/-/lodash.unescape-4.0.1.tgz#bf2249886ce514cda112fae9218cdc065211fc9c"
 
-lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.9.0:
+lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.14"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
 
@@ -4183,9 +4184,9 @@ lru-cache@^5.0.0:
     request "^2.88.0"
     sha1 "^1.1.1"
 
-"magento1-vsbridge-client@github:icmaa/magento1-vsbridge-client#feature/delete-actions-with-body":
+"magento1-vsbridge-client@github:icmaa/magento1-vsbridge-client":
   version "0.1.0"
-  resolved "https://codeload.github.com/icmaa/magento1-vsbridge-client/tar.gz/7d7a980feeb4037e52337d9cf4c5fe3da70f78a9"
+  resolved "https://codeload.github.com/icmaa/magento1-vsbridge-client/tar.gz/00fe2f36f20c9668e7561c646e93e2e2a435584a"
   dependencies:
     oauth-1.0a "^1.0.1"
     request "^2.72.0"
@@ -6289,10 +6290,9 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
-storefront-query-builder@^0.0.9:
+"storefront-query-builder@github:icmaa/storefront-query-builder#feature/4111-add-stock-filter-for-configurable-products":
   version "0.0.9"
-  resolved "https://registry.yarnpkg.com/storefront-query-builder/-/storefront-query-builder-0.0.9.tgz#e2733851d08dd98566d4f81281326658c74d660a"
-  integrity sha512-c6zIRyJwFQJtlLG1R+qlrHHDea1Z4O/EJbTvjbGRHIrsMKav2XfX5GzEai7SWU4+GomySU9eIR/M2YAJhVo5rw==
+  resolved "https://codeload.github.com/icmaa/storefront-query-builder/tar.gz/ab3d5445f520c58be330139bfb339efbe9a67d20"
   dependencies:
     clone-deep "^4.0.1"
 
