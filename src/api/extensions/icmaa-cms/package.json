@@ -6,8 +6,6 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "prismic-dom": "^2.1.0",
-    "prismic-javascript": "^2.1.1",
     "storyblok-js-client": "^2.0.0"
   }
 }

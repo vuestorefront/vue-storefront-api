@@ -1,7 +1,6 @@
 import { apiStatus } from '../../../lib/util'
 import { Router } from 'express'
 
-import prismicConnector from './connector/prismic'
 import storyblokConnector from './connector/storyblok'
 import { getClient as esClient } from '../../../lib/elastic'
 
@@ -15,11 +14,6 @@ module.exports = ({ config, db }) => {
 
     let serviceName = config.extensions.icmaaCms.service;
     switch (serviceName) {
-      case 'prismic':
-        await prismicConnector.fetch(req.query.type, req.query.uid, req.query.lang)
-          .then(response => apiStatus(res, response, 200))
-          .catch(error => apiStatus(res, error.message, 500))
-        break
       case 'storyblok':
         const { type, uid, lang } = req.query
         await storyblokConnector.fetch({ type, uid, lang })
