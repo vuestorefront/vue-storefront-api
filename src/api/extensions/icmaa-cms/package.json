@@ -1,11 +1,14 @@
 {
   "name": "icmaa-cms",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "cewald <c.ewald@impericon.com> and contributors",
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@types/qs": "^6.9.1",
+    "http2-client": "^1.3.3",
+    "qs": "^6.9.1",
     "storyblok-js-client": "^2.0.0"
   }
 }

@@ -1,8 +1,8 @@
 import pick from 'lodash/pick'
 import config from 'config'
-import StoryblokConnector from '../../connector/storyblok'
+import StoryblokClient from 'storyblok-js-client'
 
-const pluginMap = config.extensions.icmaaCms.storyblok.pluginFieldMap
+const pluginMap: Record<string, any>[] = config.get('extensions.icmaaCms.storyblok.pluginFieldMap')
 const metaFieldsToTransport = [{'name': 'uname'}, 'uuid', 'published_at', 'created_at', 'first_published_at']
 
 const getFieldMap = (key) => pluginMap.find(m => m.key === key)
@@ -18,7 +18,7 @@ export const extractPluginValues = (object) => {
           object[key] = map.values.length === 1 ? Object.values(values)[0] : values
         }
       } else if (v.type === 'doc') {
-        object[key] = StoryblokConnector.api().richTextResolver.render(object[key])
+        object[key] = new StoryblokClient({}).richTextResolver.render(object[key])
       }
     }
   }

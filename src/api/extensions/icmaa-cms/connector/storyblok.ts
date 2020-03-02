@@ -1,27 +1,46 @@
 import config from 'config'
-import StoryblokClient from 'storyblok-js-client'
+import qs from 'qs'
+import { get as http2get } from 'http2-client'
+
 import { objectKeysToCamelCase } from '../helpers/formatter'
 import { extractStoryContent, extractPluginValues } from '../helpers/formatter/storyblok'
-import { sortBy, pick } from 'lodash'
+import { sortBy, pick, merge } from 'lodash'
 
 class StoryblokConnector {
-  api () {
-    return new StoryblokClient({
-      accessToken: config.extensions.icmaaCms.storyblok.accessToken,
-      cache: {
-        clear: 'auto',
-        type: 'memory'
+  protected lang
+
+  public api () {
+    return {
+      get: (endpoint: string = 'cdn/stories', params: Record<string, any>): Promise<any> => {
+        const baseUrl = 'https://api.storyblok.com/v1'
+        const querystring: string = '?' + qs.stringify(
+          merge({ token: config.get('extensions.icmaaCms.storyblok.accessToken') }, params),
+          { encodeValuesOnly: true, arrayFormat: 'brackets' }
+        )
+
+        return new Promise((resolve) => {
+          let data = ''
+          http2get(
+            `${baseUrl}/${endpoint}${querystring}`,
+            response => {
+              response
+                .on('data', chunk => { data += chunk; })
+                .on('end', () => {
+                  resolve(JSON.parse(data))
+                })
+            })
+        })
       }
-    })
+    }
   }
 
-  matchLanguage (lang) {
+  public matchLanguage (lang) {
     lang = lang && lang !== 'default' ? lang.toLowerCase() : false
-    this.lang = lang && config.icmaa.mandant ? `${config.icmaa.mandant}_${lang}` : lang
+    this.lang = lang && config.get('icmaa.mandant') ? `${config.get('icmaa.mandant')}_${lang}` : lang
     return this.lang
   }
 
-  isJsonString (string) {
+  public isJsonString (string) {
     try {
       return JSON.parse(string)
     } catch (e) {
@@ -29,7 +48,7 @@ class StoryblokConnector {
     }
   }
 
-  async fetch ({ type, uid, lang }) {
+  public async fetch ({ type, uid, lang }) {
     try {
       this.matchLanguage(lang)
       return this.api().get('cdn/stories', {
@@ -40,7 +59,7 @@ class StoryblokConnector {
         }
       })
         .then(response => {
-          const story = response.data.stories.shift() || { }
+          const story = response.stories.shift() || { }
           const content = extractStoryContent(story)
           objectKeysToCamelCase(content)
           extractPluginValues(content)
@@ -53,7 +72,7 @@ class StoryblokConnector {
     }
   }
 
-  async search ({ type, q, lang, fields }) {
+  public async search ({ type, q, lang, fields }) {
     let queryObject = { 'identifier': { 'in': q } }
     if (this.isJsonString(q)) {
       queryObject = this.isJsonString(q)
@@ -67,7 +86,7 @@ class StoryblokConnector {
     }
   }
 
-  async searchRequest ({ queryObject, type, page = 1, results = [], fields }) {
+  public async searchRequest ({ queryObject, type, page = 1, results = [], fields }) {
     return this.api().get('cdn/stories', {
       'page': page,
       'per_page': 100,
@@ -77,7 +96,7 @@ class StoryblokConnector {
         ...queryObject
       }
     }).then(response => {
-      let stories = response.data.stories
+      let stories = response.stories
         .map(story => extractStoryContent(story))
         .map(story => objectKeysToCamelCase(story))
         .map(story => extractPluginValues(story))
@@ -97,13 +116,13 @@ class StoryblokConnector {
     })
   }
 
-  createAttributeOptionArray (options, nameKey = 'label', valueKey = 'value', sortKey = 'sort_order') {
+  public createAttributeOptionArray (options, nameKey: string|Function = 'label', valueKey: string = 'value', sortKey: string|boolean = 'sort_order') {
     let result = []
     options.forEach(option => {
       result.push({
         'name': typeof nameKey === 'function' ? nameKey(option) : option[nameKey],
         'value': option[valueKey],
-        'sort_order': sortKey !== false ? option[sortKey] : 1
+        'sort_order': sortKey !== false ? option[sortKey as string] : 1
       })
     });
 
