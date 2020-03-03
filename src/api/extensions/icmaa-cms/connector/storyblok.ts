@@ -24,7 +24,7 @@ class StoryblokConnector {
           let data = ''
           http2get(
             `${baseUrl}/${endpoint}${querystring}`,
-            { headers: { 'Accept-Encoding': 'gzip, deflate' } },
+            { headers: { 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache' } },
             response => {
               // Storyblok is using gzip on its request, so it isn't complete without uncompressing it.
               // The following block minds about the decompression using `zlib` of node.
