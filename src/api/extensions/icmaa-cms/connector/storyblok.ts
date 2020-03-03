@@ -15,9 +15,15 @@ class StoryblokConnector {
     return {
       get: (endpoint: string = 'cdn/stories', params: Record<string, any>): Promise<any> => {
         const baseUrl = 'https://api.storyblok.com/v1'
-        const cv = new Date().getTime()
+        const defaults = {
+          token: config.get('extensions.icmaaCms.storyblok.accessToken'),
+          // We need a timestamp for SSR cache-invalidation of storyblok
+          // https://www.storyblok.com/docs/api/content-delivery#topics/cache-invalidation
+          cv: new Date().getTime()
+        }
+
         const querystring: string = '?' + qs.stringify(
-          merge({ token: config.get('extensions.icmaaCms.storyblok.accessToken'), cv }, params),
+          merge(defaults, params),
           { encodeValuesOnly: true, arrayFormat: 'brackets' }
         )
 
