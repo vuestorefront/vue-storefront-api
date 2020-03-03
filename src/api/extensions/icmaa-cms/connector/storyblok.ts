@@ -1,6 +1,8 @@
 import config from 'config'
+
 import qs from 'qs'
 import { get as http2get } from 'http2-client'
+import zlib from 'zlib'
 
 import { objectKeysToCamelCase } from '../helpers/formatter'
 import { extractStoryContent, extractPluginValues } from '../helpers/formatter/storyblok'
@@ -22,9 +24,22 @@ class StoryblokConnector {
           let data = ''
           http2get(
             `${baseUrl}/${endpoint}${querystring}`,
+            { headers: { 'Accept-Encoding': 'gzip, deflate' } },
             response => {
-              response
-                .on('data', chunk => { data += chunk; })
+              // Storyblok is using gzip on its request, so it isn't complete without uncompressing it.
+              // The following block minds about the decompression using `zlib` of node.
+              // We could do this much simpler using `request`, `axios` or `fetch` but they won't support HTTP2.
+              var output
+              if (response.headers['content-encoding'] === 'gzip') {
+                var gzip = zlib.createGunzip()
+                response.pipe(gzip)
+                output = gzip
+              } else {
+                output = response
+              }
+
+              output
+                .on('data', chunk => { data += chunk })
                 .on('end', () => {
                   resolve(JSON.parse(data))
                 })
@@ -124,7 +139,7 @@ class StoryblokConnector {
         'value': option[valueKey],
         'sort_order': sortKey !== false ? option[sortKey as string] : 1
       })
-    });
+    })
 
     result = sortBy(result, ['sort_order', 'name'])
 
