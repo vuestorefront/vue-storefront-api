@@ -15,16 +15,22 @@ class StoryblokConnector {
     return {
       get: (endpoint: string = 'cdn/stories', params: Record<string, any>): Promise<any> => {
         const baseUrl = 'https://api.storyblok.com/v1'
+        const cv = new Date().getTime()
         const querystring: string = '?' + qs.stringify(
-          merge({ token: config.get('extensions.icmaaCms.storyblok.accessToken') }, params),
+          merge({ token: config.get('extensions.icmaaCms.storyblok.accessToken'), cv }, params),
           { encodeValuesOnly: true, arrayFormat: 'brackets' }
         )
+
+        const headers = {
+          'Accept-Encoding': 'gzip, deflate',
+          'Cache-Control': 'no-cache'
+        }
 
         return new Promise((resolve) => {
           let data = ''
           http2get(
             `${baseUrl}/${endpoint}${querystring}`,
-            { headers: { 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache' } },
+            { headers },
             response => {
               // Storyblok is using gzip on its request, so it isn't complete without uncompressing it.
               // The following block minds about the decompression using `zlib` of node.
