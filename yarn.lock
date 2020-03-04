@@ -4186,9 +4186,9 @@ lru-cache@^5.0.0:
     request "^2.88.0"
     sha1 "^1.1.1"
 
-"magento1-vsbridge-client@github:icmaa/magento1-vsbridge-client#5ae559c68c2bc12820b5f8175d4ad9f4a102ee84":
+"magento1-vsbridge-client@git+https://github.com/icmaa/magento1-vsbridge-client":
   version "0.1.0"
-  resolved "https://codeload.github.com/icmaa/magento1-vsbridge-client/tar.gz/5ae559c68c2bc12820b5f8175d4ad9f4a102ee84"
+  resolved "git+https://github.com/icmaa/magento1-vsbridge-client#5ae559c68c2bc12820b5f8175d4ad9f4a102ee84"
   dependencies:
     oauth-1.0a "^1.0.1"
     request "^2.72.0"
@@ -4203,9 +4203,9 @@ magento2-rest-client@0.0.2:
     request "^2.72.0"
     winston "^2.2.0"
 
-"magento2-rest-client@github:DivanteLtd/magento2-rest-client":
+"magento2-rest-client@git+https://github.com/DivanteLtd/magento2-rest-client":
   version "0.0.12"
-  resolved "https://codeload.github.com/DivanteLtd/magento2-rest-client/tar.gz/fb5adcb24fe25e097c2127a3ded5ef05e0fcb2f7"
+  resolved "git+https://github.com/DivanteLtd/magento2-rest-client#29cfac4c4f9982f99b7832621820f93dcf6f9dd4"
   dependencies:
     humps "^1.1.0"
     oauth-1.0a "^1.0.1"
@@ -6247,9 +6247,9 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
-"storefront-query-builder@github:icmaa/storefront-query-builder#feature/add-stock-filter-for-configurable-products":
+"storefront-query-builder@git+https://github.com/icmaa/storefront-query-builder#feature/add-stock-filter-for-configurable-products":
   version "0.0.9"
-  resolved "https://codeload.github.com/icmaa/storefront-query-builder/tar.gz/04bf3dd3bd28ddfc1f6b52a3176cffd85041f2c9"
+  resolved "git+https://github.com/icmaa/storefront-query-builder#04bf3dd3bd28ddfc1f6b52a3176cffd85041f2c9"
   dependencies:
     clone-deep "^4.0.1"
 
