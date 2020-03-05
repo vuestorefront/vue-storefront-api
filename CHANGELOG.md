@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add save address on place order - @lucasqm (#394)
+- Add ElasticSearch client support for HTTP authentication - @cewald (#397)
+- Add error handling for catalog and add header 'X-VS-Cache-Tags' to response - @gibkigonzo
 
 ### Fixed
 - Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
