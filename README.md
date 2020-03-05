@@ -85,6 +85,7 @@ Then, please do change the `config/local.json` to start using the new Elastic AP
 ```json
   "elasticsearch": {
     "host": "localhost",
+    "index": "vue_storefront_catalog",
     "port": 9200,
     "protocol": "http",
     "min_score": 0.01,
