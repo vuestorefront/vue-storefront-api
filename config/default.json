@@ -116,6 +116,12 @@
       ]
     }    
   },
+  "varnish": {
+    "host": "185.246.52.88",
+    "port": 80,
+    "method": "BAN",
+    "enabled": false
+  },
   "redis": {
     "host": "localhost",
     "port": 6379,
@@ -257,7 +263,8 @@
         "includeFields": [ "children_data", "id", "children_count", "sku", "name", "is_active", "parent_id", "level", "url_key" ]
       },
       "attribute": {
-        "includeFields": [ "attribute_code", "id", "entity_type_id", "options", "default_value", "is_user_defined", "frontend_label", "attribute_id", "default_frontend_label", "is_visible_on_front", "is_visible", "is_comparable" ]
+        "includeFields": [ "attribute_code", "id", "entity_type_id", "options", "default_value", "is_user_defined", "frontend_label", "attribute_id", "default_frontend_label", "is_visible_on_front", "is_visible", "is_comparable" ],
+        "loadByAttributeMetadata": false
       },
       "productList": {
         "sort": "",

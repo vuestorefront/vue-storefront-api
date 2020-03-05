@@ -217,5 +217,30 @@ export default ({config, db}) => {
     })
   });
 
+  /**
+   * POST for changing user's password after reset password with the token
+   */
+  userApi.post('/create-password', (req, res) => {
+    if (!req.body.email) {
+      return apiStatus(res, 'email not provided', 500);
+    }
+    if (!req.body.resetToken) {
+      return apiStatus(res, 'resetToken not provided', 500);
+    }
+    if (!req.body.newPassword) {
+      return apiStatus(res, 'newPassword not provided', 500);
+    }
+
+    const userProxy = _getProxy(req);
+    userProxy
+      .resetPasswordUsingResetToken(req.body)
+      .then(result => {
+        apiStatus(res, result, 200);
+      })
+      .catch(err => {
+        apiStatus(res, err, 500);
+      });
+  })
+
   return userApi
 }
