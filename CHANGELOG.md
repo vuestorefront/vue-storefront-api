@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
 - Add correct paths for production build - @cewald (#407)
+- Fix MSI default stock id value
 
 ## [1.11.0] - 2019.12.20
 
