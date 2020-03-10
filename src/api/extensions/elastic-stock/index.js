@@ -1,5 +1,5 @@
 import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../../lib/util';
-import { getClient as getElasticClient, adjustQuery } from '../../../lib/elastic'
+import { getClient as getElasticClient, adjustQuery, getHits } from '../../../lib/elastic'
 import { Router } from 'express';
 const bodybuilder = require('bodybuilder')
 
@@ -12,14 +12,13 @@ module.exports = ({
   const getStockList = (storeCode, skus) => {
     let storeView = getCurrentStoreView(storeCode)
     const esQuery = adjustQuery({
-      index: storeView.elasticsearch.indexName, // current index name
+      index: storeView.elasticsearch.index, // current index name
       type: 'product',
       _source_includes: ['stock'],
-      body: bodybuilder().filter('terms', 'visibility', [2, 3, 4]).andFilter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
+      body: bodybuilder().filter('term', 'status', 1).andFilter('terms', 'sku', skus).build()
     }, 'product', config)
     return getElasticClient(config).search(esQuery).then((products) => { // we're always trying to populate cache - when online
-      console.log(products)
-      return products.hits.hits.map(el => { return el._source.stock })
+      return getHits(products).map(el => { return el._source.stock })
     }).catch(err => {
       console.error(err)
     })

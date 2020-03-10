@@ -7,6 +7,7 @@ type Products @doc(description: "The Products object is the top-level object ret
     total_count: Int @doc(description: "The number of products returned")
     # filters: [LayerFilter] @doc(description: "Layered navigation filters array") // @TODO: add filters to response instead of aggregations
     aggregations: JSON @doc(description: "Layered navigation filters array as aggregations")
+    attribute_metadata: JSON @doc(description: "Transformed aggregations into attributes - you need to allow 'config.entities.attribute.loadByAttributeMetadata'")
     sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields")
 }
 
@@ -14,6 +15,7 @@ type ESResponse {
   hits: JSON
   suggest: JSON
   aggregations: JSON
+  attribute_metadata: JSON
 }
 
 type Query {

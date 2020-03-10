@@ -1,0 +1,46 @@
+version: '3.0'
+services:
+  es1:
+    container_name: elasticsearch
+    build: docker/elasticsearch/
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1    
+    volumes:
+      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xmx512m -Xms512m"
+    networks:
+      - vuestorefrontapi_some-net
+
+  kibana:
+    build: docker/kibana/
+    volumes:
+      - ./docker/kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - '5601:5601'
+    depends_on:
+      - es1
+    networks:
+      - vuestorefrontapi_some-net
+
+  redis:
+    image: 'redis:4-alpine'
+    ports:
+      - '6379:6379'
+    networks:
+      - vuestorefrontapi_some-net
+
+volumes:
+  esdat1:
+
+networks:
+  vuestorefrontapi_some-net:
+    external: true

@@ -4,6 +4,9 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
+import AttributeService from './attribute/service'
+import bodybuilder from 'bodybuilder'
+import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -17,7 +20,23 @@ function _cacheStorageHandler (config, result, hash, tags) {
   }
 }
 
-export default ({config, db}) => function (req, res, body) {
+function _outputFormatter (responseBody, format = 'standard') {
+  if (format === 'compact') { // simple formatter
+    delete responseBody.took
+    delete responseBody.timed_out
+    delete responseBody._shards
+    if (responseBody.hits) {
+      delete responseBody.hits.max_score
+      responseBody.total = responseBody.hits.total
+      responseBody.hits = responseBody.hits.hits.map(hit => {
+        return Object.assign(hit._source, { _score: hit._score })
+      })
+    }
+  }
+  return responseBody
+}
+
+export default ({config, db}) => async function (req, res, body) {
   let groupId = null
 
   // Request method handling: exit if not GET or POST
@@ -26,14 +45,18 @@ export default ({config, db}) => function (req, res, body) {
     throw new Error('ERROR: ' + req.method + ' request method is not supported.')
   }
 
-  let requestBody = {}
+  let responseFormat = 'standard'
+  let requestBody = req.body
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
       requestBody = JSON.parse(decodeURIComponent(req.query.request))
     }
-  } else {
-    requestBody = req.body
   }
+
+  if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
+    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody) })
+  }
+  if (req.query.response_format) responseFormat = req.query.response_format
 
   const urlSegments = req.url.split('/');
 
@@ -103,20 +126,41 @@ export default ({config, db}) => function (req, res, body) {
         let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
 
         if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
-
         if (entityType === 'product') {
-          resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
+          resultProcessor.process(_resBody.hits.hits, groupId).then(async (result) => {
             _resBody.hits.hits = result
-            _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-            res.json(_resBody);
+            if (config.get('varnish.enabled')) {
+              // Add tags to cache, so we can display them in response headers then
+              _cacheStorageHandler(config, {
+                ..._resBody,
+                tags: tagsArray
+              }, reqHash, tagsArray)
+            } else {
+              _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
+            }
+            if (_resBody.aggregations && config.entities.attribute.loadByAttributeMetadata) {
+              const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
+              // find attribute list
+              const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+              _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+            }
+            res.json(_outputFormatter(_resBody, responseFormat));
           }).catch((err) => {
             console.error(err)
           })
         } else {
           resultProcessor.process(_resBody.hits.hits).then((result) => {
             _resBody.hits.hits = result
-            _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-            res.json(_resBody);
+            if (config.get('varnish.enabled')) {
+              // Add tags to cache, so we can display them in response headers then
+              _cacheStorageHandler(config, {
+                ..._resBody,
+                tags: tagsArray
+              }, reqHash, tagsArray)
+            } else {
+              _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
+            }
+            res.json(_outputFormatter(_resBody, responseFormat));
           }).catch((err) => {
             console.error(err)
           })
@@ -133,6 +177,11 @@ export default ({config, db}) => function (req, res, body) {
     ).then(output => {
       if (output !== null) {
         res.setHeader('X-VS-Cache', 'Hit')
+        if (config.get('varnish.enabled')) {
+          const tagsHeader = output.tags.join(' ')
+          res.setHeader('X-VS-Cache-Tag', tagsHeader)
+          delete output.tags
+        }
         res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {

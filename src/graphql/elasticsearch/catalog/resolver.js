@@ -4,6 +4,7 @@ import { buildQuery } from '../queryBuilder';
 import esResultsProcessor from './processor'
 import { getIndexName } from '../mapping'
 import { adjustQuery } from './../../../lib/elastic'
+import AttributeService from './../../../api/attribute/service'
 
 const resolver = {
   Query: {
@@ -67,6 +68,13 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
   }
 
   response.aggregations = esResponse.aggregations
+
+  if (response.aggregations && config.entities.attribute.loadByAttributeMetadata) {
+    const attributeListParam = AttributeService.transformAggsToAttributeListParam(response.aggregations)
+    const attributeList = await AttributeService.list(attributeListParam, config, esIndex)
+    response.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+  }
+
   response.sort_fields = {}
   if (sortOptions.length > 0) {
     response.sort_fields.options = sortOptions
