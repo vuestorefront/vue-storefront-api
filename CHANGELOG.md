@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.1] - 2020.03.17
+
+### Added
+- Add save address on place order - @lucasqm (#394)
+- Add ElasticSearch client support for HTTP authentication - @cewald (#397)
+- Add error handling for catalog and add header 'X-VS-Cache-Tags' to response - @gibkigonzo
+
+### Fixed
+- Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
+- Add default ES index to config and update `getStockList` - @gibkigonzo (#405)
+- Makes elastic-stock extension compatible with both ES5 and ES7. Allows for stock fetch of configurable children that is set as "Not Visible Individually" - @didkan (#410)
+
+
 ## [1.11.0] - 2019.12.20
 
 ### Fixed

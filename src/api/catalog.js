@@ -4,6 +4,7 @@ import ProcessorFactory from '../processor/factory';
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
+import { apiError } from '../lib/util';
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -86,43 +87,41 @@ export default ({config, db}) => function (req, res, body) {
       body: requestBody,
       json: true,
       auth: auth
-    }, (_err, _res, _resBody) => { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
-      if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
-        const factory = new ProcessorFactory(config)
-        const tagsArray = []
-        if (config.server.useOutputCache && cache) {
-          const tagPrefix = entityType[0].toUpperCase() // first letter of entity name: P, T, A ...
-          tagsArray.push(entityType)
-          _resBody.hits.hits.map(item => {
-            if (item._source.id) { // has common identifier
-              tagsArray.push(`${tagPrefix}${item._source.id}`)
-            }
-          })
+    }, async (_err, _res, _resBody) => { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
+      if (_err || _resBody.error) {
+        apiError(res, _err || _resBody.error);
+        return
+      }
+      try {
+        if (_resBody && _resBody.hits && _resBody.hits.hits) { // we're signing up all objects returned to the client to be able to validate them when (for example order)
+          const factory = new ProcessorFactory(config)
+          const tagsArray = []
+          if (config.server.useOutputCache && cache) {
+            const tagPrefix = entityType[0].toUpperCase() // first letter of entity name: P, T, A ...
+            tagsArray.push(entityType)
+            _resBody.hits.hits.map(item => {
+              if (item._source.id) { // has common identifier
+                tagsArray.push(`${tagPrefix}${item._source.id}`)
+              }
+            })
+            const cacheTags = tagsArray.join(' ')
+            res.setHeader('X-VS-Cache-Tags', cacheTags)
+          }
+
+          let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
+
+          if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
+
+          const productGroupId = entityType === 'product' ? groupId : undefined
+          const result = await resultProcessor.process(_resBody.hits.hits, productGroupId)
+          _resBody.hits.hits = result
+          _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
+          res.json(_resBody);
+        } else { // no cache storage if no results from Elastic
+          res.json(_resBody);
         }
-
-        let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
-
-        if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
-
-        if (entityType === 'product') {
-          resultProcessor.process(_resBody.hits.hits, groupId).then((result) => {
-            _resBody.hits.hits = result
-            _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-            res.json(_resBody);
-          }).catch((err) => {
-            console.error(err)
-          })
-        } else {
-          resultProcessor.process(_resBody.hits.hits).then((result) => {
-            _resBody.hits.hits = result
-            _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-            res.json(_resBody);
-          }).catch((err) => {
-            console.error(err)
-          })
-        }
-      } else { // no cache storage if no results from Elastic
-        res.json(_resBody);
+      } catch (err) {
+        apiError(res, err);
       }
     });
   }
