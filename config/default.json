@@ -246,6 +246,7 @@
     "cms-data",
     "mail-service",
     "example-processor",
+    "example-custom-filter",
     "elastic-stock"
   ],
   "extensions": {
