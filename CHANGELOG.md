@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ElasticSearch client support for HTTP authentication - @cewald (#397)
 - Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
 - Varnish Cache with autoinvalidation by Cache tags as addon - @Fifciu
+- Add `resetPasswordUsingResetToken` to `magento1` platform - @cewald (#415)
 
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
 - Add correct paths for production build - @cewald (#407)
+- Fix MSI default stock id value
 - Add outputFormatter to response from cache - @gibkigonzo (#428)
 
 ## [1.11.0] - 2019.12.20
