@@ -60,7 +60,7 @@
     "ajv": "^6.4.0",
     "ajv-keywords": "^3.4.0",
     "body-parser": "^1.18.2",
-    "bodybuilder": "2.2.13",
+    "bodybuilder": "2.2.21",
     "commander": "^2.19.0",
     "compression": "^1.7.2",
     "config": "^1.30.0",
