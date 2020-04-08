@@ -271,6 +271,9 @@
       "resultProcessors": {
         "product": "my-product-processor"
       }
+    },
+    "example-custom-filter": {
+      "catalogFilter": [ "SampleFilter" ]
     }
   },
   "magento2": {
