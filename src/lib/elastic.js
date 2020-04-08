@@ -33,29 +33,24 @@ function adjustIndexName (indexName, entityType, config) {
 
 function adjustBackendProxyUrl (req, indexName, entityType, config) {
   let url
+  const queryString = require('query-string');
+  const parsedQuery = queryString.parseUrl(req.url).query
+
   if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
-    url = config.elasticsearch.host + ':' + config.elasticsearch.port + (req.query.request ? _updateQueryStringParameter(req.url, 'request', null) : req.url)
+    delete parsedQuery.request
+    delete parsedQuery.request_format
+    delete parsedQuery.response_format
+    url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + indexName + '/' + entityType + '/_search?' + queryString.stringify(parsedQuery)
   } else {
-    const queryString = require('query-string');
-    const parsedQuery = queryString.parseUrl(req.url).query
     parsedQuery._source_includes = parsedQuery._source_include
     parsedQuery._source_excludes = parsedQuery._source_exclude
     delete parsedQuery._source_exclude
     delete parsedQuery._source_include
     delete parsedQuery.request
+    delete parsedQuery.request_format
+    delete parsedQuery.response_format
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
   }
-  if (!url.startsWith('http')) {
-    url = config.elasticsearch.protocol + '://' + url
-  }
-  return url
-}
-
-/**
- * similar to `adjustBackendProxyUrl`, builds multi-entity query url
- */
-function buildMultiEntityUrl ({ config, includeFields = [], excludeFields = [] }) {
-  let url = `${config.elasticsearch.host}:${config.elasticsearch.port}/_search?_source_include=${includeFields.join(',')}&_source_exclude=${excludeFields.join(',')}`
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url
   }
@@ -79,15 +74,16 @@ function getHits (result) {
 }
 
 function getClient (config) {
-  const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-    node: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
-    apiVersion: config.elasticsearch.apiVersion,
-    requestTimeout: 5000
-  }
+  let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
+  const node = `${protocol}://${host}:${port}`
+
+  let auth
   if (config.elasticsearch.user) {
-    esConfig.auth = config.elasticsearch.user + ':' + config.elasticsearch.password
+    const { user, password } = config.elasticsearch
+    auth = { username: user, password }
   }
-  return new es.Client(esConfig)
+
+  return new es.Client({ node, auth, apiVersion, requestTimeout })
 }
 
 function putAlias (db, originalName, aliasName, next) {
@@ -272,6 +268,5 @@ module.exports = {
   getClient,
   getHits,
   adjustIndexName,
-  putMappings,
-  buildMultiEntityUrl
+  putMappings
 }

@@ -140,6 +140,9 @@ exports.default = {
             },
             sameAsBilling: {
               type: 'number'
+            },
+            save_address: {
+              type: 'number'              
             }
           }
         },
@@ -203,6 +206,9 @@ exports.default = {
               },
               sameAsBilling: {
                 type: 'number'
+              },
+              save_address: {
+                type: 'number'              
               }
             }
           }

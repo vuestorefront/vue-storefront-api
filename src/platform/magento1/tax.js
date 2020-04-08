@@ -23,8 +23,8 @@ class TaxProxy extends AbstractTaxProxy {
             if (store.elasticsearch.index === indexName) {
               taxRegion = store.tax.defaultRegion
               taxCountry = store.tax.defaultCountry
-              sourcePriceInclTax = store.tax.sourcePriceIncludesTax
-              finalPriceInclTax = store.tax.finalPriceIncludesTax
+              sourcePriceInclTax = store.tax.sourcePriceIncludesTax || null
+              finalPriceInclTax = store.tax.finalPriceIncludesTax || null
               this._storeConfigTax = store.tax
               break;
             }

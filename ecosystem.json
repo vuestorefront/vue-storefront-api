@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "api",
-      "script": "./dist/index.js",
+      "script": "./dist/src/index.js",
       "log_date_format": "YYYY-MM-DD HH:mm:ss",
       "ignore_watch": ["node_modules"]
     },
