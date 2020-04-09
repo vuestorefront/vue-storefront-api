@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Varnish Cache with autoinvalidation by Cache tags as addon - @Fifciu
 - Add `resetPasswordUsingResetToken` to `magento1` platform - @cewald (#415)
 - Add `composeError` in './magento2/o2m.js' - @flancer64 (#422)
+- Explicit data extraction from 'Error' objects - @flancer64 (#424)
 
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
