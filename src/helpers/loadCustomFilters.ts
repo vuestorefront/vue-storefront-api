@@ -9,7 +9,7 @@ export default async function loadModuleCustomFilters (config: Record<string, an
       const moduleFilter = config.extensions[mod][type + 'Filter']
       const dirPath = [__dirname, '../api/extensions/' + mod + '/filter/', type]
       for (const filterName of moduleFilter) {
-        const filePath = path.resolve(...dirPath, filterName + '.ts')
+        const filePath = path.resolve(...dirPath, filterName)
         filterPromises.push(
           import(filePath)
             .then(module => {
