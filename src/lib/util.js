@@ -78,15 +78,22 @@ export function apiStatus (res, result = 'OK', code = 200, meta = null) {
   return result;
 }
 
-/**  Creates a api error status Express Response object.
- *  @param {express.Response} res  Express HTTP Response
- *  @param {number} [code=200]    Status code to send on success
- *  @param {json} [result='OK']    Text message or result information object
+/**
+ *  Creates an error for API status of Express Response object.
+ *
+ *  @param {express.Response} res   Express HTTP Response
+ *  @param {object|string} error    Error object or error message
+ *  @return {json} [result='OK']    Text message or result information object
  */
-export function apiError (res, errorObj, code = 500) {
-  const result = errorObj.message ? errorObj.message : (errorObj.errorMessage ? errorObj.errorMessage : errorObj);
-  const resultCode = errorObj.code ? errorObj.code : code;
-  return apiStatus(res, result, resultCode)
+export function apiError (res, error) {
+  let errorCode = error.code || error.status || 500;
+  let errorMessage = error.errorMessage || error;
+  if (error instanceof Error) {
+    // Class 'Error' is not serializable with JSON.stringify, extract data explicitly.
+    errorCode = error.code || errorCode;
+    errorMessage = error.message;
+  }
+  return apiStatus(res, errorMessage, errorCode);
 }
 
 export function encryptToken (textToken, secret) {
