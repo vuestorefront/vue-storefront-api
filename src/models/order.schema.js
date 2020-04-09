@@ -142,7 +142,7 @@ exports.default = {
               type: 'number'
             },
             save_address: {
-              type: 'number'              
+              type: 'number'
             }
           }
         },
@@ -208,7 +208,7 @@ exports.default = {
                 type: 'number'
               },
               save_address: {
-                type: 'number'              
+                type: 'number'
               }
             }
           }
