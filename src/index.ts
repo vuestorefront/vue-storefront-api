@@ -71,4 +71,15 @@ app.use('/graphql', graphqlExpress(req => ({
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
+app.use((err, req, res, next) => {
+  const { statusCode, message, stack } = err;
+  res.status(statusCode).json({
+    code: statusCode,
+    result: config.get('server.showErrorStack') ? `
+      message: ${message};
+      stack: ${stack}
+    ` : message
+  });
+});
+
 export default app;

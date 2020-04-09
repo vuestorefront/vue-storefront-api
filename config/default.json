@@ -9,7 +9,8 @@
     "availableCacheTags": ["P", "C", "T", "A", "product", "category", "attribute", "taxrule"],
     "invalidateCacheKey": "aeSu7aip",
     "invalidateCacheForwarding": false,
-    "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag="
+    "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag=",
+    "showErrorStack": false
   },
   "orders": {
     "useServerQueue": false
