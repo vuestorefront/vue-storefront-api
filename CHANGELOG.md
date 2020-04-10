@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
 - Varnish Cache with autoinvalidation by Cache tags as addon - @Fifciu
 - Add `resetPasswordUsingResetToken` to `magento1` platform - @cewald (#415)
+- Update to `storefront-query-builder` version `1.0.0` - @cewald (#429)
 - Add `composeError` in './magento2/o2m.js' - @flancer64 (#422)
 - Explicit data extraction from 'Error' objects - @flancer64 (#424)
 

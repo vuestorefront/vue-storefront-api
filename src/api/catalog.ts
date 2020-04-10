@@ -6,8 +6,9 @@ import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
 import AttributeService from './attribute/service'
 import bodybuilder from 'bodybuilder'
+import loadCustomFilters from '../helpers/loadCustomFilters'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
-import { apiError } from '../lib/util';
+import { apiError } from '../lib/util'
 
 function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -55,7 +56,8 @@ export default ({config, db}) => async function (req, res, body) {
   }
 
   if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
-    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody) })
+    const customFilters = await loadCustomFilters(config)
+    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody), customFilters })
   }
   if (req.query.response_format) responseFormat = req.query.response_format
 
