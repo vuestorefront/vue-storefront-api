@@ -72,7 +72,7 @@ app.use('/graphql', graphqlExpress(req => ({
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 app.use((err, req, res, next) => {
-  const { statusCode, message, stack } = err;
+  const { statusCode, message = '', stack = '' } = err;
   const stackTrace = stack
     .split(/\r?\n/)
     .map(string => string.trim())
