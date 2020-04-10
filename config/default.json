@@ -246,6 +246,7 @@
     "cms-data",
     "mail-service",
     "example-processor",
+    "example-custom-filter",
     "elastic-stock"
   ],
   "extensions": {
@@ -270,6 +271,9 @@
       "resultProcessors": {
         "product": "my-product-processor"
       }
+    },
+    "example-custom-filter": {
+      "catalogFilter": [ "SampleFilter" ]
     }
   },
   "magento2": {

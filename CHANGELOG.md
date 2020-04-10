@@ -16,11 +16,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
 - Varnish Cache with autoinvalidation by Cache tags as addon - @Fifciu
 - Add `resetPasswordUsingResetToken` to `magento1` platform - @cewald (#415)
+- Update to `storefront-query-builder` version `1.0.0` - @cewald (#429)
+- Add `composeError` in './magento2/o2m.js' - @flancer64 (#422)
+- Explicit data extraction from 'Error' objects - @flancer64 (#424)
 
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
 - Add correct paths for production build - @cewald (#407)
 - Fix MSI default stock id value
+- Add outputFormatter to response from cache - @gibkigonzo (#428)
+
+
+## [1.11.1] - 2020.03.17
+
+### Added
+- Add save address on place order - @lucasqm (#394)
+- Add ElasticSearch client support for HTTP authentication - @cewald (#397)
+- Add error handling for catalog and add header 'X-VS-Cache-Tags' to response - @gibkigonzo
+
+### Fixed
+- Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
+- Add default ES index to config and update `getStockList` - @gibkigonzo (#405)
+- Makes elastic-stock extension compatible with both ES5 and ES7. Allows for stock fetch of configurable children that is set as "Not Visible Individually" - @didkan (#410)
+
 
 ## [1.11.0] - 2019.12.20
 

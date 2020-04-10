@@ -34,9 +34,36 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
   const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
   let currentStep = 1;
 
+  /**
+   * Internal function to compose Error object using messages about other errors.
+   *
+   * 'Error' constructor should contain one message object only.
+   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error)
+   *
+   * @param {string} message Main error message.
+   * @param {string|array|object} errors Additional error message or error object or array of array objects.
+   * @return {Error}
+   */
+  function composeError (message, errors) {
+    if (typeof errors === 'string') {
+      message = message + ' ' + errors;
+    } else if (Array.isArray(errors)) {
+      // case with array of validation errors (ajv.ErrorObject - node_modules/ajv/lib/ajv.d.ts)
+      errors.forEach((item) => {
+        const part = (typeof item === 'string') ? item : (item.message || '');
+        message = (message + ' ' + part).trim();
+      });
+    } else if (errors && (errors.message || errors.errorMessage)) {
+      // I don't know possible structure of an 'errors' in this case, so I take 'apiError()' from 'src/lib/util.js'
+      // we should use debugger to inspect this case in more details and modify code.
+      message = message + ' ' + (errors.message || errors.errorMessage);
+    }
+    return new Error(message.trim());
+  }
+
   if (!validate(orderData)) { // schema validation of upcoming order
     logger.error(THREAD_ID + ' Order validation error!', validate.errors);
-    done(new Error('Error while validating order object', validate.errors));
+    done(composeError('Error while validating order object.', validate.errors));
 
     if (job) job.progress(currentStep++, TOTAL_STEPS);
     return;
@@ -248,28 +275,28 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
                 })
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
-                if (job) job.attempts(6).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-                return done(new Error('Error placing an order', err));
+                if (job) job.attempts(6).backoff({delay: 30 * 1000, type: 'fixed'}).save()
+                return done(composeError('Error placing an order.', err));
               })
             }).catch((errors) => {
               logger.error('Error while adding shipping address', errors)
               if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
-              return done(new Error('Error while adding shipping address', errors));
+              return done(composeError('Error while adding shipping address.', errors));
             })
           }).catch((errors) => {
             logger.error('Error while adding billing address', errors)
             if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
-            return done(new Error('Error while adding billing address', errors));
+            return done(composeError('Error while adding billing address.', errors));
           })
         }).catch((errors) => {
           logger.error('Error while synchronizing country list', errors)
           if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-          return done(new Error('Error while syncing country list', errors));
+          return done(composeError('Error while syncing country list.', errors));
         })
       }).catch((errors) => {
         logger.error('Error while adding products', errors)
         if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-        return done(new Error('Error while adding products', errors));
+        return done(composeError('Error while adding products.', errors));
       })
     })
   }
@@ -291,7 +318,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
         //      })
       }).catch(error => {
         logger.info(error)
-        return done(new Error('Error while adding products', error));
+        return done(composeError('Error while adding products.', error));
       }) // TODO: assign the guest cart with user at last?
     } else {
       logger.info(THREAD_ID + '< Using cartId provided with the order', cartId)
