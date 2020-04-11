@@ -10,9 +10,9 @@ import loadCustomFilters from '../helpers/loadCustomFilters'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 import { apiError } from '../lib/util'
 
-function _cacheStorageHandler (config, result, hash, tags) {
+async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
-    cache.set(
+    return cache.set(
       'api:' + hash,
       result,
       tags
@@ -155,7 +155,7 @@ export default ({config, db}) => async function (req, res, body) {
           } else {
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
           }
-          res.json(_outputFormatter(_resBody, responseFormat));
+          res.json(_outputFormatter(Object.assign({}, _resBody), responseFormat))
         } else { // no cache storage if no results from Elastic
           res.json(_resBody);
         }
@@ -176,7 +176,7 @@ export default ({config, db}) => async function (req, res, body) {
           res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
-        res.json(output)
+        res.json(_outputFormatter(output, responseFormat))
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {
         res.setHeader('X-VS-Cache', 'Miss')
