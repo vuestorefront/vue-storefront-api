@@ -176,7 +176,7 @@ export default ({config, db}) => async function (req, res, body) {
           res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
-        res.json(_outputFormatter(output, responseFormat));
+        res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {
         res.setHeader('X-VS-Cache', 'Miss')
