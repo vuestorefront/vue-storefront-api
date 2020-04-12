@@ -1,6 +1,6 @@
-import jwt from 'jwt-simple';
-import request from 'request';
-import ProcessorFactory from '../processor/factory';
+import jwt from 'jwt-simple'
+import request from 'request'
+import ProcessorFactory from '../processor/factory'
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
@@ -61,12 +61,12 @@ export default ({config, db}) => async function (req, res, body) {
   }
   if (req.query.response_format) responseFormat = req.query.response_format
 
-  const urlSegments = req.url.split('/');
+  const urlSegments = req.url.split('/')
 
   let indexName = ''
   let entityType = ''
   if (urlSegments.length < 2) { throw new Error('No index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/<entity_type>_search') } else {
-    indexName = urlSegments[1];
+    indexName = urlSegments[1]
 
     if (urlSegments.length > 2) { entityType = urlSegments[2] }
 
@@ -94,14 +94,14 @@ export default ({config, db}) => async function (req, res, body) {
   delete requestBody.groupToken
   delete requestBody.groupId
 
-  let auth = null;
+  let auth = null
 
   // Only pass auth if configured
   if (config.elasticsearch.user || config.elasticsearch.password) {
     auth = {
       user: config.elasticsearch.user,
       pass: config.elasticsearch.password
-    };
+    }
   }
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
@@ -114,7 +114,7 @@ export default ({config, db}) => async function (req, res, body) {
       auth: auth
     }, async (_err, _res, _resBody) => { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
       if (_err || _resBody.error) {
-        apiError(res, _err || _resBody.error);
+        apiError(res, _err || _resBody.error)
         return
       }
       try {
@@ -146,6 +146,9 @@ export default ({config, db}) => async function (req, res, body) {
             const attributeList = await AttributeService.list(attributeListParam, config, indexName)
             _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
           }
+
+          _resBody = _outputFormatter(_resBody, responseFormat)
+
           if (config.get('varnish.enabled')) {
             // Add tags to cache, so we can display them in response headers then
             _cacheStorageHandler(config, {
@@ -155,14 +158,13 @@ export default ({config, db}) => async function (req, res, body) {
           } else {
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
           }
-          res.json(_outputFormatter(Object.assign({}, _resBody), responseFormat))
-        } else { // no cache storage if no results from Elastic
-          res.json(_resBody);
         }
+
+        res.json(_resBody)
       } catch (err) {
-        apiError(res, err);
+        apiError(res, err)
       }
-    });
+    })
   }
 
   if (config.server.useOutputCache && cache) {
@@ -176,7 +178,7 @@ export default ({config, db}) => async function (req, res, body) {
           res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
-        res.json(_outputFormatter(output, responseFormat))
+        res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {
         res.setHeader('X-VS-Cache', 'Miss')
