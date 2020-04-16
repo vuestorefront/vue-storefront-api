@@ -96,18 +96,16 @@ const es5RebuildCommand = (cmd) => { // TODO: add parallel processing
   })
 }
 
-const rebuildCommandFactory = (cmd) => {
-  if (parseInt(config.elasticsearch.apiVersion) < 6) {
-    return es5RebuildCommand(cmd)
-  } else {
-    return es7RebuildCommand(cmd)
-  }
-}
-
 program
   .command('rebuild')
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
-  .action(rebuildCommandFactory)
+  .action((cmd) => {
+    if (parseInt(config.elasticsearch.apiVersion) < 6) {
+      return es5RebuildCommand(cmd)
+    } else {
+      return es7RebuildCommand(cmd)
+    }
+  })
 
 /**
  * CREATE INDEX
@@ -159,18 +157,16 @@ const es5NewCommand = (cmd) => { // TODO: add parallel processing
   })
 }
 
-const newCommandFactory = (cmd) => {
-  if (parseInt(config.elasticsearch.apiVersion) < 6) {
-    return es5NewCommand(cmd)
-  } else {
-    return es7NewCommand(cmd)
-  }
-}
-
 program
   .command('new')
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
-  .action(newCommandFactory)
+  .action((cmd) => {
+    if (parseInt(config.elasticsearch.apiVersion) < 6) {
+      return es5NewCommand(cmd)
+    } else {
+      return es7NewCommand(cmd)
+    }
+  })
 
 /**
  * OTHERS COMMANDS
