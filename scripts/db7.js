@@ -51,10 +51,20 @@ program
     }, 1000)
   })
 
+const asyncCreateIndex = (es, common, indexName, collectionName) => new Promise((resolve, reject) => {
+  es.createIndex(common.db, indexName + '_' + collectionName, collectionName, (err) => {
+    if (err) {
+      reject(err)
+    } else {
+      resolve()
+    }
+  })
+})
+
 program
   .command('new')
   .option('-i|--indexName <indexName>', 'name of the Elasticsearch index', config.elasticsearch.indices[0])
-  .action((cmd) => { // TODO: add parallel processing
+  .action(async (cmd) => { // TODO: add parallel processing
     if (!cmd.indexName) {
       console.error('error: indexName must be specified');
       process.exit(1);
@@ -63,19 +73,14 @@ program
     console.log('** Hello! I am going to create NEW ES index')
     const indexName = cmd.indexName
 
-    let waitingCounter = 0
-    for (var indexTypeIterator in config.elasticsearch.indexTypes) {
-      var collectionName = config.elasticsearch.indexTypes[indexTypeIterator]
-      es.createIndex(common.db, indexName + '_' + collectionName, collectionName, (err) => {
-        if (err) {
-          console.log(err)
-        }
-        waitingCounter++
-      })
+    for (let collectionName of config.elasticsearch.indexTypes) {
+      try {
+        await asyncCreateIndex(es, common, indexName, collectionName)
+      } catch (err) {
+        console.log(JSON.stringify(err, null, 2))
+      }
     }
-    setInterval(() => {
-      if (waitingCounter === config.elasticsearch.indexTypes.length) process.exit(0)
-    }, 1000)
+    process.exit(0)
   })
 
 program

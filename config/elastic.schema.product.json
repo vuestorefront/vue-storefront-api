@@ -76,6 +76,25 @@
        "tax_class_id": {"type": "integer"},
        "gender": {"type": "integer"},
        "material": {"type": "integer"},
-       "category_gear": {"type": "integer"}
+       "category_gear": {"type": "integer"},
+       "attributes_metadata": {
+            "properties": {
+                "id": {"type": "integer"},
+                "attribute_id": {"type": "integer"},
+                "default_frontend_label": {"type": "text"},
+                "is_visible_on_front": {"type": "boolean"},
+                "is_visible" : {"type": "boolean"},
+                "frontend_input": {"type": "text"},
+                "is_user_defined": {"type": "boolean"},
+                "is_comparable": {"type": "boolean"},
+                "attribute_code": {"type": "text"},
+                "options": {
+                    "properties": {
+                        "value": {"type": "text"},
+                        "label": {"type": "text"}
+                    }
+                }
+            }
+        }
     }
 }
