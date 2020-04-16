@@ -52,6 +52,7 @@ const es7RebuildCommand = (cmd) => { // TODO: add parallel processing
 }
 
 const es5RebuildCommand = (cmd) => { // TODO: add parallel processing
+  console.warn(`es5 is deprecated and will be removed in 1.13`)
   if (!cmd.indexName) {
     console.error('error: indexName must be specified');
     process.exit(1);
@@ -140,6 +141,7 @@ const es7NewCommand = async (cmd) => { // TODO: add parallel processing
 }
 
 const es5NewCommand = (cmd) => { // TODO: add parallel processing
+  console.warn(`es5 is deprecated and will be removed in 1.13`)
   if (!cmd.indexName) {
     console.error('error: indexName must be specified');
     process.exit(1);
