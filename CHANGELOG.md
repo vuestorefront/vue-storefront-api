@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update to `storefront-query-builder` version `1.0.0` - @cewald (#429)
 - Add `composeError` in './magento2/o2m.js' - @flancer64 (#422)
 - Explicit data extraction from 'Error' objects - @flancer64 (#424)
+- Merge scripts: db7 => db, elastic7=>elastic and add support for es7 in yarn mage2vs import - @gibkigonzo (#436)
 
 ### Fixed
 - add es7 support for map url module and fixed default index for es config - @gibkigonzo
