@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix MSI default stock id value
 - Add outputFormatter to response from cache - @gibkigonzo (#428)
 - disable showing stack for invalid requests - @gibkigonzo (#431)
-
+- Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
 
 ## [1.11.1] - 2020.03.17
 
