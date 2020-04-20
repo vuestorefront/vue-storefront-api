@@ -22,4 +22,5 @@
   },
   "elasticsearch": {
     "requestTimeout": 60000
+  }
 }
