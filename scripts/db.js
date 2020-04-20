@@ -23,19 +23,19 @@ const es7RebuildCommand = (cmd) => { // TODO: add parallel processing
     console.log(`** Creating temporary index ${tempIndex}`)
     es.createIndex(common.db, tempIndex, collectionName, (err) => {
       if (err) {
-        console.log(err)
+        console.log(JSON.stringify(err, null, 2))
       }
 
       console.log(`** We will reindex ${originalIndex} with the current schema`)
       es.reIndex(common.db, originalIndex, tempIndex, (err) => {
         if (err) {
-          console.log(err)
+          console.log(JSON.stringify(err, null, 2))
         }
 
         console.log('** Removing the original index')
         es.deleteIndex(common.db, originalIndex, (err) => {
           if (err) {
-            console.log(err)
+            console.log(JSON.stringify(err, null, 2))
           }
 
           console.log('** Creating alias')
