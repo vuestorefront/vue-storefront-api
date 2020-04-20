@@ -134,6 +134,7 @@ function reIndex (db, fromIndexName, toIndexName, next) {
   db.reindex({
     wait_for_completion: true,
     waitForCompletion: true,
+    timeout: 360,
     body: {
       'source': {
         'index': fromIndexName
