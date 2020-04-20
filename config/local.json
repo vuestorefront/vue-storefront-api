@@ -19,5 +19,7 @@
     "attribute": {
       "loadByAttributeMetadata": true
     }
-  }
+  },
+  "elasticsearch": {
+    "requestTimeout": 60000
 }
