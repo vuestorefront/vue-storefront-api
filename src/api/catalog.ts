@@ -9,6 +9,8 @@ import bodybuilder from 'bodybuilder'
 import loadCustomFilters from '../helpers/loadCustomFilters'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 import { apiError } from '../lib/util'
+import configureProducts from './product/configure'
+import prepareProducts from './product/prepare'
 
 async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -145,8 +147,14 @@ export default ({config, db}) => async function (req, res, body) {
             // find attribute list
             const attributeList = await AttributeService.list(attributeListParam, config, indexName)
             _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+            _resBody.hits.hits = await prepareProducts({
+              products: _resBody.hits.hits,
+              attribute_metadata: _resBody.attribute_metadata,
+              options: {
+                indexName
+              }
+            })
           }
-
           _resBody = _outputFormatter(_resBody, responseFormat)
 
           if (config.get('varnish.enabled')) {
@@ -159,7 +167,12 @@ export default ({config, db}) => async function (req, res, body) {
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
           }
         }
-
+        // if (entityType === 'product') {
+        //   _resBody.hits.hits = configureProducts({
+        //     products: _resBody.hits.hits,
+        //     attribute_metadata: _resBody.attribute_metadata
+        //   })
+        // }
         res.json(_resBody)
       } catch (err) {
         apiError(res, err)
@@ -178,6 +191,12 @@ export default ({config, db}) => async function (req, res, body) {
           res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
+        // if (entityType === 'product') {
+        //   output.hits = configureProducts({
+        //     products: output.hits,
+        //     attribute_metadata: output.attribute_metadata
+        //   })
+        // }
         res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {
