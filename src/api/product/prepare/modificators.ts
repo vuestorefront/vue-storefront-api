@@ -1,40 +1,34 @@
-import { queryProducts } from './service';
-import { hasConfigurableChildren, isGroupedProduct, isBundleProduct } from './helpers';
+import { Product } from './../types';
+import { preConfigureProduct } from './';
+import { queryProducts } from './../service'
+import { isGroupedProduct, isBundleProduct } from './../helpers'
 import config from 'config'
 
-type Product = any
-type AttributeMetadata = any
-interface PrepareProductsOptions {
-  setFirstVarianAsDefaultInURL?: boolean,
-  prefetchGroupProducts?: boolean,
-  indexName?: string
-}
-
-const setDefaultQty = (product) => {
+export const setDefaultQty = (product) => {
   // set product quantity to 1
   if (!product.qty) {
     product.qty = 1
   }
 }
 
-const addParentSku = (product) => {
+export const setParentSku = (product) => {
   if (!product.parentSku) {
-    product.parentSku = product.sku;
+    product.parentSku = product.sku
   }
 }
 
-const setFirstVariantAsDefault = (product, isFirstVariantAsDefaultInURL) => {
+export const setFirstVariantAsDefault = (product, isFirstVariantAsDefaultInURL) => {
   if (isFirstVariantAsDefaultInURL) {
-    product.sku = product.configurable_children[0].sku;
+    product.sku = product.configurable_children[0].sku
   }
 }
 
-const setDefaultObjects = (product) => {
+export const setDefaultObjects = (product) => {
   product.errors = {}; // this is an object to store validation result for custom options and others
   product.info = {};
 }
 
-const setProductLink = async (productLink, associatedProduct) => {
+export const setProductLink = async (productLink, associatedProduct) => {
   if (associatedProduct) {
     productLink.product = await preConfigureProduct({ product: associatedProduct })
     productLink.product.qty = productLink.qty || 1
@@ -43,7 +37,7 @@ const setProductLink = async (productLink, associatedProduct) => {
   }
 }
 
-const setupAssociated = async (product, prefetchGroupProducts, indexName): Promise<any> => {
+export const setAssociatedProducts = async (product, prefetchGroupProducts, indexName): Promise<Product> => {
   if (!prefetchGroupProducts) return product
 
   if (isGroupedProduct(product) && product.product_links) {
@@ -85,45 +79,3 @@ const setupAssociated = async (product, prefetchGroupProducts, indexName): Promi
 
   return product
 }
-
-interface PreConfigureProductParams {
-  product: Product,
-  options?: PrepareProductsOptions
-}
-const preConfigureProduct = async ({
-  product,
-  options: {
-    setFirstVarianAsDefaultInURL = false,
-    prefetchGroupProducts = true,
-    indexName = ''
-  } = {}
-}: PreConfigureProductParams) => {
-  const isFirstVariantAsDefaultInURL = setFirstVarianAsDefaultInURL && hasConfigurableChildren(product)
-
-  setDefaultQty(product)
-  setDefaultObjects(product)
-  addParentSku(product)
-  setFirstVariantAsDefault(product, isFirstVariantAsDefaultInURL)
-  await setupAssociated(product, prefetchGroupProducts, indexName)
-
-  return product;
-};
-
-interface PrepareProductsParams {
-  products: Product[],
-  attribute_metadata?: AttributeMetadata[],
-  options?: PrepareProductsOptions
-}
-const prepareProducts = async ({
-  products,
-  attribute_metadata,
-  options = {}
-}: PrepareProductsParams) => {
-  const mapProducts = await Promise.all(products.map(async (hit) => {
-    const preparedProduct = await preConfigureProduct({ product: hit._source, options })
-    return { ...hit, _source: preparedProduct }
-  }))
-  return products
-}
-
-export default prepareProducts
