@@ -40,29 +40,6 @@ function _outputFormatter (responseBody, format = 'standard') {
   return responseBody
 }
 
-function _assignHits (responseBody, hits, format = 'standard') {
-  switch (format) {
-    case 'standard': {
-      responseBody.hits.hits = hits
-      return
-    }
-    default: {
-      responseBody.hits = hits
-    }
-  }
-}
-
-function _getHits (responseBody, format = 'standard') {
-  switch (format) {
-    case 'standard': {
-      return responseBody.hits.hits
-    }
-    default: {
-      return responseBody.hits
-    }
-  }
-}
-
 export default ({config, db}) => async function (req, res, body) {
   let groupId = null
 
@@ -173,9 +150,16 @@ export default ({config, db}) => async function (req, res, body) {
             _resBody.hits.hits = await prepareProducts({
               products: _resBody.hits.hits,
               options: {
-                indexName
+                reqUrl: req.url,
+                indexName,
+                setFirstVarianAsDefaultInURL: false,
+                prefetchGroupProducts: true
               }
             })
+            // _resBody.hits.hits = configureProducts({
+            //   products: _resBody.hits.hits,
+            //   attribute_metadata: _resBody.attribute_metadata
+            // })
           }
           _resBody = _outputFormatter(_resBody, responseFormat)
 
@@ -188,13 +172,6 @@ export default ({config, db}) => async function (req, res, body) {
           } else {
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
           }
-        }
-        if (entityType === 'product') {
-          const configuredProducts = configureProducts({
-            products: _getHits(_resBody, responseFormat),
-            attribute_metadata: _resBody.attribute_metadata
-          })
-          _assignHits(_resBody, configuredProducts, responseFormat)
         }
         res.json(_resBody)
       } catch (err) {

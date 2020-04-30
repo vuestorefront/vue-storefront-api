@@ -3,12 +3,15 @@ export type Product = any
 interface PrepareProductsOptions {
   setFirstVarianAsDefaultInURL?: boolean,
   prefetchGroupProducts?: boolean,
-  indexName?: string
+  indexName?: string,
+  reqUrl?: string
 }
 
 export interface PreConfigureProductParams {
   product: Product,
-  options?: PrepareProductsOptions
+  options?: PrepareProductsOptions,
+  _sourceInclude: any,
+  _sourceExclude: any
 }
 
 export interface PrepareProductsParams {
