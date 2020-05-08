@@ -97,7 +97,6 @@ export default ({config, db}) => async function (req, res, body) {
   delete requestBody.groupId
 
   let auth = null
-
   // Only pass auth if configured
   if (config.elasticsearch.user || config.elasticsearch.password) {
     auth = {
@@ -147,6 +146,8 @@ export default ({config, db}) => async function (req, res, body) {
             // find attribute list
             const attributeList = await AttributeService.list(attributeListParam, config, indexName)
             _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+          }
+          if (entityType === 'product') {
             _resBody.hits.hits = await prepareProducts({
               products: _resBody.hits.hits,
               options: {
@@ -156,10 +157,18 @@ export default ({config, db}) => async function (req, res, body) {
                 prefetchGroupProducts: true
               }
             })
-            // _resBody.hits.hits = configureProducts({
-            //   products: _resBody.hits.hits,
-            //   attribute_metadata: _resBody.attribute_metadata
-            // })
+            _resBody.hits.hits = await configureProducts({
+              products: _resBody.hits.hits,
+              attribute_metadata: _resBody.attribute_metadata,
+              configuration: JSON.parse(req.query.filters || '{}'),
+              options: {
+                fallbackToDefaultWhenNoAvailable: true,
+                setProductErrors: true,
+                setConfigurableProductOptions: true,
+                filterUnavailableVariants: false
+              },
+              request: req
+            })
           }
           _resBody = _outputFormatter(_resBody, responseFormat)
 

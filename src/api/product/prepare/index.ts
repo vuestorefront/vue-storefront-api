@@ -6,7 +6,7 @@ import {
   setAssociatedProducts
 } from './modificators';
 import { hasConfigurableChildren } from './../helpers'
-import { PreConfigureProductParams, PrepareProductsParams } from '../types'
+import { PrepareProductParams, PrepareProductsParams } from '../types'
 
 function getIncludeExclude (reqUrl: string): { _sourceInclude: any, _sourceExclude: any } {
   const queryString = require('query-string');
@@ -27,14 +27,12 @@ export async function preConfigureProduct ({
   } = {},
   _sourceInclude = null,
   _sourceExclude = null
-}: PreConfigureProductParams) {
-  const isFirstVariantAsDefaultInURL = setFirstVarianAsDefaultInURL && hasConfigurableChildren(product)
-
+}: PrepareProductParams) {
   // base product modifications
   setDefaultQty(product)
   setDefaultObjects(product)
   setParentSku(product)
-  setFirstVariantAsDefault(product, { isFirstVariantAsDefaultInURL })
+  setFirstVariantAsDefault(product, { isFirstVariantAsDefaultInURL: setFirstVarianAsDefaultInURL && hasConfigurableChildren(product) })
 
   // setup bundle or group product
   await setAssociatedProducts(product, { prefetchGroupProducts, indexName }, { _sourceInclude, _sourceExclude })

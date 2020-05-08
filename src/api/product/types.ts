@@ -7,7 +7,7 @@ interface PrepareProductsOptions {
   reqUrl?: string
 }
 
-export interface PreConfigureProductParams {
+export interface PrepareProductParams {
   product: Product,
   options?: PrepareProductsOptions,
   _sourceInclude: any,
@@ -19,8 +19,17 @@ export interface PrepareProductsParams {
   options?: PrepareProductsOptions
 }
 
+interface ConfigureProductsOptions {
+  fallbackToDefaultWhenNoAvailable?: boolean,
+  setProductErrors?: boolean,
+  setConfigurableProductOptions?: boolean,
+  filterUnavailableVariants?: boolean
+}
+
 export interface ConfigureProductsParams {
   products: Product[],
+  configuration: any,
   attribute_metadata?: any[],
-  options?: PrepareProductsOptions
+  options?: ConfigureProductsOptions,
+  request: any
 }
