@@ -25,7 +25,7 @@ function getConfigurationMatchLevel (configuration, variant): number {
       }
 
       return [].concat(configuration[configProperty])
-        .map(f => toString(f.id))
+        .map(f => typeof f === 'object' ? toString(f.id) : f)
         .includes(toString(variantPropertyId))
     })
     .filter(Boolean)
@@ -64,28 +64,19 @@ function findConfigurableVariant ({ product, configuration = null, selectDefault
 }
 
 export function getDesiredSelectedVariant (product, configuration, { fallbackToDefaultWhenNoAvailable }) {
-  let isDesiredProductFound = false
   let selectedVariant = findConfigurableVariant({ product, configuration, availabilityCheck: true })
   if (!selectedVariant) {
     if (fallbackToDefaultWhenNoAvailable) {
       selectedVariant = findConfigurableVariant({ product, selectDefaultChildren: true, availabilityCheck: true }) // return first available child
-      isDesiredProductFound = false
-    } else {
-      isDesiredProductFound = false
     }
-  } else {
-    isDesiredProductFound = true
   }
 
-  return {
-    selectedVariant,
-    isDesiredProductFound
-  }
+  return selectedVariant
 }
 
 export function omitSelectedVariantFields (selectedVariant) {
   const hasImage = selectedVariant && selectedVariant.image && selectedVariant.image !== 'no_selection'
-  const fieldsToOmit = ['name']
+  const fieldsToOmit = ['name', 'visibility']
   if (!hasImage) fieldsToOmit.push('image')
   selectedVariant = omit(selectedVariant, fieldsToOmit)
 }

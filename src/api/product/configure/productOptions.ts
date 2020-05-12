@@ -2,6 +2,9 @@ import toString from 'lodash/toString'
 // import trim from 'lodash/trim'
 
 function optionLabel (attribute, { attributeKey, searchBy = 'code', optionId }) {
+  if (!attribute.labels) {
+    attribute.labels = {}
+  }
   let attrCache = attribute.labels[attributeKey]
 
   if (attrCache) {
@@ -66,7 +69,6 @@ export function getProductConfiguration ({ product, selectedVariant, attribute }
         searchBy: 'code',
         optionId: selectedOption.value
       })
-
     currentProductOption[attributeCode] = {
       attribute_code: attributeCode,
       id: String(selectedOption.value),
@@ -122,8 +124,8 @@ export function getAllProductOptions ({ configurableOptions, configuration }) {
     }))
     .filter(({ productOption }) => productOption)
     .map(({ configOption, productOption }) => ({
-      option_id: productOption.attribute_id,
-      option_value: configOption.id,
+      option_id: Number(productOption.attribute_id),
+      option_value: Number(configOption.id),
       label: productOption.label || configOption.attribute_code,
       value: configOption.label
     }))

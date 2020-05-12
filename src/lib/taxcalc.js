@@ -1,4 +1,5 @@
 import camelCase from 'lodash/camelCase'
+import get from 'lodash/get'
 
 function isSpecialPriceActive (fromDate, toDate) {
   if (!fromDate && !toDate) {
@@ -149,6 +150,17 @@ export function updateProductPrices ({ product, rate, sourcePriceInclTax = false
           tax: configurableChild.special_price_tax,
           deprecatedPriceFieldsSupport
         })
+      }
+    }
+  }
+
+  if (product.bundle_options) {
+    for (let bundleOption of product.bundle_options) {
+      for (let productLink of bundleOption.product_links) {
+        const productBundle = get(productLink, 'product', null)
+        if (productBundle) {
+          updateProductPrices({ product: productBundle, rate, sourcePriceInclTax, deprecatedPriceFieldsSupport, finalPriceInclTax })
+        }
       }
     }
   }

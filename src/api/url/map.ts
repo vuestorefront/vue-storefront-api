@@ -3,6 +3,8 @@ import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../lib/u
 import { getClient as getElasticClient } from '../../lib/elastic'
 import ProcessorFactory from '../../processor/factory'
 import get from 'lodash/get'
+import prepareProducts from '../product/prepare'
+import configureProducts from '../product/configure'
 
 const adjustQueryForOldES = ({ config }) => {
   const searchedEntities = get(config, 'urlModule.map.searchedEntities', [])
@@ -92,12 +94,30 @@ const map = ({ config }) => {
       if (result && checkFieldValueEquality({ config, result, value: req.body.url })) {
         result = adjustResultType({ result, config, indexName })
         if (result._type === 'product') {
+          if (config.entities.product.enableProductNext) {
+            const configuration = JSON.parse(req.query.filters || '{}')
+            const options = JSON.parse(req.query.options || '{}')
+            esResponse.body.hits.hits = await prepareProducts({
+              products: esResponse.body.hits.hits,
+              options: {
+                reqUrl: req.url,
+                indexName,
+                ...options
+              }
+            })
+            esResponse.body.hits.hits = await configureProducts({
+              products: esResponse.body.hits.hits,
+              attributes_metadata: [],
+              configuration,
+              options,
+              request: req
+            })
+          }
           const factory = new ProcessorFactory(config)
           let resultProcessor = factory.getAdapter('product', indexName, req, res)
           if (!resultProcessor) {
             resultProcessor = factory.getAdapter('default', indexName, req, res)
           }
-
           resultProcessor
             .process(esResponse.body.hits.hits, null)
             .then(pResult => {

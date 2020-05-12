@@ -361,7 +361,8 @@
         "includeFields": null,
         "filterFieldMapping": {
           "category.name": "category.name.keyword"
-        }
+        },
+        "enableProductNext": false
       }
     },
   "usePriceTiers": false,

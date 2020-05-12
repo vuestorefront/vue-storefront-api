@@ -21,7 +21,7 @@ function getIncludeExclude (reqUrl: string): { _sourceInclude: any, _sourceExclu
 export async function preConfigureProduct ({
   product,
   options: {
-    setFirstVarianAsDefaultInURL = false,
+    setFirstVariantAsDefaultInURL = false,
     prefetchGroupProducts = false,
     indexName = ''
   } = {},
@@ -32,7 +32,7 @@ export async function preConfigureProduct ({
   setDefaultQty(product)
   setDefaultObjects(product)
   setParentSku(product)
-  setFirstVariantAsDefault(product, { isFirstVariantAsDefaultInURL: setFirstVarianAsDefaultInURL && hasConfigurableChildren(product) })
+  setFirstVariantAsDefault(product, { isFirstVariantAsDefaultInURL: setFirstVariantAsDefaultInURL && hasConfigurableChildren(product) })
 
   // setup bundle or group product
   await setAssociatedProducts(product, { prefetchGroupProducts, indexName }, { _sourceInclude, _sourceExclude })

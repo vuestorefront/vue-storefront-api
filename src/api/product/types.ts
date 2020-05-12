@@ -1,7 +1,7 @@
 export type Product = any
 
 interface PrepareProductsOptions {
-  setFirstVarianAsDefaultInURL?: boolean,
+  setFirstVariantAsDefaultInURL?: boolean,
   prefetchGroupProducts?: boolean,
   indexName?: string,
   reqUrl?: string
@@ -23,13 +23,15 @@ interface ConfigureProductsOptions {
   fallbackToDefaultWhenNoAvailable?: boolean,
   setProductErrors?: boolean,
   setConfigurableProductOptions?: boolean,
-  filterUnavailableVariants?: boolean
+  filterUnavailableVariants?: boolean,
+  assignProductConfiguration?: boolean,
+  separateSelectedVariant?: boolean
 }
 
 export interface ConfigureProductsParams {
   products: Product[],
   configuration: any,
-  attribute_metadata?: any[],
+  attributes_metadata?: any[],
   options?: ConfigureProductsOptions,
   request: any
 }

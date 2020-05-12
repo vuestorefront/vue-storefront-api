@@ -134,6 +134,31 @@ export default ({config, db}) => async function (req, res, body) {
             res.setHeader('X-VS-Cache-Tags', cacheTags)
           }
 
+          if (entityType === 'product' && _resBody.aggregations && config.entities.attribute.loadByAttributeMetadata) {
+            const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
+            // find attribute list
+            const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+            _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+          }
+          if (entityType === 'product' && config.entities.product.enableProductNext) {
+            const configuration = JSON.parse(req.query.filters || '{}')
+            const options = JSON.parse(req.query.options || '{}')
+            _resBody.hits.hits = await prepareProducts({
+              products: _resBody.hits.hits,
+              options: {
+                reqUrl: req.url,
+                indexName,
+                ...options
+              }
+            })
+            _resBody.hits.hits = await configureProducts({
+              products: _resBody.hits.hits,
+              attributes_metadata: _resBody.attribute_metadata,
+              configuration,
+              options,
+              request: req
+            })
+          }
           let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
 
           if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
@@ -141,35 +166,6 @@ export default ({config, db}) => async function (req, res, body) {
           const productGroupId = entityType === 'product' ? groupId : undefined
           const result = await resultProcessor.process(_resBody.hits.hits, productGroupId)
           _resBody.hits.hits = result
-          if (entityType === 'product' && _resBody.aggregations && config.entities.attribute.loadByAttributeMetadata) {
-            const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
-            // find attribute list
-            const attributeList = await AttributeService.list(attributeListParam, config, indexName)
-            _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
-          }
-          if (entityType === 'product') {
-            _resBody.hits.hits = await prepareProducts({
-              products: _resBody.hits.hits,
-              options: {
-                reqUrl: req.url,
-                indexName,
-                setFirstVarianAsDefaultInURL: false,
-                prefetchGroupProducts: true
-              }
-            })
-            _resBody.hits.hits = await configureProducts({
-              products: _resBody.hits.hits,
-              attribute_metadata: _resBody.attribute_metadata,
-              configuration: JSON.parse(req.query.filters || '{}'),
-              options: {
-                fallbackToDefaultWhenNoAvailable: true,
-                setProductErrors: true,
-                setConfigurableProductOptions: true,
-                filterUnavailableVariants: false
-              },
-              request: req
-            })
-          }
           _resBody = _outputFormatter(_resBody, responseFormat)
 
           if (config.get('varnish.enabled')) {

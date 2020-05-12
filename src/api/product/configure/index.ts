@@ -16,7 +16,9 @@ function configureProductAsync ({
     fallbackToDefaultWhenNoAvailable = true,
     setProductErrors = true,
     setConfigurableProductOptions = true,
-    filterUnavailableVariants = false
+    filterUnavailableVariants = false,
+    assignProductConfiguration = false,
+    separateSelectedVariant = false
   } = {},
   stockItems = []
 }) {
@@ -31,14 +33,12 @@ function configureProductAsync ({
     setCustomAttributesForChild(product)
 
     // find selected variant
-    const { selectedVariant, isDesiredProductFound } = getDesiredSelectedVariant(product, _configuration, { fallbackToDefaultWhenNoAvailable })
+    const selectedVariant = getDesiredSelectedVariant(product, _configuration, { fallbackToDefaultWhenNoAvailable })
 
     if (selectedVariant) {
-      if (!isDesiredProductFound) { // update the configuration
-        configuration = getProductConfiguration({ product, selectedVariant, attribute })
-      }
+      _configuration = getProductConfiguration({ product, selectedVariant, attribute })
 
-      setConfigurableProductOptionsAsync({ product, configuration, setConfigurableProductOptions }) // set the custom options
+      setConfigurableProductOptionsAsync({ product, configuration: _configuration, setConfigurableProductOptions }) // set the custom options
 
       product.is_configured = true
 
@@ -47,7 +47,18 @@ function configureProductAsync ({
     if (!selectedVariant && setProductErrors) { // can not find variant anyway, even the default one
       product.errors.variants = 'No available product variants'
     }
-    return Object.assign(product, omit((selectedVariant || {}), ['visibility']))
+
+    const configuredProduct = Object.assign(
+      product,
+      (assignProductConfiguration
+        ? { configuration: _configuration }
+        : {}
+      )
+    )
+    if (separateSelectedVariant) {
+      return { ...configuredProduct, selectedVariant }
+    }
+    return { ...configuredProduct, ...selectedVariant }
   } else {
     return product
   }
@@ -55,13 +66,13 @@ function configureProductAsync ({
 
 async function configureProducts ({
   products,
-  attribute_metadata = [],
+  attributes_metadata = [],
   configuration = {},
   options = {},
   request
 }: ConfigureProductsParams) {
-  const productAttributesMetadata = products.map(({ _source }) => _source.attribute_metadata || [])
-  const attribute = transformMetadataToAttributes([attribute_metadata, ...productAttributesMetadata])
+  const productAttributesMetadata = products.map(({ _source }) => _source.attributes_metadata || [])
+  const attribute = transformMetadataToAttributes([attributes_metadata, ...productAttributesMetadata])
 
   let stockItems = []
   if (options.filterUnavailableVariants) {
