@@ -95,8 +95,8 @@ const map = ({ config }) => {
         result = adjustResultType({ result, config, indexName })
         if (result._type === 'product') {
           if (config.entities.product.enableProductNext) {
-            const configuration = JSON.parse(req.query.filters || '{}')
-            const options = JSON.parse(req.query.options || '{}')
+            const configuration = req.body.filters || {}
+            const options = req.body.options || {}
             esResponse.body.hits.hits = await prepareProducts({
               products: esResponse.body.hits.hits,
               options: {
