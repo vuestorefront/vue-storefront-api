@@ -11,6 +11,7 @@ import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 import { apiError } from '../lib/util'
 import configureProducts from './product/configure'
 import prepareProducts from './product/prepare'
+import queryString from 'query-string';
 
 async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -38,6 +39,20 @@ function _outputFormatter (responseBody, format = 'standard') {
     }
   }
   return responseBody
+}
+
+export function getGroupId (requestBody, config) {
+  const userToken = requestBody.groupToken
+
+  // Decode token and get group id
+  if (userToken && userToken.length > 10) {
+    const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+    return decodeToken.group_id
+  } else if (requestBody.groupId) {
+    return requestBody.groupId
+  } else {
+    return null
+  }
 }
 
 export default ({config, db}) => async function (req, res, body) {
@@ -83,15 +98,8 @@ export default ({config, db}) => async function (req, res, body) {
 
   // pass the request to elasticsearch
   const elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
-  const userToken = requestBody.groupToken
 
-  // Decode token and get group id
-  if (userToken && userToken.length > 10) {
-    const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-    groupId = decodeToken.group_id || groupId
-  } else if (requestBody.groupId) {
-    groupId = requestBody.groupId || groupId
-  }
+  groupId = getGroupId(requestBody, config)
 
   delete requestBody.groupToken
   delete requestBody.groupId
@@ -108,8 +116,13 @@ export default ({config, db}) => async function (req, res, body) {
   const configuration = JSON.parse(req.query.filters || '{}')
   const options = JSON.parse(req.query.options || '{}')
 
+  const parsedUrl = queryString.parseUrl(req.url)
+  delete parsedUrl.query['filters']
+  delete parsedUrl.query['options']
+  const toHashUrl = queryString.stringifyUrl(parsedUrl)
+
   const s = Date.now()
-  const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
+  const reqHash = sha3_224(`${JSON.stringify(requestBody)}${toHashUrl}`)
   const dynamicRequestHandler = () => {
     request({ // do the elasticsearch request
       uri: elasticBackendUrl,
@@ -143,10 +156,10 @@ export default ({config, db}) => async function (req, res, body) {
             // find attribute list
             const attributeList = await AttributeService.list(attributeListParam, config, indexName)
             _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+          }
 
-            if (config.entities.product.enableProductNext) {
-              _resBody.hits.hits = prepareProducts(_resBody.hits.hits)
-            }
+          if (entityType === 'product' && config.entities.product.enableProductNext) {
+            _resBody.hits.hits = prepareProducts(_resBody.hits.hits)
           }
           let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
           if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
@@ -175,7 +188,8 @@ export default ({config, db}) => async function (req, res, body) {
                 indexName,
                 groupId
               },
-              request: req
+              request: req,
+              response: res
             })
           }
         }
@@ -207,7 +221,8 @@ export default ({config, db}) => async function (req, res, body) {
               indexName,
               groupId
             },
-            request: req
+            request: req,
+            response: res
           })
         }
         res.json(output)

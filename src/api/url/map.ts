@@ -5,6 +5,7 @@ import ProcessorFactory from '../../processor/factory'
 import get from 'lodash/get'
 import configureProducts from '../product/configure'
 import prepareProducts from '../product/prepare'
+import { getGroupId } from '../catalog'
 
 const adjustQueryForOldES = ({ config }) => {
   const searchedEntities = get(config, 'urlModule.map.searchedEntities', [])
@@ -96,7 +97,7 @@ const map = ({ config }) => {
         if (result._type === 'product') {
           if (config.entities.product.enableProductNext) {
             esResponse.body.hits.hits = prepareProducts(esResponse.body.hits.hits)
-
+            const groupId = getGroupId(req.body, config)
             const configuration = req.body.filters || {}
             const options = req.body.options || {}
             esResponse.body.hits.hits = await configureProducts({
@@ -105,9 +106,11 @@ const map = ({ config }) => {
               configuration,
               options: {
                 ...options,
-                indexName
+                indexName,
+                groupId
               },
-              request: req
+              request: req,
+              response: res
             })
           }
           const factory = new ProcessorFactory(config)

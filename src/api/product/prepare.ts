@@ -8,7 +8,6 @@ function setDefaultQty (product) {
 }
 
 function setParentSku (product) {
-  console.log(product.sku)
   if (!product.parentSku) {
     product.parentSku = product.sku
   }

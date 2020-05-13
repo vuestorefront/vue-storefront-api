@@ -51,7 +51,7 @@ export async function getStockItems (products, request) {
     const result = await Promise.all(promisesList)
     return result
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return []
   }
 }

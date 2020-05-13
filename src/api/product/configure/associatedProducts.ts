@@ -1,4 +1,3 @@
-import { Product } from './../types';
 import { preConfigureProduct } from '../prepare';
 import { queryProducts } from './../service'
 import { isGroupedProduct, isBundleProduct } from './../helpers'
@@ -13,12 +12,12 @@ async function setProductLink (productLink, associatedProduct) {
   }
 }
 
-export async function setBundleProducts (product, { indexName, _sourceInclude, _sourceExclude, taxProcess }) {
+export async function setBundleProducts (product, { indexName, _sourceInclude, _sourceExclude, productProcess }) {
   if (isBundleProduct(product) && product.bundle_options) {
     const skus = product.bundle_options
       .map((bundleOption) => bundleOption.product_links.map((productLink) => productLink.sku))
       .reduce((acc, next) => acc.concat(next), [])
-    const associatedProducts = (await queryProducts(config)(
+    let associatedProducts = await queryProducts(config)(
       {
         filter: { sku: { in: skus } },
         pageSize: skus.length
@@ -28,9 +27,9 @@ export async function setBundleProducts (product, { indexName, _sourceInclude, _
         _sourceInclude,
         _sourceExclude
       }
-    )).map((res) => res._source)
+    )
 
-    taxProcess(associatedProducts)
+    associatedProducts = (await productProcess(associatedProducts)).map((res) => res._source)
 
     for (const bundleOption of product.bundle_options) {
       for (const productLink of bundleOption.product_links) {
@@ -41,11 +40,11 @@ export async function setBundleProducts (product, { indexName, _sourceInclude, _
   }
 }
 
-export async function setGroupedProduct (product, { indexName, _sourceInclude, _sourceExclude, taxProcess }) {
+export async function setGroupedProduct (product, { indexName, _sourceInclude, _sourceExclude, productProcess }) {
   if (isGroupedProduct(product) && product.product_links) {
     const productLinks = product.product_links.filter((productLink) => productLink.link_type === 'associated' && productLink.linked_product_type === 'simple')
     const skus = productLinks.map((productLink) => productLink.linked_product_sku)
-    const associatedProducts = (await queryProducts(config)(
+    let associatedProducts = await queryProducts(config)(
       {
         filter: { sku: { in: skus } },
         pageSize: skus.length
@@ -55,9 +54,9 @@ export async function setGroupedProduct (product, { indexName, _sourceInclude, _
         _sourceInclude,
         _sourceExclude
       }
-    )).map((res) => res._source)
+    )
 
-    taxProcess(associatedProducts)
+    associatedProducts = (await productProcess(associatedProducts)).map((res) => res._source)
 
     for (const productLink of productLinks) {
       const associatedProduct = associatedProducts.find((associatedProduct) => associatedProduct.sku === productLink.linked_product_sku)

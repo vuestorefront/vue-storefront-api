@@ -8,7 +8,7 @@ import { filterOutUnavailableVariants, getStockItems } from './stock';
 import queryString from 'query-string';
 import { setGroupedProduct, setBundleProducts } from './associatedProducts';
 import config from 'config'
-import PlatformFactory from '../../../platform/factory';
+import ProcessorFactory from '../../../processor/factory'
 
 async function configureProductAsync ({
   product,
@@ -27,7 +27,7 @@ async function configureProductAsync ({
   stockItems = [],
   _sourceInclude,
   _sourceExclude,
-  taxProcess
+  productProcess
 }) {
   if (filterUnavailableVariants) {
     filterOutUnavailableVariants(product, stockItems)
@@ -35,8 +35,8 @@ async function configureProductAsync ({
 
   // setup bundle or group product
   if (prefetchGroupProducts) {
-    await setGroupedProduct(product, { indexName, _sourceInclude, _sourceExclude, taxProcess })
-    await setBundleProducts(product, { indexName, _sourceInclude, _sourceExclude, taxProcess })
+    await setGroupedProduct(product, { indexName, _sourceInclude, _sourceExclude, productProcess })
+    await setBundleProducts(product, { indexName, _sourceInclude, _sourceExclude, productProcess })
   }
 
   // setup configurable product
@@ -87,7 +87,8 @@ async function configureProducts ({
   attributes_metadata = [],
   configuration = {},
   options = {},
-  request
+  request,
+  response
 }: ConfigureProductsParams) {
   const productAttributesMetadata = products.map(({ _source }) => _source.attributes_metadata || [])
   const attribute = transformMetadataToAttributes([attributes_metadata, ...productAttributesMetadata])
@@ -97,10 +98,17 @@ async function configureProducts ({
     stockItems = await getStockItems(products.map(({ _source }) => _source), request)
   }
 
-  const taxProcess = (products) => {
-    const factory = new PlatformFactory(config, request)
-    const taxProcessor = factory.getAdapter((config as any).platform, 'tax', options.indexName, (config as any).tax.defaultCountry)
-    taxProcessor.process(products, options.groupId)
+  const productProcess = async (products) => {
+    const factory = new ProcessorFactory(config)
+    let resultProcessor = factory.getAdapter('product', options.indexName, request, response)
+    if (!resultProcessor) { resultProcessor = factory.getAdapter('default', options.indexName, request, response) } // get the default processor
+    try {
+      const result = await resultProcessor.process(products, options.groupId)
+      return result
+    } catch (err) {
+      console.error(err)
+      return products
+    }
   }
 
   const includeExclude = getIncludeExclude(request.url)
@@ -112,7 +120,7 @@ async function configureProducts ({
       options: options as ConfigureProductsOptions,
       stockItems,
       ...includeExclude,
-      taxProcess
+      productProcess
     })
     return { ...hit, _source: configuredProduct }
   }))

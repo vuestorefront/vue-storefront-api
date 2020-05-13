@@ -17,5 +17,6 @@ export interface ConfigureProductsParams {
   configuration: any,
   attributes_metadata?: any[],
   options?: ConfigureProductsOptions,
-  request: any
+  request: any,
+  response: any
 }
