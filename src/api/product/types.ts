@@ -1,31 +1,15 @@
 export type Product = any
 
-interface PrepareProductsOptions {
-  setFirstVariantAsDefaultInURL?: boolean,
-  prefetchGroupProducts?: boolean,
-  indexName?: string,
-  reqUrl?: string
-}
-
-export interface PrepareProductParams {
-  product: Product,
-  options?: PrepareProductsOptions,
-  _sourceInclude: any,
-  _sourceExclude: any
-}
-
-export interface PrepareProductsParams {
-  products: Product[],
-  options?: PrepareProductsOptions
-}
-
-interface ConfigureProductsOptions {
+export interface ConfigureProductsOptions {
   fallbackToDefaultWhenNoAvailable?: boolean,
   setProductErrors?: boolean,
   setConfigurableProductOptions?: boolean,
   filterUnavailableVariants?: boolean,
   assignProductConfiguration?: boolean,
-  separateSelectedVariant?: boolean
+  separateSelectedVariant?: boolean,
+  prefetchGroupProducts?: boolean,
+  indexName?: string,
+  groupId?: string
 }
 
 export interface ConfigureProductsParams {

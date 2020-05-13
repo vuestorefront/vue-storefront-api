@@ -3,8 +3,8 @@ import { apiStatus, getCurrentStoreView, getCurrentStoreCode } from '../../lib/u
 import { getClient as getElasticClient } from '../../lib/elastic'
 import ProcessorFactory from '../../processor/factory'
 import get from 'lodash/get'
-import prepareProducts from '../product/prepare'
 import configureProducts from '../product/configure'
+import prepareProducts from '../product/prepare'
 
 const adjustQueryForOldES = ({ config }) => {
   const searchedEntities = get(config, 'urlModule.map.searchedEntities', [])
@@ -95,21 +95,18 @@ const map = ({ config }) => {
         result = adjustResultType({ result, config, indexName })
         if (result._type === 'product') {
           if (config.entities.product.enableProductNext) {
+            esResponse.body.hits.hits = prepareProducts(esResponse.body.hits.hits)
+
             const configuration = req.body.filters || {}
             const options = req.body.options || {}
-            esResponse.body.hits.hits = await prepareProducts({
-              products: esResponse.body.hits.hits,
-              options: {
-                reqUrl: req.url,
-                indexName,
-                ...options
-              }
-            })
             esResponse.body.hits.hits = await configureProducts({
               products: esResponse.body.hits.hits,
               attributes_metadata: [],
               configuration,
-              options,
+              options: {
+                ...options,
+                indexName
+              },
               request: req
             })
           }

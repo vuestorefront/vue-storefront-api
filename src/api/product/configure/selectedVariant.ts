@@ -63,7 +63,7 @@ function findConfigurableVariant ({ product, configuration = null, selectDefault
   return selectedVariant
 }
 
-export function getDesiredSelectedVariant (product, configuration, { fallbackToDefaultWhenNoAvailable }) {
+export function getSelectedVariant (product, configuration, { fallbackToDefaultWhenNoAvailable }) {
   let selectedVariant = findConfigurableVariant({ product, configuration, availabilityCheck: true })
   if (!selectedVariant) {
     if (fallbackToDefaultWhenNoAvailable) {

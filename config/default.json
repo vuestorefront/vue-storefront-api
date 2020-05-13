@@ -362,7 +362,7 @@
         "filterFieldMapping": {
           "category.name": "category.name.keyword"
         },
-        "enableProductNext": false
+        "enableProductNext": true
       }
     },
   "usePriceTiers": false,

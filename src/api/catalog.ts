@@ -104,6 +104,10 @@ export default ({config, db}) => async function (req, res, body) {
       pass: config.elasticsearch.password
     }
   }
+
+  const configuration = JSON.parse(req.query.filters || '{}')
+  const options = JSON.parse(req.query.options || '{}')
+
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
@@ -139,28 +143,12 @@ export default ({config, db}) => async function (req, res, body) {
             // find attribute list
             const attributeList = await AttributeService.list(attributeListParam, config, indexName)
             _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
-          }
-          if (entityType === 'product' && config.entities.product.enableProductNext) {
-            const configuration = JSON.parse(req.query.filters || '{}')
-            const options = JSON.parse(req.query.options || '{}')
-            _resBody.hits.hits = await prepareProducts({
-              products: _resBody.hits.hits,
-              options: {
-                reqUrl: req.url,
-                indexName,
-                ...options
-              }
-            })
-            _resBody.hits.hits = await configureProducts({
-              products: _resBody.hits.hits,
-              attributes_metadata: _resBody.attribute_metadata,
-              configuration,
-              options,
-              request: req
-            })
+
+            if (config.entities.product.enableProductNext) {
+              _resBody.hits.hits = prepareProducts(_resBody.hits.hits)
+            }
           }
           let resultProcessor = factory.getAdapter(entityType, indexName, req, res)
-
           if (!resultProcessor) { resultProcessor = factory.getAdapter('default', indexName, req, res) } // get the default processor
 
           const productGroupId = entityType === 'product' ? groupId : undefined
@@ -177,6 +165,19 @@ export default ({config, db}) => async function (req, res, body) {
           } else {
             _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
           }
+          if (entityType === 'product' && config.entities.product.enableProductNext) {
+            _resBody.hits.hits = await configureProducts({
+              products: _resBody.hits.hits,
+              attributes_metadata: _resBody.attribute_metadata,
+              configuration,
+              options: {
+                ...options,
+                indexName,
+                groupId
+              },
+              request: req
+            })
+          }
         }
         res.json(_resBody)
       } catch (err) {
@@ -188,7 +189,7 @@ export default ({config, db}) => async function (req, res, body) {
   if (config.server.useOutputCache && cache) {
     cache.get(
       'api:' + reqHash
-    ).then(output => {
+    ).then(async (output) => {
       if (output !== null) {
         res.setHeader('X-VS-Cache', 'Hit')
         if (config.get('varnish.enabled')) {
@@ -196,12 +197,19 @@ export default ({config, db}) => async function (req, res, body) {
           res.setHeader('X-VS-Cache-Tag', tagsHeader)
           delete output.tags
         }
-        // if (entityType === 'product') {
-        //   output.hits = configureProducts({
-        //     products: output.hits,
-        //     attribute_metadata: output.attribute_metadata
-        //   })
-        // }
+        if (entityType === 'product' && config.entities.product.enableProductNext) {
+          output.hits.hits = await configureProducts({
+            products: output.hits.hits,
+            attributes_metadata: output.attribute_metadata,
+            configuration,
+            options: {
+              ...options,
+              indexName,
+              groupId
+            },
+            request: req
+          })
+        }
         res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {

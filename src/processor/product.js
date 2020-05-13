@@ -1,5 +1,6 @@
 import PlatformFactory from '../platform/factory'
 import { sgnSrc } from '../lib/util'
+import prepareProducts from '../api/product/prepare';
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 

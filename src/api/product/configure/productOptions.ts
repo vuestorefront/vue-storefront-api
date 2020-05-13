@@ -1,5 +1,5 @@
 import toString from 'lodash/toString'
-// import trim from 'lodash/trim'
+import omit from 'lodash/omit'
 
 function optionLabel (attribute, { attributeKey, searchBy = 'code', optionId }) {
   if (!attribute.labels) {
@@ -78,30 +78,6 @@ export function getProductConfiguration ({ product, selectedVariant, attribute }
   return currentProductOption
 }
 
-// export function getProductConfigurationOptions ({ product, attribute }) {
-//   const productOptions = {}
-//   const configurableOptions = product.configurable_options || []
-//   for (let option of configurableOptions) {
-//     const attributeCode = getAttributeCode(option, attribute)
-//     const productOptionValues = option.values
-//       .map((optionValue) => ({
-//         label: optionValue.label
-//           ? optionValue.label
-//           : optionLabel(attribute, {
-//             attributeKey: option.attribute_id,
-//             searchBy: 'id',
-//             optionId: optionValue.value_index
-//           }),
-//         id: String(optionValue.value_index),
-//         attribute_code: option.attribute_code
-//       }))
-//       .filter((optionValue) => trim(optionValue.label) !== '')
-
-//     productOptions[attributeCode] = productOptionValues
-//   }
-//   return productOptions
-// }
-
 export function getAllProductOptions ({ configurableOptions, configuration }) {
   const product_option = {
     extension_attributes: {
@@ -131,4 +107,30 @@ export function getAllProductOptions ({ configurableOptions, configuration }) {
     }))
 
   return product_option
+}
+
+function getInternalOptionsFormat (productOption) {
+  return productOption.extension_attributes.configurable_item_options
+    .map(({ label, value }) => ({ label, value }))
+}
+
+function omitInternalOptionsFormat (productOption) {
+  productOption.extension_attributes.configurable_item_options = productOption.extension_attributes.configurable_item_options
+    .map((option) => omit(option, ['label', 'value']))
+}
+
+export function setConfigurableProductOptionsAsync ({ product, configuration, setConfigurableProductOptions }) {
+  if (!setConfigurableProductOptions) return
+
+  const configurableOptions = product.configurable_options
+
+  if (!configurableOptions) return
+
+  const productOptions = getAllProductOptions({ configurableOptions, configuration })
+
+  product.options = getInternalOptionsFormat(productOptions)
+
+  omitInternalOptionsFormat(productOptions)
+
+  product.product_option = productOptions
 }

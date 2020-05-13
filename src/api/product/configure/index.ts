@@ -1,14 +1,16 @@
 import { hasConfigurableChildren } from './../helpers';
-import { ConfigureProductsParams } from './../types';
-import omit from 'lodash/omit'
+import { ConfigureProductsParams, ConfigureProductsOptions } from './../types';
 import cloneDeep from 'lodash/cloneDeep'
-import { getDesiredSelectedVariant, omitSelectedVariantFields } from './selectedVariant';
-import { setConfigurableProductOptionsAsync, setCustomAttributesForChild } from './modificators';
+import { getSelectedVariant, omitSelectedVariantFields } from './selectedVariant';
 import { transformMetadataToAttributes } from './attributes';
-import { getProductConfiguration } from './productOptions';
+import { getProductConfiguration, setConfigurableProductOptionsAsync } from './productOptions';
 import { filterOutUnavailableVariants, getStockItems } from './stock';
+import queryString from 'query-string';
+import { setGroupedProduct, setBundleProducts } from './associatedProducts';
+import config from 'config'
+import PlatformFactory from '../../../platform/factory';
 
-function configureProductAsync ({
+async function configureProductAsync ({
   product,
   configuration,
   attribute,
@@ -18,22 +20,32 @@ function configureProductAsync ({
     setConfigurableProductOptions = true,
     filterUnavailableVariants = false,
     assignProductConfiguration = false,
-    separateSelectedVariant = false
+    separateSelectedVariant = false,
+    prefetchGroupProducts = false,
+    indexName = ''
   } = {},
-  stockItems = []
+  stockItems = [],
+  _sourceInclude,
+  _sourceExclude,
+  taxProcess
 }) {
   if (filterUnavailableVariants) {
     filterOutUnavailableVariants(product, stockItems)
   }
 
+  // setup bundle or group product
+  if (prefetchGroupProducts) {
+    await setGroupedProduct(product, { indexName, _sourceInclude, _sourceExclude, taxProcess })
+    await setBundleProducts(product, { indexName, _sourceInclude, _sourceExclude, taxProcess })
+  }
+
+  // setup configurable product
   if (hasConfigurableChildren(product)) {
     // we don't want to modify configuration object
     let _configuration = cloneDeep(configuration)
 
-    setCustomAttributesForChild(product)
-
-    // find selected variant
-    const selectedVariant = getDesiredSelectedVariant(product, _configuration, { fallbackToDefaultWhenNoAvailable })
+    // find selected variant by configuration
+    const selectedVariant = getSelectedVariant(product, _configuration, { fallbackToDefaultWhenNoAvailable })
 
     if (selectedVariant) {
       _configuration = getProductConfiguration({ product, selectedVariant, attribute })
@@ -48,19 +60,25 @@ function configureProductAsync ({
       product.errors.variants = 'No available product variants'
     }
 
-    const configuredProduct = Object.assign(
-      product,
-      (assignProductConfiguration
-        ? { configuration: _configuration }
-        : {}
-      )
-    )
-    if (separateSelectedVariant) {
-      return { ...configuredProduct, selectedVariant }
+    const configuredProduct = {
+      ...product,
+      ...(assignProductConfiguration ? { configuration: _configuration } : {})
     }
-    return { ...configuredProduct, ...selectedVariant }
-  } else {
-    return product
+    return {
+      ...configuredProduct,
+      ...(separateSelectedVariant ? { selectedVariant } : selectedVariant)
+    }
+  }
+
+  return product
+}
+
+function getIncludeExclude (reqUrl: string): { _sourceInclude: any, _sourceExclude: any } {
+  const { _source_include, _source_exclude } = queryString.parseUrl(reqUrl).query
+
+  return {
+    _sourceInclude: _source_include,
+    _sourceExclude: _source_exclude
   }
 }
 
@@ -79,16 +97,26 @@ async function configureProducts ({
     stockItems = await getStockItems(products.map(({ _source }) => _source), request)
   }
 
-  const configuredProducts = products.map((hit) => {
-    const configuredProduct = configureProductAsync({
+  const taxProcess = (products) => {
+    const factory = new PlatformFactory(config, request)
+    const taxProcessor = factory.getAdapter((config as any).platform, 'tax', options.indexName, (config as any).tax.defaultCountry)
+    taxProcessor.process(products, options.groupId)
+  }
+
+  const includeExclude = getIncludeExclude(request.url)
+  const configuredProducts = await Promise.all(products.map(async (hit) => {
+    const configuredProduct = await configureProductAsync({
       product: hit._source,
       configuration,
       attribute,
-      options: options as any,
-      stockItems
+      options: options as ConfigureProductsOptions,
+      stockItems,
+      ...includeExclude,
+      taxProcess
     })
     return { ...hit, _source: configuredProduct }
-  })
+  }))
+
   return configuredProducts
 }
 
