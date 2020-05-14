@@ -1,23 +1,34 @@
 import { hasConfigurableChildren } from './helpers';
 
+/**
+ * set product quantity to 1
+ */
 function setDefaultQty (product) {
-  // set product quantity to 1
   if (!product.qty) {
     product.qty = 1
   }
 }
 
+/**
+ * set parent sku, this is needed, because in configuration process we will override sku by configurable_children.sku
+ */
 function setParentSku (product) {
   if (!product.parentSku) {
     product.parentSku = product.sku
   }
 }
 
+/**
+ * Default object that are used in vsf
+ */
 function setDefaultObjects (product) {
   product.errors = {}; // this is an object to store validation result for custom options and others
   product.info = {};
 }
 
+/**
+ * Fill custom attributes for every configurable child
+ */
 function setCustomAttributesForChild (product) {
   if (!hasConfigurableChildren(product)) return
   // handle custom_attributes for easier comparing in the future
@@ -33,6 +44,9 @@ function setCustomAttributesForChild (product) {
   })
 }
 
+/**
+ * Init product_option, needed to next configuration step
+ */
 function setDefaultProductOptions (product) {
   if (product.product_option) return
   product.product_option = {
@@ -44,6 +58,9 @@ function setDefaultProductOptions (product) {
   }
 }
 
+/**
+ * Take products and apply base modification to it
+ */
 export function preConfigureProduct (product) {
   // base product modifications
   setDefaultQty(product)
@@ -53,8 +70,11 @@ export function preConfigureProduct (product) {
   setDefaultProductOptions(product)
 
   return product;
-};
+}
 
+/**
+ * Apply base configuration to product list
+ */
 function prepareProducts (products) {
   const preparedProducts = products.map((hit) => {
     const preparedProduct = preConfigureProduct(hit._source)

@@ -3,6 +3,9 @@ import { queryProducts } from './../service'
 import { isGroupedProduct, isBundleProduct } from './../helpers'
 import config from 'config'
 
+/**
+ * Set associated product to product link object
+ */
 async function setProductLink (productLink, associatedProduct) {
   if (associatedProduct) {
     productLink.product = preConfigureProduct(associatedProduct)
@@ -12,6 +15,11 @@ async function setProductLink (productLink, associatedProduct) {
   }
 }
 
+/**
+ * This function prepare all product_links for bundle products.
+ * It fetches products by sku.
+ * TODO: cache those products
+ */
 export async function setBundleProducts (product, { indexName, _sourceInclude, _sourceExclude, productProcess }) {
   if (isBundleProduct(product) && product.bundle_options) {
     const skus = product.bundle_options
@@ -40,6 +48,11 @@ export async function setBundleProducts (product, { indexName, _sourceInclude, _
   }
 }
 
+/**
+ * This function prepare all product_links for grouped products.
+ * It fetches products by sku.
+ * TODO: cache those products
+ */
 export async function setGroupedProduct (product, { indexName, _sourceInclude, _sourceExclude, productProcess }) {
   if (isGroupedProduct(product) && product.product_links) {
     const productLinks = product.product_links.filter((productLink) => productLink.link_type === 'associated' && productLink.linked_product_type === 'simple')
