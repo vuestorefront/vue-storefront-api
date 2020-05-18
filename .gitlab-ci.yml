@@ -1,6 +1,6 @@
 variables:
   REGISTRY_URL: "registry.storefrontcloud.io"
-  REGISTRY_IMAGE: "registry.storefrontcloud.io/test-storefrontcloud-io/vue-storefront-api"
+  REGISTRY_IMAGE: "registry.storefrontcloud.io/demo-storefrontcloud-io/vue-storefront-api"
 
 stages:
   - build
