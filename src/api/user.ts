@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
+const path = require('path');
 
 function addUserGroupToken (config, result) {
   /**
@@ -36,7 +37,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userRegisterSchema = require('../models/userRegister.schema.json')
     let userRegisterSchemaExtension = {};
-    if (fs.existsSync('../models/userRegister.schema.extension.json')) {
+    if (fs.existsSync(path.resolve(__dirname, '../models/userRegister.schema.extension.json'))) {
       userRegisterSchemaExtension = require('../models/userRegister.schema.extension.json');
     }
     const validate = ajv.compile(merge(userRegisterSchema, userRegisterSchemaExtension))
@@ -169,7 +170,7 @@ export default ({config, db}) => {
     const ajv = new Ajv();
     const userProfileSchema = require('../models/userProfile.schema.json')
     let userProfileSchemaExtension = {};
-    if (fs.existsSync('../models/userProfile.schema.extension.json')) {
+    if (fs.existsSync(path.resolve(__dirname, '../models/userProfile.schema.extension.json'))) {
       userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
     }
     const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
