@@ -41,6 +41,10 @@ export default ({ config, db }) =>
       imageBuffer = imageAction.imageBuffer
     }
 
+    if (res.headersSent) {
+      return
+    }
+
     return res
       .type(imageAction.mimeType)
       .set({ 'Cache-Control': `max-age=${imageAction.maxAgeForResponse}` })
