@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
 - use ts for compiling additional scripts - @gibkigonzo (#437)
 - Bugfix for wrong JSON scheme url's and hostname resolution for `magento1` platform - @cewald (#443)
+- udpate typings for query params - @gibkigonzo (#446)
 
 ## [1.11.1] - 2020.03.17
 
