@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - disable showing stack for invalid requests - @gibkigonzo (#431)
 - Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
 - use ts for compiling additional scripts - @gibkigonzo (#437)
+- check if headers has been already sent in image middleware - @gibkigonzo (#434)
 
 ## [1.11.1] - 2020.03.17
 
