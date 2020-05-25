@@ -5,6 +5,7 @@ import PlatformFactory from '../platform/factory';
 
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
+const path = require('path');
 const kue = require('kue');
 const jwa = require('jwa');
 const hmac = jwa('HS256');
@@ -29,7 +30,7 @@ export default ({ config, db }) => resource({
 
     const orderSchema = require('../models/order.schema.js')
     let orderSchemaExtension = {}
-    if (fs.existsSync('../models/order.schema.extension.json')) {
+    if (fs.existsSync(path.resolve(__dirname, '../models/order.schema.extension.json'))) {
       orderSchemaExtension = require('../models/order.schema.extension.json')
     }
     const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));

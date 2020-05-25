@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - disable showing stack for invalid requests - @gibkigonzo (#431)
 - Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
 - use ts for compiling additional scripts - @gibkigonzo (#437)
+- Bugfix for wrong JSON scheme url's and hostname resolution for `magento1` platform - @cewald (#443)
 
 ## [1.11.1] - 2020.03.17
 
