@@ -4,9 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.12] - 2020.05.26
+
+## [1.12.0-rc1] - UNRELEASED
+
+### Added
+- Add url module - @gibkigonzo (#3942)
+- The `response_format` query parameter to the `/api/catalog` endpoint. Currently there is just one additional format supported: `response_format=compact`. When used, the response format got optimized by: a) remapping the results, removing the `_source` from the `hits.hits`; b) compressing the JSON fields names according to the `config.products.fieldsToCompact`; c) removing the JSON fields from the `product.configurable_children` when their values === parent product values; overall response size reduced over -70% - @pkarw
+- The support for `SearchQuery` instead of the ElasticSearch DSL as for the input to `/api/catalog` - using `storefront-query-builder` package - @pkarw - https://github.com/DivanteLtd/vue-storefront/issues/2167
+- Create attribute service that allows to fetch attributes with specific options - used for products aggregates - @gibkigonzo (https://github.com/DivanteLtd/vue-storefront/pull/4001, https://github.com/DivanteLtd/mage2vuestorefront/pull/99)
+- Add ElasticSearch client support for HTTP authentication - @cewald (#397)
+- Endpoint for reset password with reset token. Only for Magento 2 - @Fifciu
+- Varnish Cache with autoinvalidation by Cache tags as addon - @Fifciu
+- Add `resetPasswordUsingResetToken` to `magento1` platform - @cewald (#415)
+- Update to `storefront-query-builder` version `1.0.0` - @cewald (#429)
+- Add `composeError` in './magento2/o2m.js' - @flancer64 (#422)
+- Explicit data extraction from 'Error' objects - @flancer64 (#424)
+- Merge scripts: db7 => db, elastic7=>elastic and add support for es7 in yarn mage2vs import - @gibkigonzo (#436)
 
 ### Fixed
+- add es7 support for map url module and fixed default index for es config - @gibkigonzo
+- Add correct paths for production build - @cewald (#407)
+- Fix MSI default stock id value
+- Add outputFormatter to response from cache - @gibkigonzo (#428)
+- disable showing stack for invalid requests - @gibkigonzo (#431)
+- Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
+- use ts for compiling additional scripts - @gibkigonzo (#437)
+- Bugfix for wrong JSON scheme url's and hostname resolution for `magento1` platform - @cewald (#443)
+- check if headers has been already sent in image middleware - @gibkigonzo (#434)
 - Missing packages in Docker Makefile (make, python and g++) - @proxiblue (#448)
 
 ## [1.11.1] - 2020.03.17
@@ -28,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed some smaller issues with graphql so that it is now working again with the fronted - #350
 - Replaced the old `crop` function call which has been removed from Sharp image processor - @grimasod (#381)
-
+- Add product processor to new URL mapper endpoint #401 - @cewald (#401, #403)
+- Add fallback for `sourcePriceInclTax` and `finalPriceInclTax` in `magento1` platform - @cewald (#398)
 
 ## [1.11.0-rc.1] - 2019.10.03
 
@@ -44,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for tax calculation where the values from customer_tax_class_ids is used - @resubaka (#307)
 - The `db` context object - passed to every api endpoint now has two usefull methods: `getElasticClient` and `getRedisClient` for accesing the data stores - @pkarw (#328)
 - The `lib/utils` got two new methods `getStoreCode(req: Express.Request)` and `getStoreView(code: string)` for getting the current multistore context from `vue-storefront` frontend requests - @pkarw
+- Check message property instead of errorMessage in apiError function - @cdshotels-liborpansky (#378)
 
 ### Removed
 - The `scripts/seo.js` tool has been removed, the legacy `migrations` scripts have been removed, the unused legacy extensions (`gls-parcelshop-dk`, `postnord-parcelshop-dk`) - @pkarw (#342)

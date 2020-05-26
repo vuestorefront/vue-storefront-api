@@ -1,0 +1,16 @@
+version: '3.0'
+services:
+  varnish:
+    build:
+      context: .
+      dockerfile: varnish/Dockerfile
+    volumes:
+      - ./docker/varnish/config.vcl:/usr/local/etc/varnish/default.vcl
+    ports:
+      - '1234:80'
+    networks:
+      - vuestorefrontapi_some-net
+
+networks:
+  vuestorefrontapi_some-net:
+    external: true
