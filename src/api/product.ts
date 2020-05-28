@@ -22,7 +22,7 @@ export default ({ config, db }) => {
 
     if (!req.query.skus) { return apiStatus(res, 'skus parameter is required', 500); }
 
-    productProxy.list(req.query.skus.split(',')).then((result) => {
+    productProxy.list((req.query.skus as string).split(',')).then((result) => {
       apiStatus(res, result, 200);
     }).catch(err => {
       apiError(res, err);
@@ -37,7 +37,7 @@ export default ({ config, db }) => {
 
     if (!req.query.skus) { return apiStatus(res, 'skus parameter is required', 500); }
 
-    productProxy.renderList(req.query.skus.split(','), req.query.currencyCode, (req.query.storeId && parseInt(req.query.storeId) > 0) ? req.query.storeId : 1).then((result) => {
+    productProxy.renderList((req.query.skus as string).split(','), req.query.currencyCode, (req.query.storeId && parseInt((req.query.storeId as string)) > 0) ? req.query.storeId : 1).then((result) => {
       result.items = result.items.map((item) => {
         let sgnObj = item
         if (config.tax.calculateServerSide === true) {
