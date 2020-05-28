@@ -8,7 +8,7 @@
     },
     {
       "name": "o2m",
-      "script": "./dist/worker/order_to_magento2.js",
+      "script": "./dist/src/worker/order_to_magento2.js",
       "args": "start",
       "log_date_format": "YYYY-MM-DD HH:mm:ss",
       "ignore_watch": ["node_modules"]
