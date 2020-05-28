@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bugfix for wrong JSON scheme url's and hostname resolution for `magento1` platform - @cewald (#443)
 - check if headers has been already sent in image middleware - @gibkigonzo (#434)
 - Missing packages in Docker Makefile (make, python and g++) - @proxiblue (#448)
+- change path in ecosystem for o2m - @gibkigonzo (#434)
 
 ## [1.11.1] - 2020.03.17
 
