@@ -24,4 +24,4 @@ class PlatformFactory {
   }
 }
 
-module.exports = PlatformFactory;
+export default PlatformFactory;

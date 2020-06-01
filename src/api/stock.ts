@@ -12,7 +12,7 @@ export default ({ config, db }) => {
 
   const _getStockId = (storeCode) => {
     let storeView = config.storeViews[storeCode]
-    return storeView ? storeView.msi.stockId : config.defaultStockId
+    return storeView ? storeView.msi.stockId : config.msi.defaultStockId
   };
 
   /**
@@ -65,7 +65,7 @@ export default ({ config, db }) => {
       return apiStatus(res, 'skus parameter is required', 500);
     }
 
-    const skuArray = req.query.skus.split(',')
+    const skuArray = (req.query.skus as string).split(',')
     const promisesList = []
     for (const sku of skuArray) {
       promisesList.push(stockProxy.check({sku: sku, stockId: config.msi.enabled ? _getStockId(req.query.storeCode) : null}))

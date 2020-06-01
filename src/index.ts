@@ -71,4 +71,18 @@ app.use('/graphql', graphqlExpress(req => ({
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = '', stack = '' } = err;
+  const stackTrace = stack
+    .split(/\r?\n/)
+    .map(string => string.trim())
+    .filter(string => string !== '')
+
+  res.status(statusCode).json({
+    code: statusCode,
+    result: message,
+    ...(config.get('server.showErrorStack') ? { stack: stackTrace } : {})
+  });
+});
+
 export default app;

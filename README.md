@@ -111,22 +111,7 @@ Starting from [Elasitc 6 and 7](https://www.elastic.co/guide/en/elasticsearch/re
 
 From now on, we're using the separate indexes per each entity type. The convention is: `${indexName}_${entityType}`. If your' **logical index name** is `vue_storefront_catalog` then it will be mapped to the **physical indexes** of: `vue_storefront_catalog_product`, `vue_storefront_catalog_category` ...
 
-To take the advantage of this new logical->physical index distinction we've provided new Elastic tools: `db7`, `migrate7`, `dump7`, `restore7` tools. They can be used exactly the same way [like the old tools](https://docs.vuestorefront.io/guide/data/database-tool.html) were. The only distinction is that they work on separate indexes.
-
-**Create new index**
-
-Before restoreing or importing data you might want to create a new Elastic index with the proper data types/schema applied. You can run just the `yarn db7 new` command in order to do that.
-
-**Restore the data**
-
-After you ran the docker file and have Elastic7 up and running you might want to:
-
-a) restore the demo data by running `yarn restore7` and `yarn restore7_it; yarn restore7_de` for default multistores. The data is restored from `var/catalog_product.json`, `var/catalog_category.json` and so on...
-
-b) import the data from Magento to proper physical indexes. To do so, currently you can do this only with [mage2vuestorefront](https://github.com/DivanteLtd/mage2vuestorefront/pull/96).
-
-**Note:** After 1.11 stable release (around November, 2019) we'll **replace** the standard tools: `db`, `migrate`, `dump`, `restore` with the Elastic 7 equivalents and it will become the default.
-
+[Tools](https://docs.vuestorefront.io/guide/data/database-tool.html) are adjusted to ES7. You can use `yarn db new`, `yarn restore`, `yarn mage2vs import`. Just make sure that you have set up `config.elasticsearch.apiVersion` to `7.1`.
 
 ## API access
 Catalog API calls are compliant with ElasticSearch (it works like a filtering proxy to ES). More on ES queries: [ElasticSearch queries tutorial](http://okfnlabs.org/blog/2013/07/01/elasticsearch-query-tutorial.html)

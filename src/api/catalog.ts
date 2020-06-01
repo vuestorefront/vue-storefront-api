@@ -1,14 +1,18 @@
-import jwt from 'jwt-simple';
-import request from 'request';
-import ProcessorFactory from '../processor/factory';
+import jwt from 'jwt-simple'
+import request from 'request'
+import ProcessorFactory from '../processor/factory'
 import { adjustBackendProxyUrl } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
-import { apiError } from '../lib/util';
+import AttributeService from './attribute/service'
+import bodybuilder from 'bodybuilder'
+import loadCustomFilters from '../helpers/loadCustomFilters'
+import { elasticsearch, SearchQuery } from 'storefront-query-builder'
+import { apiError } from '../lib/util'
 
-function _cacheStorageHandler (config, result, hash, tags) {
+async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
-    cache.set(
+    return cache.set(
       'api:' + hash,
       result,
       tags
@@ -18,7 +22,23 @@ function _cacheStorageHandler (config, result, hash, tags) {
   }
 }
 
-export default ({config, db}) => function (req, res, body) {
+function _outputFormatter (responseBody, format = 'standard') {
+  if (format === 'compact') { // simple formatter
+    delete responseBody.took
+    delete responseBody.timed_out
+    delete responseBody._shards
+    if (responseBody.hits) {
+      delete responseBody.hits.max_score
+      responseBody.total = responseBody.hits.total
+      responseBody.hits = responseBody.hits.hits.map(hit => {
+        return Object.assign(hit._source, { _score: hit._score })
+      })
+    }
+  }
+  return responseBody
+}
+
+export default ({config, db}) => async function (req, res, body) {
   let groupId = null
 
   // Request method handling: exit if not GET or POST
@@ -27,21 +47,30 @@ export default ({config, db}) => function (req, res, body) {
     throw new Error('ERROR: ' + req.method + ' request method is not supported.')
   }
 
-  let requestBody = {}
+  let responseFormat = 'standard'
+  let requestBody = req.body
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
-      requestBody = JSON.parse(decodeURIComponent(req.query.request))
+      try {
+        requestBody = JSON.parse(decodeURIComponent(req.query.request))
+      } catch (err) {
+        throw new Error(err)
+      }
     }
-  } else {
-    requestBody = req.body
   }
 
-  const urlSegments = req.url.split('/');
+  if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
+    const customFilters = await loadCustomFilters(config)
+    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody), customFilters })
+  }
+  if (req.query.response_format) responseFormat = req.query.response_format
+
+  const urlSegments = req.url.split('/')
 
   let indexName = ''
   let entityType = ''
   if (urlSegments.length < 2) { throw new Error('No index name given in the URL. Please do use following URL format: /api/catalog/<index_name>/<entity_type>_search') } else {
-    indexName = urlSegments[1];
+    indexName = urlSegments[1]
 
     if (urlSegments.length > 2) { entityType = urlSegments[2] }
 
@@ -69,14 +98,14 @@ export default ({config, db}) => function (req, res, body) {
   delete requestBody.groupToken
   delete requestBody.groupId
 
-  let auth = null;
+  let auth = null
 
   // Only pass auth if configured
   if (config.elasticsearch.user || config.elasticsearch.password) {
     auth = {
       user: config.elasticsearch.user,
       pass: config.elasticsearch.password
-    };
+    }
   }
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
@@ -89,7 +118,7 @@ export default ({config, db}) => function (req, res, body) {
       auth: auth
     }, async (_err, _res, _resBody) => { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
       if (_err || _resBody.error) {
-        apiError(res, _err || _resBody.error);
+        apiError(res, _err || _resBody.error)
         return
       }
       try {
@@ -115,15 +144,31 @@ export default ({config, db}) => function (req, res, body) {
           const productGroupId = entityType === 'product' ? groupId : undefined
           const result = await resultProcessor.process(_resBody.hits.hits, productGroupId)
           _resBody.hits.hits = result
-          _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
-          res.json(_resBody);
-        } else { // no cache storage if no results from Elastic
-          res.json(_resBody);
+          if (entityType === 'product' && _resBody.aggregations && config.entities.attribute.loadByAttributeMetadata) {
+            const attributeListParam = AttributeService.transformAggsToAttributeListParam(_resBody.aggregations)
+            // find attribute list
+            const attributeList = await AttributeService.list(attributeListParam, config, indexName)
+            _resBody.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+          }
+
+          _resBody = _outputFormatter(_resBody, responseFormat)
+
+          if (config.get('varnish.enabled')) {
+            // Add tags to cache, so we can display them in response headers then
+            _cacheStorageHandler(config, {
+              ..._resBody,
+              tags: tagsArray
+            }, reqHash, tagsArray)
+          } else {
+            _cacheStorageHandler(config, _resBody, reqHash, tagsArray)
+          }
         }
+
+        res.json(_resBody)
       } catch (err) {
-        apiError(res, err);
+        apiError(res, err)
       }
-    });
+    })
   }
 
   if (config.server.useOutputCache && cache) {
@@ -132,6 +177,11 @@ export default ({config, db}) => function (req, res, body) {
     ).then(output => {
       if (output !== null) {
         res.setHeader('X-VS-Cache', 'Hit')
+        if (config.get('varnish.enabled')) {
+          const tagsHeader = output.tags.join(' ')
+          res.setHeader('X-VS-Cache-Tag', tagsHeader)
+          delete output.tags
+        }
         res.json(output)
         console.log(`cache hit [${req.url}], cached request: ${Date.now() - s}ms`)
       } else {

@@ -8,6 +8,7 @@ import review from './review';
 import cart from './cart';
 import product from './product';
 import sync from './sync';
+import url from './url';
 
 export default ({ config, db }) => {
   let api = Router();
@@ -35,6 +36,9 @@ export default ({ config, db }) => {
 
   // mount the sync resource
   api.use('/sync', sync({ config, db }))
+
+  // mount the url resource
+  api.use('/url', url({ config }))
 
   // perhaps expose some API metadata at the root
   api.get('/', (req, res) => {

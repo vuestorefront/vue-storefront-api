@@ -1,7 +1,7 @@
 {
   "verbose": true,
   "debug": false,
-  "exec": "ts-node src",
+  "exec": "node -r ts-node/register src/",
   "watch": ["./src"],
   "ext": "ts, js",
   "inspect": true
