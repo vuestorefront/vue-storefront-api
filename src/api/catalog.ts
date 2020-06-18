@@ -9,6 +9,7 @@ import bodybuilder from 'bodybuilder'
 import loadCustomFilters from '../helpers/loadCustomFilters'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 import { apiError } from '../lib/util'
+import querystring from 'querystring'
 
 async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -84,7 +85,7 @@ export default ({config, db}) => async function (req, res, body) {
   }
 
   // pass the request to elasticsearch
-  const elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
+  let elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
   const userToken = requestBody.groupToken
 
   // Decode token and get group id
@@ -110,6 +111,17 @@ export default ({config, db}) => async function (req, res, body) {
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
+    if (typeof config.entities[entityType] === 'object') {
+      const urlParts = elasticBackendUrl.split('?')
+      const { includeFields, excludeFields } = config.entities[entityType]
+      const urlParams = {
+        ...req.query,
+        _source_include: includeFields,
+        _source_exclude: excludeFields
+      }
+      elasticBackendUrl = `${urlParts[0]}?${querystring.stringify(urlParams)}`
+    }
+
     request({ // do the elasticsearch request
       uri: elasticBackendUrl,
       method: req.method,
