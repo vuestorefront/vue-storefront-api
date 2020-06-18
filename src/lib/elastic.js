@@ -73,6 +73,7 @@ function getHits (result) {
   }
 }
 
+let esClient = null
 function getClient (config) {
   let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
   const node = `${protocol}://${host}:${port}`
@@ -83,7 +84,11 @@ function getClient (config) {
     auth = { username: user, password }
   }
 
-  return new es.Client({ node, auth, apiVersion, requestTimeout })
+  if (!esClient) {
+    esClient = new es.Client({ node, auth, apiVersion, requestTimeout })
+  }
+
+  return esClient
 }
 
 function putAlias (db, originalName, aliasName, next) {
