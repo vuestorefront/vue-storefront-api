@@ -50,6 +50,10 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
     delete parsedQuery.request_format
     delete parsedQuery.response_format
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
+
+    if (config.elasticsearch.cacheRequest) {
+      url += `&request_cache=${!!config.elasticsearch.cacheRequest}`
+    }
   }
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url
