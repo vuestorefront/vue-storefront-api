@@ -111,13 +111,30 @@ export default ({config, db}) => async function (req, res, body) {
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
-    if (typeof config.entities[entityType] === 'object') {
+    // filter request parameters
+    if (config.elasticsearch.useRequestFilter && typeof config.entities[entityType] === 'object') {
       const urlParts = elasticBackendUrl.split('?')
       const { includeFields, excludeFields } = config.entities[entityType]
+
+      const filteredParams = Object.keys(req.query)
+        .filter(key => !config.elasticsearch.requestParamsBlacklist.includes(key))
+        .reduce((object, key) => {
+          object[key] = req.query[key]
+          return object
+        }, {})
+
+      let _source_include = includeFields
+      let _source_exclude = excludeFields
+
+      if (!config.elasticsearch.overwriteRequestSourceParams) {
+        _source_include = [...includeFields, ...req.query._source_include]
+        _source_exclude = [...excludeFields, ...req.query._source_exclude]
+      }
+
       const urlParams = {
-        ...req.query,
-        _source_include: includeFields,
-        _source_exclude: excludeFields
+        ...filteredParams,
+        _source_include,
+        _source_exclude
       }
       elasticBackendUrl = `${urlParts[0]}?${querystring.stringify(urlParams)}`
     }
