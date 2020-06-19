@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- get proper tax calculation for multistore - @didkan (#464)
-- create only one ES client instance per app - @gibkigonzo (#393)
-
+- AAdd error status code as number in `apiError` - @gibkigonzo (#442)
+- Get proper tax calculation for multistore - @didkan (#464)
+- Create only one ES client instance per app - @gibkigonzo (#393)
 
 ## [1.12.0] - 2020.06.01
 
