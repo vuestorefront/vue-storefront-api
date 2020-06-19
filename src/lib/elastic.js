@@ -66,13 +66,14 @@ function adjustQuery (esQuery, entityType, config) {
 }
 
 function getHits (result) {
-  if (result.body) { // differences between ES5 andd ES7
+  if (result.body) { // differences between ES5 and ES7
     return result.body.hits.hits
   } else {
     return result.hits.hits
   }
 }
 
+let esClient = null
 function getClient (config) {
   let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
   const node = `${protocol}://${host}:${port}`
@@ -83,7 +84,11 @@ function getClient (config) {
     auth = { username: user, password }
   }
 
-  return new es.Client({ node, auth, apiVersion, requestTimeout })
+  if (!esClient) {
+    esClient = new es.Client({ node, auth, apiVersion, requestTimeout })
+  }
+
+  return esClient
 }
 
 function putAlias (db, originalName, aliasName, next) {
