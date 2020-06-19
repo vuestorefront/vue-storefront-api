@@ -49,11 +49,11 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
     delete parsedQuery.request
     delete parsedQuery.request_format
     delete parsedQuery.response_format
-    url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
-
     if (config.elasticsearch.cacheRequest) {
-      url += `&request_cache=${!!config.elasticsearch.cacheRequest}`
+      parsedQuery.request_cache = !!config.elasticsearch.cacheRequest
     }
+
+    url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
   }
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url
