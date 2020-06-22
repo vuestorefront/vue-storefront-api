@@ -40,7 +40,7 @@
       "review"
     ],
     "apiVersion": "5.6",
-
+    "cacheRequest": false,
     "searchScoring": {
       "attributes": {
         "attribute_code": {
