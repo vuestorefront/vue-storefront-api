@@ -49,6 +49,10 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
     delete parsedQuery.request
     delete parsedQuery.request_format
     delete parsedQuery.response_format
+    if (config.elasticsearch.cacheRequest) {
+      parsedQuery.request_cache = !!config.elasticsearch.cacheRequest
+    }
+
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
   }
   if (!url.startsWith('http')) {
@@ -73,6 +77,7 @@ function getHits (result) {
   }
 }
 
+let esClient = null
 function getClient (config) {
   let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
   const node = `${protocol}://${host}:${port}`
@@ -83,7 +88,11 @@ function getClient (config) {
     auth = { username: user, password }
   }
 
-  return new es.Client({ node, auth, apiVersion, requestTimeout })
+  if (!esClient) {
+    esClient = new es.Client({ node, auth, apiVersion, requestTimeout })
+  }
+
+  return esClient
 }
 
 function putAlias (db, originalName, aliasName, next) {
