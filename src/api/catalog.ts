@@ -127,8 +127,10 @@ export default ({config, db}) => async function (req, res, body) {
       let _source_exclude = excludeFields
 
       if (!config.elasticsearch.overwriteRequestSourceParams) {
-        _source_include = [...includeFields, ...req.query._source_include]
-        _source_exclude = [...excludeFields, ...req.query._source_exclude]
+        const requestSourceInclude = req.query._source_include || []
+        const requestSourceExclude = req.query._source_exclude || []
+        _source_include = [...includeFields, ...requestSourceInclude]
+        _source_exclude = [...excludeFields, ...requestSourceExclude]
       }
 
       const urlParams = {
