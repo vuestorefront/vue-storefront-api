@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.12.1] - 2020.06.22
+
+### Added
+
+- Add request_cache to ES url - @gibkigonzo (#387)
+
+### Fixed
+
+- Add error status code as number in `apiError` - @gibkigonzo (#442)
+- Get proper tax calculation for multistore - @didkan (#464)
+- Create only one ES client instance per app - @gibkigonzo (#393)
+
 ## [1.12.0] - 2020.06.01
 
 ### Added

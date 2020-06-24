@@ -43,6 +43,7 @@
     "useRequestFilter": false,
     "overwriteRequestSourceParams": false,
     "requestParamsBlacklist": [],
+    "cacheRequest": false,
     "searchScoring": {
       "attributes": {
         "attribute_code": {
