@@ -89,9 +89,7 @@ export default ({config, db}) => async function (req, res, body) {
 
   // Decode token and get group id
   if (userToken && userToken.length > 10) {
-    console.log(userToken)
-    const decodeToken = jwt.decode('ew0KICAidHlwIjogIkpXVCIsDQogICJhbGciOiAibm9uZSINCn0.ew0KICAiZ3JvdXBfaWQiOiAxMjM0LA0KICAiaWQiOiAzMTAsDQogICJ1c2VyIjogImMyMzRBQUFBQUFBQUFBYTc3NzFAdXJoZW4uY29tZCINCn0.442f513d04ade1a1eab43e4073f1db6f8b0bfeebc88ac9d39c1d562847817658', config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-    console.log(decodeToken)
+    const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
     groupId = decodeToken.group_id || groupId
   } else if (requestBody.groupId) {
     groupId = requestBody.groupId || groupId
