@@ -5,7 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.12.0-rc1] - UNRELEASED
+## [1.12.1] - 2020.06.22
+
+### Added
+
+- Add request_cache to ES url - @gibkigonzo (#387)
+
+### Fixed
+
+- Add error status code as number in `apiError` - @gibkigonzo (#442)
+- Get proper tax calculation for multistore - @didkan (#464)
+- Create only one ES client instance per app - @gibkigonzo (#393)
+
+## [1.12.0] - 2020.06.01
 
 ### Added
 - Add url module - @gibkigonzo (#3942)
@@ -28,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add outputFormatter to response from cache - @gibkigonzo (#428)
 - disable showing stack for invalid requests - @gibkigonzo (#431)
 - Improve `_outputFormatter` on cache catalog-response to prevent exception - @cewald (#432)
+- use ts for compiling additional scripts - @gibkigonzo (#437)
+- Bugfix for wrong JSON scheme url's and hostname resolution for `magento1` platform - @cewald (#443)
+- check if headers has been already sent in image middleware - @gibkigonzo (#434)
+- Missing packages in Docker Makefile (make, python and g++) - @proxiblue (#448)
+- change path in ecosystem for o2m - @gibkigonzo (#434)
+- udpate typings for query params - @gibkigonzo (#446)
 
 ## [1.11.1] - 2020.03.17
 

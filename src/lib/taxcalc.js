@@ -164,7 +164,7 @@ export function calculateProductTax ({ product, taxClasses, taxCountry = 'PL', t
           el.customer_tax_class_ids.indexOf(userGroupId) >= 0
       )
     } else {
-      taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
+      taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id)) >= 0)
     }
 
     if (taxClass) {

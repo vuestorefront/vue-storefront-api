@@ -42,7 +42,7 @@ export default ({config, db}) => async function (req, res, body) {
   let groupId = null
 
   // Request method handling: exit if not GET or POST
-  // Other metods - like PUT, DELETE etc. should be available only for authorized users or not available at all)
+  // Other methods - like PUT, DELETE etc. should be available only for authorized users or not available at all)
   if (!(req.method === 'GET' || req.method === 'POST' || req.method === 'OPTIONS')) {
     throw new Error('ERROR: ' + req.method + ' request method is not supported.')
   }
@@ -51,7 +51,11 @@ export default ({config, db}) => async function (req, res, body) {
   let requestBody = req.body
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
-      requestBody = JSON.parse(decodeURIComponent(req.query.request))
+      try {
+        requestBody = JSON.parse(decodeURIComponent(req.query.request))
+      } catch (err) {
+        throw new Error(err)
+      }
     }
   }
 
@@ -114,6 +118,7 @@ export default ({config, db}) => async function (req, res, body) {
       auth: auth
     }, async (_err, _res, _resBody) => { // TODO: add caching layer to speed up SSR? How to invalidate products (checksum on the response BEFORE processing it)
       if (_err || _resBody.error) {
+        console.error(_err || _resBody.error)
         apiError(res, _err || _resBody.error)
         return
       }
