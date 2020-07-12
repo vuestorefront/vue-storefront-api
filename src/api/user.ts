@@ -1,4 +1,4 @@
-import { apiStatus, encryptToken, decryptToken, apiError } from '../lib/util';
+import { apiStatus, encryptToken, decryptToken, apiError, getToken } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 import jwt from 'jwt-simple';
@@ -152,7 +152,8 @@ export default ({config, db}) => {
    */
   userApi.get('/me', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.me(req.query.token).then((result) => {
+    const token = getToken(req)
+    userProxy.me(token).then((result) => {
       addUserGroupToken(config, result)
       apiStatus(res, result, 200);
     }).catch(err => {
@@ -165,8 +166,9 @@ export default ({config, db}) => {
    */
   userApi.get('/order-history', (req, res) => {
     const userProxy = _getProxy(req)
+    const token = getToken(req)
     userProxy.orderHistory(
-      req.query.token,
+      token,
       req.query.pageSize || 20,
       req.query.currentPage || 1
     ).then((result) => {
@@ -199,9 +201,10 @@ export default ({config, db}) => {
     }
 
     const userProxy = _getProxy(req)
+    const token = getToken(req)
 
     try {
-      let { website_id, addresses } = await userProxy.me(req.query.token)
+      let { website_id, addresses } = await userProxy.me(token)
       const { customer } = req.body
 
       const validationMessage = validateAddresses(addresses, customer.addresses)
@@ -210,7 +213,7 @@ export default ({config, db}) => {
       }
 
       const result = await userProxy.update({
-        token: req.query.token,
+        token,
         body: {
           customer: {
             ...customer,
@@ -230,7 +233,8 @@ export default ({config, db}) => {
    */
   userApi.post('/changePassword', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
+    const token = getToken(req)
+    userProxy.changePassword({ token, body: req.body }).then((result) => {
       apiStatus(res, result, 200)
     }).catch(err => {
       apiStatus(res, err, 500)
@@ -242,7 +246,8 @@ export default ({config, db}) => {
    */
   userApi.post('/change-password', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.changePassword({token: req.query.token, body: req.body}).then((result) => {
+    const token = getToken(req)
+    userProxy.changePassword({token, body: req.body}).then((result) => {
       apiStatus(res, result, 200)
     }).catch(err => {
       apiStatus(res, err, 500)
