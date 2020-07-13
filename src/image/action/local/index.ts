@@ -12,7 +12,7 @@ export default class LocalImageAction extends ImageAction {
   }
 
   public get maxAgeForResponse () {
-    return 31557600000
+    return 365.25 * 86400
   }
 
   public getImageURL (): string {
