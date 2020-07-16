@@ -84,7 +84,7 @@ export default ({config, db}) => async function (req, res, body) {
   }
 
   // pass the request to elasticsearch
-  let elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
+  const elasticBackendUrl = adjustBackendProxyUrl(req, indexName, entityType, config)
   const userToken = requestBody.groupToken
 
   // Decode token and get group id
