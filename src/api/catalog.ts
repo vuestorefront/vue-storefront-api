@@ -9,7 +9,6 @@ import bodybuilder from 'bodybuilder'
 import loadCustomFilters from '../helpers/loadCustomFilters'
 import { elasticsearch, SearchQuery } from 'storefront-query-builder'
 import { apiError } from '../lib/util'
-import querystring from 'querystring'
 
 async function _cacheStorageHandler (config, result, hash, tags) {
   if (config.server.useOutputCache && cache) {
@@ -111,36 +110,6 @@ export default ({config, db}) => async function (req, res, body) {
   const s = Date.now()
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
-    // filter request parameters
-    if (config.elasticsearch.useRequestFilter && typeof config.entities[entityType] === 'object') {
-      const urlParts = elasticBackendUrl.split('?')
-      const { includeFields, excludeFields } = config.entities[entityType]
-
-      const filteredParams = Object.keys(req.query)
-        .filter(key => !config.elasticsearch.requestParamsBlacklist.includes(key))
-        .reduce((object, key) => {
-          object[key] = req.query[key]
-          return object
-        }, {})
-
-      let _source_include = includeFields || []
-      let _source_exclude = excludeFields || []
-
-      if (!config.elasticsearch.overwriteRequestSourceParams) {
-        const requestSourceInclude = req.query._source_include || []
-        const requestSourceExclude = req.query._source_exclude || []
-        _source_include = [...includeFields, ...requestSourceInclude]
-        _source_exclude = [...excludeFields, ...requestSourceExclude]
-      }
-
-      const urlParams = {
-        ...filteredParams,
-        _source_include,
-        _source_exclude
-      }
-      elasticBackendUrl = `${urlParts[0]}?${querystring.stringify(urlParams)}`
-    }
-
     request({ // do the elasticsearch request
       uri: elasticBackendUrl,
       method: req.method,
