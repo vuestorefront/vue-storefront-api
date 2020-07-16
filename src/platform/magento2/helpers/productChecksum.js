@@ -1,7 +1,7 @@
-const { sha3_224 } = require('js-sha3')
-const get = require('lodash/get')
-const flow = require('lodash/flow')
-const cloneDeep = require('lodash/cloneDeep')
+import { sha3_224 } from 'js-sha3'
+import get from 'lodash/get'
+import flow from 'lodash/flow'
+import cloneDeep from 'lodash/cloneDeep'
 
 const replaceNumberToString = obj => {
   Object.keys(obj).forEach(key => {
@@ -46,7 +46,7 @@ const getDataToHash = (product) => {
 
 const productChecksum = (product) => sha3_224(JSON.stringify(getDataToHash(product)))
 
-module.exports = {
+export {
   getProductOptions,
   productChecksum
 }

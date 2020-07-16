@@ -1,3 +1,4 @@
+import productsEquals from './helpers/productsEquals'
 
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
@@ -15,7 +16,6 @@ if (fs.existsSync('../../models/order.schema.extension.json')) {
   orderSchemaExtension = require('../../models/order.schema.extension.json')
 }
 const validate = ajv.compile(merge(orderSchema, orderSchemaExtension));
-const productsEquals = require('./helpers/productsEquals')
 
 function isNumeric (val) {
   return Number(parseFloat(val)).toString() === val;

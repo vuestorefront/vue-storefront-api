@@ -1,4 +1,4 @@
-const { getProductOptions, productChecksum } = require('./productChecksum');
+import { getProductOptions, productChecksum } from './productChecksum';
 
 // 'id' check
 const getServerItemId = (product) =>
@@ -90,4 +90,4 @@ const productsEquals = (product1, product2) => {
   return check(['id', 'sku'])
 }
 
-module.exports = productsEquals
+export default productsEquals
