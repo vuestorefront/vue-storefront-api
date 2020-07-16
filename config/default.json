@@ -12,6 +12,9 @@
     "invalidateCacheForwardUrl": "http://localhost:3000/invalidate?key=aeSu7aip&tag=",
     "showErrorStack": false
   },
+  "users": {
+    "tokenInHeader": false
+  },
   "orders": {
     "useServerQueue": false
   },
