@@ -1,4 +1,4 @@
-import { apiStatus, encryptToken, decryptToken, apiError } from '../lib/util';
+import { apiStatus, encryptToken, decryptToken, apiError, getToken } from '../lib/util';
 import { Router } from 'express';
 import PlatformFactory from '../platform/factory';
 import jwt from 'jwt-simple';
@@ -19,6 +19,19 @@ function addUserGroupToken (config, result) {
   }
 
   result.groupToken = jwt.encode(data, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+}
+
+function validateAddresses (currentAddresses = [], newAddresses = []) {
+  for (let address of newAddresses) {
+    if (!address.customer_id && !address.id) {
+      continue
+    } else {
+      const existingAddress = currentAddresses.find((existingAddress) => existingAddress.id === address.id && existingAddress.customer_id === address.customer_id)
+      if (!existingAddress) {
+        return 'Provided invalid address.id or address.customer_id'
+      }
+    }
+  }
 }
 
 export default ({config, db}) => {
@@ -139,7 +152,8 @@ export default ({config, db}) => {
    */
   userApi.get('/me', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.me(req.query.token).then((result) => {
+    const token = getToken(req)
+    userProxy.me(token).then((result) => {
       addUserGroupToken(config, result)
       apiStatus(res, result, 200);
     }).catch(err => {
@@ -152,8 +166,9 @@ export default ({config, db}) => {
    */
   userApi.get('/order-history', (req, res) => {
     const userProxy = _getProxy(req)
+    const token = getToken(req)
     userProxy.orderHistory(
-      req.query.token,
+      token,
       req.query.pageSize || 20,
       req.query.currentPage || 1
     ).then((result) => {
@@ -166,12 +181,12 @@ export default ({config, db}) => {
   /**
    * POST for updating user
    */
-  userApi.post('/me', (req, res) => {
+  userApi.post('/me', async (req, res) => {
     const ajv = new Ajv();
-    const userProfileSchema = require('../models/userProfile.schema.json')
+    const userProfileSchema = require('../models/userProfileUpdate.schema.json')
     let userProfileSchemaExtension = {};
-    if (fs.existsSync(path.resolve(__dirname, '../models/userProfile.schema.extension.json'))) {
-      userProfileSchemaExtension = require('../models/userProfile.schema.extension.json');
+    if (fs.existsSync(path.resolve(__dirname, '../models/userProfileUpdate.schema.extension.json'))) {
+      userProfileSchemaExtension = require('../models/userProfileUpdate.schema.extension.json');
     }
     const validate = ajv.compile(merge(userProfileSchema, userProfileSchemaExtension))
 
@@ -186,12 +201,31 @@ export default ({config, db}) => {
     }
 
     const userProxy = _getProxy(req)
-    userProxy.update({token: req.query.token, body: req.body}).then((result) => {
+    const token = getToken(req)
+
+    try {
+      let { website_id, addresses } = await userProxy.me(token)
+      const { customer } = req.body
+
+      const validationMessage = validateAddresses(addresses, customer.addresses)
+      if (validationMessage) {
+        return apiStatus(res, validationMessage, 403)
+      }
+
+      const result = await userProxy.update({
+        token,
+        body: {
+          customer: {
+            ...customer,
+            website_id
+          }
+        }
+      })
       addUserGroupToken(config, result)
       apiStatus(res, result, 200)
-    }).catch(err => {
+    } catch (err) {
       apiStatus(res, err, 500)
-    })
+    }
   })
 
   /**
@@ -199,7 +233,8 @@ export default ({config, db}) => {
    */
   userApi.post('/changePassword', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.changePassword({ token: req.query.token, body: req.body }).then((result) => {
+    const token = getToken(req)
+    userProxy.changePassword({ token, body: req.body }).then((result) => {
       apiStatus(res, result, 200)
     }).catch(err => {
       apiStatus(res, err, 500)
@@ -211,7 +246,8 @@ export default ({config, db}) => {
    */
   userApi.post('/change-password', (req, res) => {
     const userProxy = _getProxy(req)
-    userProxy.changePassword({token: req.query.token, body: req.body}).then((result) => {
+    const token = getToken(req)
+    userProxy.changePassword({token, body: req.body}).then((result) => {
       apiStatus(res, result, 200)
     }).catch(err => {
       apiStatus(res, err, 500)

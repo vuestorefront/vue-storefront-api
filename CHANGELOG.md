@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix default value for `maxAgeForResponse` - @lauraseidler (#485)
 - Adds `vsf-utlilities`. Use productEquals to compare products in o2m - @gibkigonzo (#477)
 
+## [1.12.2] - UNRELEASED
+
+### Added
+
+- Added validation for user profile update.
+- add `getToken` to handle getting token from header
+
+### Fixed
+
 ## [1.12.1] - 2020.06.22
 
 ### Added
