@@ -1,4 +1,4 @@
-import productsEquals from './helpers/productsEquals'
+import { productsEquals } from 'vsf-utilities'
 
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
