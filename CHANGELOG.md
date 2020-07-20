@@ -5,12 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.12.2] - UNRELEASED
+## [1.12.2] - 2020.07.20
 
 ### Added
 
-- Added validation for user profile update.
-- add `getToken` to handle getting token from header
+- Added validation for user profile update. - @gibkigonzo (#488)
+- add `getToken` to handle getting token from header - @gibkigonzo (#488)
+- Allow filter elasticsearch request for security reasons - @seSze (#476)
 
 ### Fixed
 
