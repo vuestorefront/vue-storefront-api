@@ -4,15 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.12.2] - UNRELEASED
-
-### Added
-
-
-### Fixed
-
-- Fix default value for `maxAgeForResponse` - @lauraseidler (#485)
-- Adds `vsf-utlilities`. Use productEquals to compare products in o2m - @gibkigonzo (#477)
 
 ## [1.12.2] - UNRELEASED
 
@@ -22,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add `getToken` to handle getting token from header
 
 ### Fixed
+
+- Fix default value for `maxAgeForResponse` - @lauraseidler (#485)
+- Adds `vsf-utlilities`. Use productEquals to compare products in o2m - @gibkigonzo (#477)
 
 ## [1.12.1] - 2020.06.22
 
