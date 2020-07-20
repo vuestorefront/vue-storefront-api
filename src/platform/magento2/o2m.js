@@ -1,3 +1,4 @@
+import { productsEquals } from 'vsf-utilities'
 
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
@@ -107,9 +108,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
       logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
       for (const clientItem of clientItems) {
-        const serverItem = serverItems.find((itm) => {
-          return itm.sku === clientItem.sku || itm.sku.indexOf(clientItem.sku + '-') >= 0 /* bundle products */
-        })
+        const serverItem = serverItems.find(itm => productsEquals(itm, clientItem))
         if (!serverItem) {
           logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
           syncPromises.push(api.cart.update(null, cartId, { // use magento API
@@ -134,9 +133,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
 
       for (const serverItem of serverItems) {
         if (serverItem) {
-          const clientItem = clientItems.find((itm) => {
-            return itm.sku === serverItem.sku || serverItem.sku.indexOf(itm.sku + '-') >= 0 /* bundle products */
-          })
+          const clientItem = clientItems.find(itm => productsEquals(itm, serverItem))
           if (!clientItem) {
             logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
             syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart

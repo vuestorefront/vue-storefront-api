@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.12.2] - UNRELEASED
 
+### Added
+
+
 ### Fixed
 
 - Fix default value for `maxAgeForResponse` - @lauraseidler (#485)
+- Adds `vsf-utlilities`. Use productEquals to compare products in o2m - @gibkigonzo (#477)
 
 ## [1.12.2] - UNRELEASED
 

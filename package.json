@@ -93,6 +93,7 @@
     "storefront-query-builder": "https://github.com/DivanteLtd/storefront-query-builder.git",
     "syswide-cas": "latest",
     "tsconfig-paths": "^3.9.0",
+    "vsf-utilities": "^1.0.1",
     "winston": "^2.4.2"
   },
   "devDependencies": {
