@@ -1,6 +1,6 @@
 {
   "name": "vue-storefront-api",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "private": true,
   "description": "vue-storefront API and data services",
   "main": "dist",
@@ -93,6 +93,7 @@
     "storefront-query-builder": "https://github.com/DivanteLtd/storefront-query-builder.git",
     "syswide-cas": "latest",
     "tsconfig-paths": "^3.9.0",
+    "vsf-utilities": "^1.0.1",
     "winston": "^2.4.2"
   },
   "devDependencies": {

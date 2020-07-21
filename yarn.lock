@@ -1214,6 +1214,14 @@ buffer@4.9.1:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
+buffer@5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.6.0.tgz#a31749dc7d81d84db08abf937b6b8c4033f62786"
+  integrity sha512-/gDYp/UtU0eA1ys8bOs9J6a+E/KWIY+DZ+Q2WESNUA0jFRsJOc0SNUO6xJ5SGA1xueg3NL65W6s+NY5l9cunuw==
+  dependencies:
+    base64-js "^1.0.2"
+    ieee754 "^1.1.4"
+
 bytes@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.0.0.tgz#d32815404d689699f85a4ea4fa8755dd13a96048"
@@ -4365,6 +4373,11 @@ lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.5:
   version "4.17.14"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
 
+lodash@^4.17.19:
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
+
 longest@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
@@ -6329,6 +6342,13 @@ sha1@^1.1.1:
     charenc ">= 0.0.1"
     crypt ">= 0.0.1"
 
+sha3@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/sha3/-/sha3-2.1.3.tgz#ab05b841b2bce347765db31f57fe2a3134b9fb48"
+  integrity sha512-Io53D4o9qOmf3Ow9p/DoGLQiQHhtuR0ulbyambvRSG+OX5yXExk2yYfvjHtb7AtOyk6K6+sPeK/qaowWc/E/GA==
+  dependencies:
+    buffer "5.6.0"
+
 shallow-clone@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/shallow-clone/-/shallow-clone-3.0.1.tgz#8f2981ad92531f55035b01fb230769a40e02efa3"
@@ -6676,7 +6696,7 @@ stealthy-require@^1.1.1:
 
 "storefront-query-builder@https://github.com/DivanteLtd/storefront-query-builder.git":
   version "1.0.1"
-  resolved "https://github.com/DivanteLtd/storefront-query-builder.git#3984d3972162d2aa407a7435522066a73959aa21"
+  resolved "https://github.com/DivanteLtd/storefront-query-builder.git#0ef1f9760eb44edce5b9464a9145ce0a7517a419"
   dependencies:
     "@typescript-eslint/parser" "^2.26.0"
     clone-deep "^4.0.1"
@@ -7333,6 +7353,14 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
+
+vsf-utilities@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vsf-utilities/-/vsf-utilities-1.0.1.tgz#b6893814280168e5f075465340e596d8b0a6f291"
+  integrity sha512-/A9qoDGhcis2dWd2dB1Y0gnRQC6QrQJfW4wNBed4J60w/5ur2K3MHCHKTcKFNUYjyK4CVFpBCA/6D0FOijXmYw==
+  dependencies:
+    lodash "^4.17.19"
+    sha3 "^2.1.3"
 
 vxx@^1.2.0:
   version "1.2.2"
