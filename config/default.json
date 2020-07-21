@@ -124,7 +124,7 @@
     }
   },
   "varnish": {
-    "host": "185.246.52.88",
+    "host": "localhost",
     "port": 80,
     "method": "BAN",
     "enabled": false
