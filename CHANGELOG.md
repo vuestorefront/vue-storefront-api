@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added validation for user profile update. - @gibkigonzo (#488)
+- Added validation for user profile update. - @gibkigonzo (#488) - **Breaking change!** - from this change you can't send anything when you update user data. You can only send what is specified in `src/models/userProfileUpdate.schema.json`. If you still want to send anything then change `"additionalProperties": false,` to `true`.
 - add `getToken` to handle getting token from header - @gibkigonzo (#488)
 - Allow filter elasticsearch request for security reasons - @seSze (#476)
 
