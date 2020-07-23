@@ -7354,10 +7354,10 @@ void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
-vsf-utilities@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vsf-utilities/-/vsf-utilities-1.0.1.tgz#b6893814280168e5f075465340e596d8b0a6f291"
-  integrity sha512-/A9qoDGhcis2dWd2dB1Y0gnRQC6QrQJfW4wNBed4J60w/5ur2K3MHCHKTcKFNUYjyK4CVFpBCA/6D0FOijXmYw==
+vsf-utilities@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vsf-utilities/-/vsf-utilities-1.0.2.tgz#213dc474e9cb032c543d23018964592e2c14abc0"
+  integrity sha512-RdBQNxLIRrr5D/c/zUQyc2GkOwLWyfuM2yeX9sBkSlzmnHT8OcV7Jdo26kADULD54Qvl9mrpb0IHMWzeC+FHNw==
   dependencies:
     lodash "^4.17.19"
     sha3 "^2.1.3"
