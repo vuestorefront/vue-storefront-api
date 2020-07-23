@@ -7,6 +7,7 @@ type Products @doc(description: "The Products object is the top-level object ret
     total_count: Int @doc(description: "The number of products returned")
     # filters: [LayerFilter] @doc(description: "Layered navigation filters array") // @TODO: add filters to response instead of aggregations
     aggregations: JSON @doc(description: "Layered navigation filters array as aggregations")
+    attribute_metadata: JSON @doc(description: "Transformed aggregations into attributes - you need to allow 'config.entities.attribute.loadByAttributeMetadata'")
     sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields")
 }
 
@@ -14,6 +15,7 @@ type ESResponse {
   hits: JSON
   suggest: JSON
   aggregations: JSON
+  attribute_metadata: JSON
 }
 
 type Query {
@@ -41,7 +43,7 @@ input FilterTypeInput @doc(description: "FilterTypeInput specifies which action 
     gte: String @doc(description: "Greater than or equal to")
     gteq: String @doc(description: "Greater than or equal to")
     in: [JSON] @doc(description: "In. The value can contain a set of comma-separated values")
-    like: String @doc(description: "Like. The specified value can contain % (percent signs) to allow matching of 0 or more characters")
+    like: [String] @doc(description: "Like. The specified value can contain % (percent signs) to allow matching of 0 or more characters")
     lt: String @doc(description: "Less than")
     lte: String @doc(description: "Less than or equal to")
     lteq: String @doc(description: "Less than or equal to")
@@ -151,6 +153,7 @@ input ProductFilterInput @doc(description: "ProductFilterInput defines the filte
     stock: ProductFilterInput @doc(description: "The product stock. Customers use this stock to identify the product.")
     is_in_stock: FilterTypeInput @doc(description: "Is product in stock")
     keyword: FilterTypeInput @doc(description: "keyword filter input")
+    url_path: FilterTypeInput @doc(description: "The url path assigned to the product")
 }
 
 type LayerFilter {

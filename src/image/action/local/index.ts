@@ -12,7 +12,7 @@ export default class LocalImageAction extends ImageAction {
   }
 
   public get maxAgeForResponse () {
-    return 31557600000
+    return 365.25 * 86400
   }
 
   public getImageURL (): string {
@@ -25,10 +25,10 @@ export default class LocalImageAction extends ImageAction {
     let height: number
     let action: string
     if (this.req.query.url) { // url provided as the query param
-      imgUrl = decodeURIComponent(this.req.query.url)
-      width = parseInt(this.req.query.width)
-      height = parseInt(this.req.query.height)
-      action = this.req.query.action
+      imgUrl = decodeURIComponent(this.req.query.url as string)
+      width = parseInt(this.req.query.width as string)
+      height = parseInt(this.req.query.height as string)
+      action = this.req.query.action as string
     } else {
       let urlParts = this.req.url.split('/')
       width = parseInt(urlParts[1])

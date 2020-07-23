@@ -1,4 +1,5 @@
 import config from 'config'
+import { getCurrentStoreCode } from '../../lib/util'
 /**
  * Adjust the config provided to the current store selected via request params
  * @param Object config configuration
@@ -6,20 +7,12 @@ import config from 'config'
  */
 export function multiStoreConfig (apiConfig, req) {
   let confCopy = Object.assign({}, apiConfig)
-  let storeCode = ''
-
-  if (req.headers['x-vs-store-code']) {
-    storeCode = req.headers['x-vs-store']
-  }
-  if (req.query.storeCode) {
-    storeCode = req.query.storeCode
-  }
-
+  let storeCode = getCurrentStoreCode(req)
   if (storeCode && config.availableStores.indexOf(storeCode) >= 0) {
     if (config.magento1['api_' + storeCode]) {
       confCopy = Object.assign({}, config.magento1['api_' + storeCode]) // we're to use the specific api configuration - maybe even separate magento instance
     } else {
-      if (new RegExp('(/' + config.availableStores.join('|') + '/)', 'gm').exec(confCopy.url) === null) {
+      if (new RegExp('/(' + config.availableStores.join('|') + ')/', 'gm').exec(confCopy.url) === null) {
         confCopy.url = (confCopy.url).replace(/(vsbridge)/gm, `${storeCode}/$1`);
       }
     }

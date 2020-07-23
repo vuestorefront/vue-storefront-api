@@ -3,6 +3,16 @@ import { sgnSrc } from '../lib/util'
 const jwa = require('jwa');
 const hmac = jwa('HS256');
 
+function compactItem (item, fieldsToCompact) {
+  for (let [key, value] of Object.entries(fieldsToCompact)) {
+    if (typeof item[key] !== 'undefined') {
+      item[value] = item[key]
+      delete item[key]
+    }
+  }
+  return item
+}
+
 class ProductProcessor {
   constructor (config, entityType, indexName, req, res) {
     this._config = config
@@ -13,10 +23,7 @@ class ProductProcessor {
   }
 
   process (items, groupId = null) {
-    console.debug('Entering ProductProcessor::process')
-
     const processorChain = []
-
     const platform = this._config.platform
     const factory = new PlatformFactory(this._config, this._req)
     const taxCountry = this._config.tax.defaultCountry
@@ -44,6 +51,29 @@ class ProductProcessor {
     return Promise.all(processorChain).then((resultSet) => {
       if (!resultSet || resultSet.length === 0) {
         throw Error('error with resultset for processor chaining')
+      }
+
+      // compact price fields
+      if (this._req.query.response_format === 'compact') {
+        resultSet[0] = resultSet[0].map((item) => {
+          const fieldsToCompress = this._config.products.fieldsToCompress
+          const fieldsToCompact = this._config.products.fieldsToCompact
+          if (!item._source) { return item }
+          if (item._source.configurable_children) {
+            item._source.configurable_children = item._source.configurable_children.map((subItem) => {
+              if (subItem) {
+                fieldsToCompress.forEach(field => {
+                  if (item._source[field] === subItem[field]) {
+                    delete subItem[field] // remove fields that are non distinct
+                  }
+                })
+              }
+              return compactItem(subItem, fieldsToCompact)
+            })
+          }
+          item._source = compactItem(item._source, fieldsToCompact)
+          return compactItem(item, fieldsToCompact)
+        })
       }
 
       if (this._req.query._source_exclude && this._req.query._source_exclude.indexOf('sgn') < 0) {

@@ -19,7 +19,7 @@ Besides a big improvement for the shopping experience, we also want to create a 
 - Docker and Docker Compose
 
 Already included in `vue-storefront-api` Docker image (required locally, if you do not use containerization):
-- Node.js 8.x or higher
+- Node.js 10.x or higher
 - Yarn
 
 ## Installation
@@ -65,6 +65,54 @@ A [Kibana](https://www.elastic.co/products/kibana) service is available to explo
 
 At first access it will ask to specify an index pattern, insert `vue_storefront*`
 
+**Note:** Kibana is not provided with the Elastic 7 docker file. Please install it on your own when needed or check the [`es-head`](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm) Chrome plugin.
+
+## Elastic 7 support
+
+By default, Vue Storefront API docker files and config are based on Elastic 5.6. We plan to change the default Elastic version to 7 with the 1.11 stable release. As for now, the [Elastic 7 support](https://github.com/DivanteLtd/vue-storefront-api/pull/342) is marked as **experimental**. 
+
+**How to use it?**
+
+In order to use the new Elastic 7 please make sure your `vue-storefront-api` has been checked out from the [PR#342](https://github.com/DivanteLtd/vue-storefront-api/pull/342) branch.
+To start the Elastic 7 docker service please use the `docker-compose.elastic7.yml` file provided:
+
+```bash
+docker-compose -f docker-compose.elastic7.yml up
+```
+
+Then, please do change the `config/local.json` to start using the new Elastic API. Key properties in the `elasticsearch` section are: `indexTypes` and `apiVersion` (to be set to 7.1). If you're using the multistore configuration please make sure you adjusted the `storeViews.*.elasticsearch` section as well - per each separate store.
+
+```json
+  "elasticsearch": {
+    "host": "localhost",
+    "index": "vue_storefront_catalog",
+    "port": 9200,
+    "protocol": "http",
+    "min_score": 0.01,
+    "indices": [
+      "vue_storefront_catalog",
+      "vue_storefront_catalog_de",
+      "vue_storefront_catalog_it"
+    ],
+    "indexTypes": [
+      "product",
+      "category",
+      "cms_block",
+      "cms_page",
+      "attribute",
+      "taxrule",
+      "review"
+    ],
+    "apiVersion": "7.1"
+  }
+```
+
+Starting from [Elasitc 6 and 7](https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html) we can have **just single** document type per single index. Vue Storefront used to have `product`, `category` ... types defined in the `vue_storefront_catalog`.
+
+From now on, we're using the separate indexes per each entity type. The convention is: `${indexName}_${entityType}`. If your' **logical index name** is `vue_storefront_catalog` then it will be mapped to the **physical indexes** of: `vue_storefront_catalog_product`, `vue_storefront_catalog_category` ...
+
+[Tools](https://docs.vuestorefront.io/guide/data/database-tool.html) are adjusted to ES7. You can use `yarn db new`, `yarn restore`, `yarn mage2vs import`. Just make sure that you have set up `config.elasticsearch.apiVersion` to `7.1`.
+
 ## API access
 Catalog API calls are compliant with ElasticSearch (it works like a filtering proxy to ES). More on ES queries: [ElasticSearch queries tutorial](http://okfnlabs.org/blog/2013/07/01/elasticsearch-query-tutorial.html)
 
@@ -82,7 +130,7 @@ This backend is using ElasticSearch data formats popularized by [ElasticSuite fo
 Please use data migration mechanism provided to manipulate Redis, ElasticSearch or kue. Details: https://github.com/DivanteLtd/vue-storefront-api/tree/master/doc 
 
 ## Adding custom modules with own dependencies (Yarn only)
-When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependecies defined inside your custom module will be intaled when you execute `yarn` at project root level, so it's way esier and faster than installing all modules dependcies separetly.
+When adding custom [Extensions to the API](https://github.com/DivanteLtd/vue-storefront/blob/master/doc/Extending%20vue-storefront-api.md) you might want to define some dependencies inside them. Thanks to [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) dependencies defined inside your custom module will be installed when you execute `yarn` at project root level, so it's way easier and faster than installing all modules dependencies separately.
 
 To do this, define the `package.json` with your dependencies in your custom module:
 - `src/api/extensions/{your-custom-extension}/package.json` 

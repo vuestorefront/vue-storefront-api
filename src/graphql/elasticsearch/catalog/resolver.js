@@ -3,6 +3,8 @@ import client from '../client';
 import { buildQuery } from '../queryBuilder';
 import esResultsProcessor from './processor'
 import { getIndexName } from '../mapping'
+import { adjustQuery } from './../../../lib/elastic'
+import AttributeService from './../../../api/attribute/service'
 
 const resolver = {
   Query: {
@@ -30,30 +32,29 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
 
   let esIndex = getIndexName(context.req.url)
 
-  let esResponse = await client.search({
+  let esResponse = await client.search(adjustQuery({
     index: esIndex,
-    type: config.elasticsearch.indexTypes[0],
     body: query,
     _sourceInclude,
     _sourceExclude
-  });
+  }, 'product', config));
 
-  if (esResponse && esResponse.hits && esResponse.hits.hits) {
+  if (esResponse && esResponse.body.hits && esResponse.body.hits.hits) {
     // process response result (caluclate taxes etc...)
-    esResponse.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
+    esResponse.body.hits.hits = await esResultsProcessor(esResponse, _req, config.elasticsearch.indexTypes[0], esIndex);
   }
 
   let response = {}
 
   // Process hits
   response.items = []
-  esResponse.hits.hits.forEach(hit => {
+  esResponse.body.hits.hits.forEach(hit => {
     let item = hit._source
     item._score = hit._score
     response.items.push(item)
   });
 
-  response.total_count = esResponse.hits.total
+  response.total_count = esResponse.body.hits.total
 
   // Process sort
   let sortOptions = []
@@ -67,6 +68,13 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
   }
 
   response.aggregations = esResponse.aggregations
+
+  if (response.aggregations && config.entities.attribute.loadByAttributeMetadata) {
+    const attributeListParam = AttributeService.transformAggsToAttributeListParam(response.aggregations)
+    const attributeList = await AttributeService.list(attributeListParam, config, esIndex)
+    response.attribute_metadata = attributeList.map(AttributeService.transformToMetadata)
+  }
+
   response.sort_fields = {}
   if (sortOptions.length > 0) {
     response.sort_fields.options = sortOptions

@@ -3,17 +3,18 @@
     "target": "es6",
     "strict": false,
     "allowJs": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "resolveJsonModule": false,
+    "resolveJsonModule": true,
     "outDir": "dist",
     "sourceMap": true,
     "baseUrl": ".",
-    "lib": ["es7"]
+    "lib": ["es7"],
+    "preserveSymlinks": true
   },
   "include": [
     "src/**/*"

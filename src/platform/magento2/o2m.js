@@ -1,15 +1,10 @@
+import { productsEquals } from 'vsf-utilities'
 
 const Magento2Client = require('magento2-rest-client').Magento2Client;
 
 const config = require('config')
-const Redis = require('redis');
-let redisClient = Redis.createClient(config.redis); // redis client
-redisClient.on('error', (err) => { // workaround for https://github.com/NodeRedis/node_redis/issues/713
-  redisClient = Redis.createClient(config.redis); // redis client
-});
-if (config.redis.auth) {
-  redisClient.auth(config.redis.auth);
-}
+const redis = require('../../lib/redis');
+const redisClient = redis.getClient(config)
 const countryMapper = require('../../lib/countrymapper')
 const Ajv = require('ajv'); // json validator
 const fs = require('fs');
@@ -40,9 +35,36 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
   const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
   let currentStep = 1;
 
+  /**
+   * Internal function to compose Error object using messages about other errors.
+   *
+   * 'Error' constructor should contain one message object only.
+   * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error)
+   *
+   * @param {string} message Main error message.
+   * @param {string|array|object} errors Additional error message or error object or array of array objects.
+   * @return {Error}
+   */
+  function composeError (message, errors) {
+    if (typeof errors === 'string') {
+      message = message + ' ' + errors;
+    } else if (Array.isArray(errors)) {
+      // case with array of validation errors (ajv.ErrorObject - node_modules/ajv/lib/ajv.d.ts)
+      errors.forEach((item) => {
+        const part = (typeof item === 'string') ? item : (item.message || '');
+        message = (message + ' ' + part).trim();
+      });
+    } else if (errors && (errors.message || errors.errorMessage)) {
+      // I don't know possible structure of an 'errors' in this case, so I take 'apiError()' from 'src/lib/util.js'
+      // we should use debugger to inspect this case in more details and modify code.
+      message = message + ' ' + (errors.message || errors.errorMessage);
+    }
+    return new Error(message.trim());
+  }
+
   if (!validate(orderData)) { // schema validation of upcoming order
     logger.error(THREAD_ID + ' Order validation error!', validate.errors);
-    done(new Error('Error while validating order object', validate.errors));
+    done(composeError('Error while validating order object.', validate.errors));
 
     if (job) job.progress(currentStep++, TOTAL_STEPS);
     return;
@@ -86,9 +108,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
       logger.info(THREAD_ID + '> ... and serverItems', serverItems)
 
       for (const clientItem of clientItems) {
-        const serverItem = serverItems.find((itm) => {
-          return itm.sku === clientItem.sku || itm.sku.indexOf(clientItem.sku + '-') >= 0 /* bundle products */
-        })
+        const serverItem = serverItems.find(itm => productsEquals(itm, clientItem))
         if (!serverItem) {
           logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
           syncPromises.push(api.cart.update(null, cartId, { // use magento API
@@ -113,9 +133,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
 
       for (const serverItem of serverItems) {
         if (serverItem) {
-          const clientItem = clientItems.find((itm) => {
-            return itm.sku === serverItem.sku || serverItem.sku.indexOf(itm.sku + '-') >= 0 /* bundle products */
-          })
+          const clientItem = clientItems.find(itm => productsEquals(itm, serverItem))
           if (!clientItem) {
             logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
             syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart
@@ -164,7 +182,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
               'regionCode': mappedBillingRegion.regionCode,
               'regionId': mappedBillingRegion.regionId,
               'company': billingAddr.company,
-              'vatId': billingAddr.vat_id
+              'vatId': billingAddr.vat_id,
+              'save_in_address_book': billingAddr.save_address
             }
           }
 
@@ -183,7 +202,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
                 'regionCode': mappedBillingRegion.regionCode,
                 'region': billingAddr.region,
                 'company': billingAddr.company,
-                'vatId': billingAddr.vat_id
+                'vatId': billingAddr.vat_id,
+                'save_in_address_book': billingAddr.save_address
               },
               'shippingMethodCode': orderData.addressInformation.shipping_method_code,
               'shippingCarrierCode': orderData.addressInformation.shipping_carrier_code,
@@ -204,7 +224,8 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
               'regionId': mappedShippingRegion.regionId,
               'regionCode': mappedShippingRegion.regionCode,
               'region': shippingAddr.region,
-              'company': shippingAddr.company
+              'company': shippingAddr.company,
+              'save_in_address_book': shippingAddr.save_address
             }
           } else {
             shippingAddressInfo['addressInformation']['shippingAddress'] = shippingAddressInfo['addressInformation']['billingAddress']
@@ -230,14 +251,16 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
 
                 logger.info(THREAD_ID + '[OK] Order placed with ORDER ID', result);
                 logger.debug(THREAD_ID + result)
-                redisClient.set('order$$id$$' + orderData.order_id, JSON.stringify({
-                  platform_order_id: result,
-                  transmited: true,
-                  transmited_at: new Date(),
-                  platform: 'magento2',
-                  order: orderData
-                }));
-                redisClient.set('order$$totals$$' + orderData.order_id, JSON.stringify(result[1]));
+                if (orderData.order_id) {
+                  redisClient.set('order$$id$$' + orderData.order_id, JSON.stringify({
+                    platform_order_id: result,
+                    transmited: true,
+                    transmited_at: new Date(),
+                    platform: 'magento2',
+                    order: orderData
+                  }));
+                  redisClient.set('order$$totals$$' + orderData.order_id, JSON.stringify(result[1]));
+                }
                 let orderIncrementId = null;
                 api.orders.incrementIdById(result).then(result => {
                   orderIncrementId = result.increment_id
@@ -249,28 +272,28 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
                 })
               }).catch(err => {
                 logger.error('Error placing an order', err, typeof err)
-                if (job) job.attempts(6).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-                return done(new Error('Error placing an order', err));
+                if (job) job.attempts(6).backoff({delay: 30 * 1000, type: 'fixed'}).save()
+                return done(composeError('Error placing an order.', err));
               })
             }).catch((errors) => {
               logger.error('Error while adding shipping address', errors)
               if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
-              return done(new Error('Error while adding shipping address', errors));
+              return done(composeError('Error while adding shipping address.', errors));
             })
           }).catch((errors) => {
             logger.error('Error while adding billing address', errors)
             if (job) job.attempts(3).backoff({ delay: 60 * 1000, type: 'fixed' }).save()
-            return done(new Error('Error while adding billing address', errors));
+            return done(composeError('Error while adding billing address.', errors));
           })
         }).catch((errors) => {
           logger.error('Error while synchronizing country list', errors)
           if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-          return done(new Error('Error while syncing country list', errors));
+          return done(composeError('Error while syncing country list.', errors));
         })
       }).catch((errors) => {
         logger.error('Error while adding products', errors)
         if (job) job.attempts(3).backoff({ delay: 30 * 1000, type: 'fixed' }).save()
-        return done(new Error('Error while adding products', errors));
+        return done(composeError('Error while adding products.', errors));
       })
     })
   }
@@ -292,7 +315,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
         //      })
       }).catch(error => {
         logger.info(error)
-        return done(new Error('Error while adding products', error));
+        return done(composeError('Error while adding products.', error));
       }) // TODO: assign the guest cart with user at last?
     } else {
       logger.info(THREAD_ID + '< Using cartId provided with the order', cartId)

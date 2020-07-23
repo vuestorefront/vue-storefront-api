@@ -41,7 +41,8 @@ function getMagentoDefaultConfig (storeCode) {
     REDIS_DB: config.redis.db,
     REDIS_AUTH: config.redis.auth,
     INDEX_NAME: config.elasticsearch.indices[0],
-    DATABASE_URL: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`
+    DATABASE_URL: `${config.elasticsearch.protocol}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
+    ELASTICSEARCH_API_VERSION: config.elasticsearch.apiVersion
   }
 }
 

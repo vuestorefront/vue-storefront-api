@@ -7,7 +7,7 @@
        "size": {"type": "integer"},
        "size_options": {"type": "integer"},
        "price": {"type": "float"},
-       "has_options": {"type": "boolean"},            
+       "has_options": {"type": "keyword"},            
        "special_price": {"type": "float"},
        "color": {"type": "integer"},
        "color_options": {"type": "integer"},
@@ -46,7 +46,7 @@
            "properties": {
                "url_key": {"type": "keyword"},
                "sku": {"type": "keyword"},
-               "has_options": {"type": "boolean"},
+               "has_options": {"type": "keyword"},
                "price": {"type": "float"},
                "special_price": {"type": "float"}
             }
@@ -76,6 +76,25 @@
        "tax_class_id": {"type": "integer"},
        "gender": {"type": "integer"},
        "material": {"type": "integer"},
-       "category_gear": {"type": "integer"}
+       "category_gear": {"type": "integer"},
+       "attributes_metadata": {
+            "properties": {
+                "id": {"type": "integer"},
+                "attribute_id": {"type": "integer"},
+                "default_frontend_label": {"type": "text"},
+                "is_visible_on_front": {"type": "text"},
+                "is_visible" : {"type": "boolean"},
+                "frontend_input": {"type": "text"},
+                "is_user_defined": {"type": "boolean"},
+                "is_comparable": {"type": "text"},
+                "attribute_code": {"type": "text"},
+                "options": {
+                    "properties": {
+                        "value": {"type": "text"},
+                        "label": {"type": "text"}
+                    }
+                }
+            }
+        }
     }
 }

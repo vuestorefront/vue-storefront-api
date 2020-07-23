@@ -1,8 +1,8 @@
 import AbstractTaxProxy from '../abstract/tax'
-import { calculateProductTax, checkIfTaxWithUserGroupIsActive, getUserGroupIdToUse } from '../../lib/taxcalc'
+import { calculateProductTax, checkIfTaxWithUserGroupIsActive, getUserGroupIdToUse } from 'vsf-utilities'
 import TierHelper from '../../helpers/priceTiers'
-const es = require('elasticsearch')
-const bodybuilder = require('bodybuilder')
+import bodybuilder from 'bodybuilder'
+import es from '../../lib/elastic'
 
 class TaxProxy extends AbstractTaxProxy {
   constructor (config, entityType, indexName, taxCountry, taxRegion = '', sourcePriceInclTax = null, finalPriceInclTax = null) {
@@ -23,8 +23,8 @@ class TaxProxy extends AbstractTaxProxy {
             if (store.elasticsearch.index === indexName) {
               taxRegion = store.tax.defaultRegion
               taxCountry = store.tax.defaultCountry
-              sourcePriceInclTax = store.tax.sourcePriceIncludesTax
-              finalPriceInclTax = store.tax.finalPriceIncludesTax
+              sourcePriceInclTax = store.tax.sourcePriceIncludesTax || null
+              finalPriceInclTax = store.tax.finalPriceIncludesTax || null
               this._storeConfigTax = store.tax
               break;
             }
@@ -39,10 +39,10 @@ class TaxProxy extends AbstractTaxProxy {
         taxCountry = this._config.tax.defaultCountry
       }
     }
-    if (sourcePriceInclTax === null) {
+    if (sourcePriceInclTax == null) {
       sourcePriceInclTax = this._config.tax.sourcePriceIncludesTax
     }
-    if (finalPriceInclTax === null) {
+    if (finalPriceInclTax == null) {
       finalPriceInclTax = this._config.tax.finalPriceIncludesTax
     }
     this._deprecatedPriceFieldsSupport = this._config.tax.deprecatedPriceFieldsSupport
@@ -50,7 +50,6 @@ class TaxProxy extends AbstractTaxProxy {
     this._taxRegion = taxRegion
     this._sourcePriceInclTax = sourcePriceInclTax
     this._finalPriceInclTax = finalPriceInclTax
-    console.log('Taxes will be calculated for', taxCountry, taxRegion, sourcePriceInclTax)
     this.taxFor = this.taxFor.bind(this)
   }
 
@@ -82,28 +81,14 @@ class TaxProxy extends AbstractTaxProxy {
       inst.applyTierPrices(productList, groupId)
 
       if (this._config.tax.calculateServerSide) {
-        const esConfig = { // as we're runing tax calculation and other data, we need a ES indexer
-          host: {
-            host: this._config.elasticsearch.host,
-            port: this._config.elasticsearch.port,
-            protocol: this._config.elasticsearch.protocol
-          },
-          log: 'debug',
-          apiVersion: this._config.elasticsearch.apiVersion,
-          requestTimeout: 5000
-        }
-        if (this._config.elasticsearch.user) {
-          esConfig.httpAuth = this._config.elasticsearch.user + ':' + this._config.elasticsearch.password
-        }
-
-        const client = new es.Client(esConfig)
-        const esQuery = {
+        const client = es.getClient(this._config)
+        const esQuery = es.adjustQuery({
           index: this._indexName,
-          type: 'taxrule',
           body: bodybuilder()
-        }
-        client.search(esQuery).then((taxClasses) => { // we're always trying to populate cache - when online
-          inst._taxClasses = taxClasses.hits.hits.map(el => { return el._source })
+        }, 'taxrule', this._config)
+
+        client.search(esQuery).then((result) => { // we're always trying to populate cache - when online
+          inst._taxClasses = es.getHits(result).map(el => { return el._source })
           for (let item of productList) {
             const isActive = checkIfTaxWithUserGroupIsActive(inst._storeConfigTax)
             if (isActive) {
