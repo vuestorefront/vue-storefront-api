@@ -17,8 +17,6 @@ class UserProxy extends AbstractUserProxy {
   }
 
   me (requestToken) {
-    console.log(this.api.customers.me(requestToken));
-
     return this.api.customers.me(requestToken)
   }
   orderHistory (requestToken, pageSize = 20, currentPage = 1) {

@@ -109,3 +109,9 @@ export function decryptToken (textToken, secret) {
   dec += decipher.final('utf8');
   return dec;
 }
+
+export function getToken (req) {
+  return config.users.tokenInHeader
+    ? (req.headers.authorization || '').replace('Bearer ', '')
+    : req.query.token
+}
