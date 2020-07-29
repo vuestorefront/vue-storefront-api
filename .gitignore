@@ -6,6 +6,7 @@ npm-debug.log
 .idea/
 api_start.sh
 api_test.sh
+config/local.json
 package-lock.json
 src/config.json
 config/certs/*.pem
