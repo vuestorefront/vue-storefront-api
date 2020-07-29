@@ -42,8 +42,7 @@ module.exports = {
     'vue-storefront/no-corecomponent': 'error',
     'vue-storefront/no-corepage-import': 'error',
     'vue-storefront/no-corepage': 'error',
-    'no-console': 0,
-    'no-unused-vars': 1
+    'no-console': 0
   },
   overrides: [
     {

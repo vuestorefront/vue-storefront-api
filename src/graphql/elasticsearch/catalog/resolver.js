@@ -6,13 +6,6 @@ import { getIndexName } from '../mapping'
 import { adjustQuery } from './../../../lib/elastic'
 import AttributeService from './../../../api/attribute/service'
 
-const resolver = {
-  Query: {
-    products: (_, { search, filter, sort, currentPage, pageSize, _sourceInclude, _sourceExclude }, context, rootValue) =>
-      list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude)
-  }
-};
-
 async function list (filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude) {
   let _req = {
     query: {
@@ -87,5 +80,12 @@ async function list (filter, sort, currentPage, pageSize, search, context, rootV
 
   return response;
 }
+
+const resolver = {
+  Query: {
+    products: (_, { search, filter, sort, currentPage, pageSize, _sourceInclude, _sourceExclude }, context, rootValue) =>
+      list(filter, sort, currentPage, pageSize, search, context, rootValue, _sourceInclude, _sourceExclude)
+  }
+};
 
 export default resolver;

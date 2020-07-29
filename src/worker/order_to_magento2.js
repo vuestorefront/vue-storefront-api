@@ -29,13 +29,13 @@ program
 program
   .command('testAuth')
   .action(() => {
-    processSingleOrder(require('../../var/testOrderAuth.json'), config, null, (err, result) => {});
+    processSingleOrder(require('../../var/testOrderAuth.json'), config, null, () => {});
   });
 
 program
   .command('testAnon')
   .action(() => {
-    processSingleOrder(require('../../var/testOrderAnon.json'), config, null, (err, result) => {});
+    processSingleOrder(require('../../var/testOrderAnon.json'), config, null, () => {});
   });
 
 program
