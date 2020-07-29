@@ -4,6 +4,17 @@ import { buildQuery } from '../queryBuilder';
 import { getIndexName } from '../mapping'
 import { adjustQuery } from './../../../lib/elastic'
 
+function buildItems (response) {
+  response.items = []
+  response.hits.hits.forEach(hit => {
+    let item = hit._source
+    item._score = hit._score
+    response.items.push(item)
+  });
+
+  return response;
+}
+
 async function list (filter, currentPage, pageSize = 200, _sourceInclude, type, context) {
   let query = buildQuery({ filter, currentPage, pageSize, _sourceInclude, type });
 
@@ -14,17 +25,6 @@ async function list (filter, currentPage, pageSize = 200, _sourceInclude, type, 
   }, 'cms', config));
 
   return buildItems(response.body)
-}
-
-function buildItems (response) {
-  response.items = []
-  response.hits.hits.forEach(hit => {
-    let item = hit._source
-    item._score = hit._score
-    response.items.push(item)
-  });
-
-  return response;
 }
 
 const resolver = {
