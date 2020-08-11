@@ -93,6 +93,9 @@ export default class LocalImageAction extends ImageAction {
         result: `Unable to download the requested image ${imgUrl}`
       })
     }
+    if (this.mimeType === 'image/svg+xml') {
+      return this.imageBuffer
+    }
     const { action, width, height } = this.imageOptions
     switch (action) {
       case 'resize':
