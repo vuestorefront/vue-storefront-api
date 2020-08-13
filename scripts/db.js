@@ -40,6 +40,9 @@ const es7RebuildCommand = (cmd) => { // TODO: add parallel processing
 
           console.log('** Creating alias')
           es.putAlias(common.db, tempIndex, originalIndex, (err) => {
+            if (err) {
+              console.log(err)
+            }
             waitingCounter++
           })
         })
@@ -88,6 +91,9 @@ const es5RebuildCommand = (cmd) => { // TODO: add parallel processing
 
           console.log('** Creating alias')
           es.putAlias(common.db, tempIndex, originalIndex, (err) => {
+            if (err) {
+              console.log(err)
+            }
             console.log('Done! Bye!')
             process.exit(0)
           })

@@ -7,6 +7,9 @@ import Redis from 'redis'
 export function getClient (config) {
   let redisClient = Redis.createClient(config.redis); // redis client
   redisClient.on('error', (err) => { // workaround for https://github.com/NodeRedis/node_redis/issues/713
+    if (err) {
+      console.error(err)
+    }
     redisClient = Redis.createClient(config.redis); // redis client
   });
   if (config.redis.auth) {
