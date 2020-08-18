@@ -61,6 +61,11 @@ export default ({ config, db }) => resource({
       }
     }
 
+    let token = null
+    if (req.query && req.query.token) {
+        token = req.query.token
+    }
+
     if (config.orders.useServerQueue) {
       try {
         let queue = kue.createQueue(Object.assign(config.kue, { redis: config.redis }));
@@ -77,7 +82,7 @@ export default ({ config, db }) => resource({
       }
     } else {
       const orderProxy = _getProxy(req, config)
-      orderProxy.create(req.body).then((result) => {
+      orderProxy.create(req.body, token).then((result) => {
         apiStatus(res, result, 200);
       }).catch(err => {
         apiError(res, err);

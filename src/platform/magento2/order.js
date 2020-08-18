@@ -10,7 +10,7 @@ class OrderProxy extends AbstractOrderProxy {
     this.api = Magento2Client(multiStoreConfig(config.magento2.api, req));
   }
 
-  create (orderData) {
+  create (orderData, customerToken = null) {
     const inst = this
     return new Promise((resolve, reject) => {
       try {
@@ -18,7 +18,7 @@ class OrderProxy extends AbstractOrderProxy {
           console.log(error)
           if (error) reject(error)
           resolve(result)
-        })
+        }, customerToken)
       } catch (e) {
         reject(e)
       }
