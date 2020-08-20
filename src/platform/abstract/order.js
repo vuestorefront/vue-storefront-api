@@ -1,5 +1,5 @@
 class AbstractOrderProxy {
-  create (orderData) {
+  create (orderData, customerToken = null) {
   }
 }
 
