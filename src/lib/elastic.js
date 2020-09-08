@@ -101,8 +101,15 @@ const getTotals = body => typeof body.hits.total === 'object' ? body.hits.total.
 
 let esClient = null
 function getClient (config) {
-  let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
-  const node = `${protocol}://${host}:${port}`
+  let { host, port, protocol, apiVersion, requestTimeout, pingTimeout } = config.elasticsearch
+
+  let nodes = []
+  let hosts = typeof host === 'string' ? host.split(',') : host
+
+  hosts.forEach(host => {
+    const node = `${protocol}://${host}:${port}`
+    nodes.push(node)
+  })
 
   let auth
   if (config.elasticsearch.user) {
@@ -111,7 +118,7 @@ function getClient (config) {
   }
 
   if (!esClient) {
-    esClient = new es.Client({ node, auth, apiVersion, requestTimeout })
+    esClient = new es.Client({ nodes, auth, apiVersion, requestTimeout, pingTimeout })
   }
 
   return esClient
