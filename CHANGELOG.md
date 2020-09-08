@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.12.4] - Unreleased
 
 ### Fixed 
- * add try catch to jwt.decode for groupId which is needed when you change the key for the JWT @resubaka (#496)
+
+ - add try catch to jwt.decode for groupId which is needed when you change the key for the JWT - @resubaka (#496)
+
+### Added
+
+ - Add extended ElasticSearch 7+ support and more flexibility to `elastic` lib - @cewald (#512)
  
 ## [1.12.3] - 2020.07.23
 
