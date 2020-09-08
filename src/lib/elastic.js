@@ -5,25 +5,6 @@ const jsonFile = require('jsonfile')
 const es = require('@elastic/elasticsearch')
 const querystring = require('querystring')
 
-function _updateQueryStringParameter (uri, key, value) {
-  var re = new RegExp('([?&])' + key + '=.*?(&|#|$)', 'i');
-  if (uri.match(re)) {
-    if (value) {
-      return uri.replace(re, '$1' + key + '=' + value + '$2');
-    } else {
-      return uri.replace(re, '$1' + '$2');
-    }
-  } else {
-    var hash = '';
-    if (uri.indexOf('#') !== -1) {
-      hash = uri.replace(/.*#/, '#');
-      uri = uri.replace(/#.*/, '');
-    }
-    var separator = uri.indexOf('?') !== -1 ? '&' : '?';
-    return uri + separator + key + '=' + value + hash;
-  }
-}
-
 function adjustIndexName (indexName, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) {
     return indexName
