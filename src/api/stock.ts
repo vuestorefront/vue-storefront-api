@@ -12,7 +12,7 @@ export default ({ config, db }) => {
 
   const _getStockId = (storeCode) => {
     let storeView = config.storeViews[storeCode]
-    return storeView  && storeView.msi && storeView.msi.stockId ? storeView.msi.stockId : config.msi.defaultStockId
+    return storeView?.msi?.stockId ? storeView.msi.stockId : config.msi.defaultStockId
   };
 
   /**
