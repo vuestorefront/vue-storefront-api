@@ -3,6 +3,7 @@ const _ = require('lodash')
 const fs = require('fs');
 const jsonFile = require('jsonfile')
 const es = require('@elastic/elasticsearch')
+const querystring = require('querystring')
 
 function _updateQueryStringParameter (uri, key, value) {
   var re = new RegExp('([?&])' + key + '=.*?(&|#|$)', 'i');
@@ -29,6 +30,39 @@ function adjustIndexName (indexName, entityType, config) {
   } else {
     return `${indexName}_${entityType}`
   }
+}
+
+function decorateBackendUrl (entityType, url, req, config) {
+  if (config.elasticsearch.useRequestFilter && typeof config.entities[entityType] === 'object') {
+    const urlParts = url.split('?')
+    const { includeFields, excludeFields } = config.entities[entityType]
+
+    const filteredParams = Object.keys(req.query)
+      .filter(key => !config.elasticsearch.requestParamsBlacklist.includes(key))
+      .reduce((object, key) => {
+        object[key] = req.query[key]
+        return object
+      }, {})
+
+    let _source_include = includeFields || []
+    let _source_exclude = excludeFields || []
+
+    if (!config.elasticsearch.overwriteRequestSourceParams) {
+      const requestSourceInclude = req.query._source_include || []
+      const requestSourceExclude = req.query._source_exclude || []
+      _source_include = [...includeFields, ...requestSourceInclude]
+      _source_exclude = [...excludeFields, ...requestSourceExclude]
+    }
+
+    const urlParams = {
+      ...filteredParams,
+      _source_include,
+      _source_exclude
+    }
+    url = `${urlParts[0]}?${querystring.stringify(urlParams)}`
+  }
+
+  return url
 }
 
 function adjustBackendProxyUrl (req, indexName, entityType, config) {
@@ -58,7 +92,8 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url
   }
-  return url
+
+  return decorateBackendUrl(entityType, url, req, config)
 }
 
 function adjustQuery (esQuery, entityType, config) {
@@ -126,6 +161,9 @@ function deleteIndex (db, indexName, next) {
   }).then((res) => {
     next()
   }).catch(err => {
+    if (err) {
+      console.error(err)
+    }
     return db.indices.deleteAlias({
       index: '*',
       name: indexName
@@ -156,6 +194,26 @@ function reIndex (db, fromIndexName, toIndexName, next) {
   }).catch(err => {
     next(err)
   })
+}
+
+/**
+ * Load the schema definition for particular entity type
+ * @param {String} entityType
+ */
+function loadSchema (entityType, apiVersion = '7.1') {
+  const rootSchemaPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json')
+  if (!fs.existsSync(rootSchemaPath)) {
+    return null
+  }
+  let schemaContent = jsonFile.readFileSync(rootSchemaPath)
+  let elasticSchema = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
+  const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
+  if (fs.existsSync(extensionsPath)) {
+    schemaContent = jsonFile.readFileSync(extensionsPath)
+    let elasticSchemaExtensions = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
+    elasticSchema = _.merge(elasticSchema, elasticSchemaExtensions) // user extensions
+  }
+  return elasticSchema
 }
 
 function createIndex (db, indexName, collectionName, next) {
@@ -199,26 +257,6 @@ function createIndex (db, indexName, collectionName, next) {
     console.log('Public index alias does not exists', err.message)
     step2()
   })
-}
-
-/**
- * Load the schema definition for particular entity type
- * @param {String} entityType
- */
-function loadSchema (entityType, apiVersion = '7.1') {
-  const rootSchemaPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.json')
-  if (!fs.existsSync(rootSchemaPath)) {
-    return null
-  }
-  let schemaContent = jsonFile.readFileSync(rootSchemaPath)
-  let elasticSchema = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
-  const extensionsPath = path.join(__dirname, '../../config/elastic.schema.' + entityType + '.extension.json');
-  if (fs.existsSync(extensionsPath)) {
-    schemaContent = jsonFile.readFileSync(extensionsPath)
-    let elasticSchemaExtensions = parseInt(apiVersion) < 6 ? schemaContent : Object.assign({}, { mappings: schemaContent });
-    elasticSchema = _.merge(elasticSchema, elasticSchemaExtensions) // user extensions
-  }
-  return elasticSchema
 }
 
 // this is deprecated just for ES 5.6

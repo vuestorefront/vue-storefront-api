@@ -37,6 +37,10 @@ function invalidateCache (req, res) {
                   }
                 },
                 (err, res, body) => {
+                  if (err) {
+                    console.error(err);
+                    return
+                  }
                   if (body && body.includes('200 Ban added')) {
                     console.log(
                       `Tags invalidated successfully for [${tag}] in the Varnish`
@@ -83,6 +87,10 @@ function invalidateCache (req, res) {
             }
           },
           (err, res, body) => {
+            if (err) {
+              console.error(err);
+              return
+            }
             if (body && body.includes('200 Ban added')) {
               console.log(
                 `Cache invalidated successfully for [${ext}] in the Varnish`

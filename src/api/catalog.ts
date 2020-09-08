@@ -89,8 +89,14 @@ export default ({config, db}) => async function (req, res, body) {
 
   // Decode token and get group id
   if (userToken && userToken.length > 10) {
-    const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
-    groupId = decodeToken.group_id || groupId
+    /** 
+     * We need to use try catch so when we change the keys for encryption that not every request with a loggedin user
+     * fails with a 500 at this point.
+     **/
+    try {
+      const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
+      groupId = decodeToken.group_id || groupId
+    } catch(err) {} 
   } else if (requestBody.groupId) {
     groupId = requestBody.groupId || groupId
   }
