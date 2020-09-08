@@ -93,6 +93,12 @@ function getHits (result) {
   }
 }
 
+/**
+ * Support for ES7+ where the `total` now is an object
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html
+ */
+const getTotals = body => typeof body.hits.total === 'object' ? body.hits.total.value : body.hits.total
+
 let esClient = null
 function getClient (config) {
   let { host, port, protocol, apiVersion, requestTimeout } = config.elasticsearch
@@ -295,6 +301,7 @@ module.exports = {
   adjustBackendProxyUrl,
   getClient,
   getHits,
+  getTotals,
   adjustIndexName,
   putMappings
 }

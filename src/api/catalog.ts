@@ -1,7 +1,7 @@
 import jwt from 'jwt-simple'
 import request from 'request'
 import ProcessorFactory from '../processor/factory'
-import { adjustBackendProxyUrl } from '../lib/elastic'
+import { adjustBackendProxyUrl, getTotals } from '../lib/elastic'
 import cache from '../lib/cache-instance'
 import { sha3_224 } from 'js-sha3'
 import AttributeService from './attribute/service'
@@ -29,7 +29,7 @@ function _outputFormatter (responseBody, format = 'standard') {
     delete responseBody._shards
     if (responseBody.hits) {
       delete responseBody.hits.max_score
-      responseBody.total = responseBody.hits.total
+      responseBody.total = getTotals(responseBody)
       responseBody.hits = responseBody.hits.hits.map(hit => {
         return Object.assign(hit._source, { _score: hit._score })
       })
@@ -89,14 +89,14 @@ export default ({config, db}) => async function (req, res, body) {
 
   // Decode token and get group id
   if (userToken && userToken.length > 10) {
-    /** 
+    /**
      * We need to use try catch so when we change the keys for encryption that not every request with a loggedin user
      * fails with a 500 at this point.
      **/
     try {
       const decodeToken = jwt.decode(userToken, config.authHashSecret ? config.authHashSecret : config.objHashSecret)
       groupId = decodeToken.group_id || groupId
-    } catch(err) {} 
+    } catch (err) {}
   } else if (requestBody.groupId) {
     groupId = requestBody.groupId || groupId
   }
