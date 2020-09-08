@@ -46,53 +46,40 @@ function decorateBackendUrl (entityType, url, req, config) {
   return url
 }
 
+function adjustQueryParams (query, config) {
+  delete query.request
+  delete query.request_format
+  delete query.response_format
+
+  if (parseInt(config.elasticsearch.apiVersion) >= 6) { // legacy for ES 5
+    query._source_includes = query._source_include
+    query._source_excludes = query._source_exclude
+    delete query._source_exclude
+    delete query._source_include
+    if (config.elasticsearch.cacheRequest) {
+      query.request_cache = !!config.elasticsearch.cacheRequest
+    }
+  }
+
+  return query
+}
+
 function adjustBackendProxyUrl (req, indexName, entityType, config) {
   let url
   const queryString = require('query-string');
-  const parsedQuery = queryString.parseUrl(req.url).query
+  const parsedQuery = adjustQueryParams(queryString.parseUrl(req.url).query, config)
 
   if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
-    delete parsedQuery.request
-    delete parsedQuery.request_format
-    delete parsedQuery.response_format
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + indexName + '/' + entityType + '/_search?' + queryString.stringify(parsedQuery)
   } else {
-    parsedQuery._source_includes = parsedQuery._source_include
-    parsedQuery._source_excludes = parsedQuery._source_exclude
-    delete parsedQuery._source_exclude
-    delete parsedQuery._source_include
-    delete parsedQuery.request
-    delete parsedQuery.request_format
-    delete parsedQuery.response_format
-    if (config.elasticsearch.cacheRequest) {
-      parsedQuery.request_cache = !!config.elasticsearch.cacheRequest
-    }
-
     url = config.elasticsearch.host + ':' + config.elasticsearch.port + '/' + adjustIndexName(indexName, entityType, config) + '/_search?' + queryString.stringify(parsedQuery)
   }
+
   if (!url.startsWith('http')) {
     url = config.elasticsearch.protocol + '://' + url
   }
 
   return decorateBackendUrl(entityType, url, req, config)
-}
-
-function adjustQueryParams (query, config) {
-  if (parseInt(config.elasticsearch.apiVersion) < 6) { // legacy for ES 5
-    delete query.request
-    delete query.request_format
-    delete query.response_format
-  } else {
-    query._source_includes = query._source_include
-    query._source_excludes = query._source_exclude
-    delete query._source_exclude
-    delete query._source_include
-    delete query.request
-    delete query.request_format
-    delete query.response_format
-  }
-
-  return query
 }
 
 function adjustQuery (esQuery, entityType, config) {
