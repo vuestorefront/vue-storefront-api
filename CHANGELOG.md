@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 
  * add try catch to jwt.decode for groupId which is needed when you change the key for the JWT @resubaka (#496)
+ * Explicit check if the msi stock id is set for the given storeview  - [@philippsander](https://github.com/philippsander) (#483)
  
 ## [1.12.3] - 2020.07.23
 
