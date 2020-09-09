@@ -121,7 +121,10 @@ function adjustBackendProxyUrl (req, indexName, entityType, config) {
 function adjustQuery (esQuery, entityType, config) {
   if (parseInt(config.elasticsearch.apiVersion) < 6) {
     esQuery.type = entityType
+  } else {
+    delete esQuery.type
   }
+
   esQuery.index = adjustIndexName(esQuery.index, entityType, config)
   return esQuery
 }
