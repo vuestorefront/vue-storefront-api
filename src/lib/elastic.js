@@ -14,12 +14,19 @@ function adjustIndexName (indexName, entityType, config) {
 }
 
 function decorateBackendUrl (entityType, url, req, config) {
-  if (config.elasticsearch.useRequestFilter && typeof config.entities[entityType] === 'object') {
+  const {
+    useRequestFilter,
+    requestParamsBlacklist,
+    overwriteRequestSourceParams,
+    apiVersion
+  } = config.elasticsearch
+
+  if (useRequestFilter && typeof config.entities[entityType] === 'object') {
     const urlParts = url.split('?')
     const { includeFields, excludeFields } = config.entities[entityType]
 
     const filteredParams = Object.keys(req.query)
-      .filter(key => !config.elasticsearch.requestParamsBlacklist.includes(key))
+      .filter(key => !requestParamsBlacklist.includes(key))
       .reduce((object, key) => {
         object[key] = req.query[key]
         return object
@@ -28,17 +35,21 @@ function decorateBackendUrl (entityType, url, req, config) {
     let _source_include = includeFields || []
     let _source_exclude = excludeFields || []
 
-    if (!config.elasticsearch.overwriteRequestSourceParams) {
+    if (!overwriteRequestSourceParams) {
       const requestSourceInclude = req.query._source_include || []
       const requestSourceExclude = req.query._source_exclude || []
       _source_include = [...includeFields, ...requestSourceInclude]
       _source_exclude = [...excludeFields, ...requestSourceExclude]
     }
 
+    const isEs6AndUp = (parseInt(apiVersion) >= 6)
+    let _sourceIncludeKey = isEs6AndUp ? '_source_includes' : '_source_include'
+    let _sourceExcludeKey = isEs6AndUp ? '_source_excludes' : '_source_exclude'
+
     const urlParams = {
       ...filteredParams,
-      _source_include,
-      _source_exclude
+      [_sourceIncludeKey]: _source_include,
+      [_sourceExcludeKey]: _source_exclude
     }
     url = `${urlParts[0]}?${querystring.stringify(urlParams)}`
   }
@@ -46,19 +57,44 @@ function decorateBackendUrl (entityType, url, req, config) {
   return url
 }
 
-function adjustQueryParams (query, config) {
+function adjustQueryParams (query, entityType, config) {
   delete query.request
   delete query.request_format
   delete query.response_format
 
-  if (parseInt(config.elasticsearch.apiVersion) >= 6) { // legacy for ES 5
+  const {
+    apiVersion,
+    useRequestFilter,
+    overwriteRequestSourceParams,
+    requestParamsBlacklist,
+    cacheRequest
+  } = config.elasticsearch
+
+  if (useRequestFilter && !overwriteRequestSourceParams && typeof config.entities[entityType] === 'object') {
+    let { includeFields, excludeFields } = config.entities[entityType]
+    const requestSourceInclude = query._source_include ? query._source_include.split(',') : []
+    const requestSourceExclude = query._source_exclude ? query._source_exclude.split(',') : []
+    query._source_include = [...includeFields, ...requestSourceInclude]
+    query._source_exclude = [...excludeFields, ...requestSourceExclude]
+  }
+
+  if (parseInt(apiVersion) >= 6) { // legacy for ES 5
     query._source_includes = query._source_include
     query._source_excludes = query._source_exclude
     delete query._source_exclude
     delete query._source_include
-    if (config.elasticsearch.cacheRequest) {
-      query.request_cache = !!config.elasticsearch.cacheRequest
+    if (cacheRequest) {
+      query.request_cache = !!cacheRequest
     }
+  }
+
+  if (useRequestFilter && typeof config.entities[entityType] === 'object') {
+    query = Object.keys(query)
+      .filter(key => !requestParamsBlacklist.includes(key))
+      .reduce((object, key) => {
+        object[key] = query[key]
+        return object
+      }, {})
   }
 
   return query

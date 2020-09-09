@@ -104,7 +104,7 @@ export default ({config, db}) => async function (req, res, body) {
   const reqHash = sha3_224(`${JSON.stringify(requestBody)}${req.url}`)
   const dynamicRequestHandler = () => {
     const reqQuery = Object.assign({}, req.query)
-    const reqQueryParams = adjustQueryParams(reqQuery, config)
+    const reqQueryParams = adjustQueryParams(reqQuery, entityType, config)
 
     const query = adjustQuery({
       index: indexName,
