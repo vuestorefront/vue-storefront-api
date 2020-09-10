@@ -125,6 +125,6 @@ export function decryptToken (textToken, secret) {
 
 export function getToken (req) {
   return config.users.tokenInHeader
-      ? (req.headers.authorization || '').replace('Bearer ', '')
-      : req.query.token
+    ? (req.headers.authorization || '').replace('Bearer ', '')
+    : req.query.token
 }
