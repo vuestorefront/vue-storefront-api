@@ -1,4 +1,4 @@
-import AbstractStockProxy from "../abstract/stock"
+import AbstractStockProxy from '../abstract/stock'
 import { multiStoreConfig } from './util'
 
 class StockProxy extends AbstractStockProxy {
