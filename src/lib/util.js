@@ -104,7 +104,7 @@ export function apiError (res, error) {
  * @param secret
  * @returns {string}
  */
-function createCypher(secret) {
+function createCypher (secret) {
   return crypto.createHash('sha256').update(String(secret)).digest('base64').substr(0, 32);
 }
 
