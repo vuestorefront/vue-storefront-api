@@ -13,11 +13,11 @@ export default class MinioS3ImageCache extends ImageCache {
   }
 
   public get moduleConfig (): any {
-    return this.config.imageable.caching[`minio-s3`]
+    return this.config.imageable.caching['minio-s3']
   }
 
   public async getImageFromCache () {
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const chunks = []
       MinioS3ImageCache.client.getObject(this.moduleConfig.bucket, this.key, (err, stream) => {
         if (err) reject(err)
