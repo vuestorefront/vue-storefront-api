@@ -145,6 +145,10 @@ const getTotals = body => typeof body.hits.total === 'object' ? body.hits.total.
 
 let esClient = null
 function getClient (config) {
+  if (esClient) {
+    return esClient
+  }
+  
   let { host, port, protocol, apiVersion, requestTimeout, pingTimeout } = config.elasticsearch
 
   let nodes = []
