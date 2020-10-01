@@ -165,9 +165,7 @@ function getClient (config) {
     auth = { username: user, password }
   }
 
-  if (!esClient) {
-    esClient = new es.Client({ nodes, auth, apiVersion, requestTimeout, pingTimeout })
-  }
+  esClient = new es.Client({ nodes, auth, apiVersion, requestTimeout, pingTimeout })
 
   return esClient
 }
