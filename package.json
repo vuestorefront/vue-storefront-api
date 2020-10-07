@@ -83,7 +83,7 @@
     "nodemailer": "^4.6.8",
     "oauth-1.0a": "^1.0.1",
     "pm2": "^2.10.4",
-    "query-string": "^6.8.3",
+    "query-string": "6.13.2",
     "redis-tag-cache": "^1.2.1",
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",

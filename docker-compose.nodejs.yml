@@ -22,8 +22,8 @@ services:
       - './scripts:/var/www/scripts'
       - './src:/var/www/src'
       - './var:/var/www/var'
+      - './yarn.lock:/var/www/yarn.lock'
     tmpfs:
       - /var/www/dist
     ports:
       - '8080:8080'
-      
