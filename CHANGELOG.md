@@ -4,12 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+
 ## [1.12.4] - Unreleased
 
-### Fixed 
+### Fixed
+
+- Bump version for `query-string` - @arjanStudent (#525)
+
+
+### Fixed
  * add try catch to jwt.decode for groupId which is needed when you change the key for the JWT @resubaka (#496)
  * Explicit check if the msi stock id is set for the given storeview  - [@philippsander](https://github.com/philippsander) (#483)
- 
+
 ## [1.12.3] - 2020.07.23
 
 ### Fixed
