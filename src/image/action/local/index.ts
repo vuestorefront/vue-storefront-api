@@ -50,7 +50,7 @@ export default class LocalImageAction extends ImageAction {
       width,
       height,
       action,
-      supportWebp: this.req.headers.accept.includes('image/webp')
+      supportWebp: this.options.imageable.action.supportWebp && this.req.headers.accept.includes('image/webp')
     }
   }
 
