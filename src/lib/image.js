@@ -12,12 +12,12 @@ export async function downloadImage (url) {
   return response
 }
 
-export async function identify (buffer, imageFormat) {
+export async function identify (buffer, supportWebp) {
   try {
     const transformer = sharp(buffer);
 
-    if (imageFormat) {
-      return transformer.toFormat(imageFormat).toBuffer();
+    if (supportWebp) {
+      return transformer.toFormat('webp').toBuffer();
     }
 
     return transformer.metadata();
@@ -26,7 +26,7 @@ export async function identify (buffer, imageFormat) {
   }
 }
 
-export async function resize (buffer, width, height, imageFormat) {
+export async function resize (buffer, width, height, supportWebp) {
   try {
     const transformer = sharp(buffer);
 
@@ -38,8 +38,8 @@ export async function resize (buffer, width, height, imageFormat) {
       transformer.resize(width, height, options)
     }
 
-    if (imageFormat) {
-      return transformer.toFormat(imageFormat).toBuffer();
+    if (supportWebp) {
+      return transformer.toFormat('webp').toBuffer();
     }
 
     return transformer.toBuffer();
@@ -48,7 +48,7 @@ export async function resize (buffer, width, height, imageFormat) {
   }
 }
 
-export async function fit (buffer, width, height, imageFormat) {
+export async function fit (buffer, width, height, supportWebp) {
   try {
     const transformer = sharp(buffer);
 
@@ -56,8 +56,8 @@ export async function fit (buffer, width, height, imageFormat) {
       transformer.resize(width, height, { fit: sharp.fit.cover });
     }
 
-    if (imageFormat) {
-      return transformer.toFormat(imageFormat).toBuffer();
+    if (supportWebp) {
+      return transformer.toFormat('webp').toBuffer();
     }
 
     return transformer.toBuffer();

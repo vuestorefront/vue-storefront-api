@@ -24,26 +24,17 @@ export default class LocalImageAction extends ImageAction {
     let width: number
     let height: number
     let action: string
-    let imageFormat: string
     if (this.req.query.url) { // url provided as the query param
       imgUrl = decodeURIComponent(this.req.query.url as string)
       width = parseInt(this.req.query.width as string)
       height = parseInt(this.req.query.height as string)
       action = this.req.query.action as string
-      imageFormat = this.req.query.imageFormat as string
     } else {
       let urlParts = this.req.url.split('/')
       width = parseInt(urlParts[1])
       height = parseInt(urlParts[2])
       action = urlParts[3]
-      imageFormat = urlParts[4].includes('format-')
-        ? urlParts[4].replace('format-', '')
-        : undefined
-
-      const relativeUrl = urlParts[4].includes('format-')
-        ? urlParts.slice(5).join('/')
-        : urlParts.slice(4).join('/')
-      imgUrl = `${this.options[this.options.platform].imgUrl}/${relativeUrl}` // full original image url
+      imgUrl = `${this.options[this.options.platform].imgUrl}/${urlParts.slice(4).join('/')}` // full original image url
 
       if (urlParts.length < 5) {
         this.res.status(400).send({
@@ -59,7 +50,7 @@ export default class LocalImageAction extends ImageAction {
       width,
       height,
       action,
-      imageFormat
+      supportWebp: this.req.headers.accept.includes('image/webp')
     }
   }
 
@@ -81,9 +72,7 @@ export default class LocalImageAction extends ImageAction {
   }
 
   public validateMIMEType () {
-    const mimeType = this.imageOptions.imageFormat
-      ? `image/${this.imageOptions.imageFormat}`
-      : mime.lookup(this.imageOptions.imgUrl)
+    const mimeType = mime.lookup(this.imageOptions.imgUrl)
 
     if (mimeType === false || !this.SUPPORTED_MIMETYPES.includes(mimeType)) {
       return this.res.status(400).send({
@@ -92,11 +81,11 @@ export default class LocalImageAction extends ImageAction {
       })
     }
 
-    this.mimeType = mimeType
+    this.mimeType = this.imageOptions.supportWebp ? 'image/webp' : mimeType
   }
 
   public async prossesImage () {
-    const { imgUrl, imageFormat } = this.imageOptions
+    const { imgUrl, supportWebp } = this.imageOptions
 
     try {
       this.imageBuffer = await downloadImage(imgUrl)
@@ -109,13 +98,13 @@ export default class LocalImageAction extends ImageAction {
     const { action, width, height } = this.imageOptions
     switch (action) {
       case 'resize':
-        this.imageBuffer = await resize(this.imageBuffer, width, height, imageFormat)
+        this.imageBuffer = await resize(this.imageBuffer, width, height, supportWebp)
         break
       case 'fit':
-        this.imageBuffer = await fit(this.imageBuffer, width, height, imageFormat)
+        this.imageBuffer = await fit(this.imageBuffer, width, height, supportWebp)
         break
       case 'identify':
-        this.imageBuffer = await identify(this.imageBuffer, imageFormat)
+        this.imageBuffer = await identify(this.imageBuffer, supportWebp)
         break
       default:
         throw new Error('Unknown action')
