@@ -22,20 +22,20 @@ program
     logger.info(`Starting KUE worker for "order" message [${partition_count}]...`);
     queue.process('order', partition_count, (job, done) => {
       logger.info('Processing order: ' + job.data.title);
-      return processSingleOrder(job.data.order, config, job, done);
+      return processSingleOrder(job.data.order, job, done);
     });
   });
 
 program
   .command('testAuth')
   .action(() => {
-    processSingleOrder(require('../../var/testOrderAuth.json'), config, null, () => {});
+    processSingleOrder(require('../../var/testOrderAuth.json'), null, (err, result) => {});
   });
 
 program
   .command('testAnon')
   .action(() => {
-    processSingleOrder(require('../../var/testOrderAnon.json'), config, null, () => {});
+    processSingleOrder(require('../../var/testOrderAnon.json'), null, (err, result) => {});
   });
 
 program
