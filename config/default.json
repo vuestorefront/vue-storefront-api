@@ -242,7 +242,7 @@
   "review": {
     "defaultReviewStatus": 2
   },
-  "bodyLimit": "100kb",
+  "bodyLimit": "1500kb",
   "corsHeaders": [
     "Link"
   ],
