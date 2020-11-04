@@ -35,7 +35,6 @@ async function processSingleOrder (orderData, job, done, logger = console) {
 
   try {
     cartId = await orderProcessor.cartIdPrepare(orderData);
-    logger.info(cartId, 'WAITED FOR NEW CART ID');
     orderData.cart_id = cartId;
   } catch (error) { // cannot create a quote for specific user, so bypass by placing anonymous order
     logger.error(THREAD_ID, error)
