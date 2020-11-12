@@ -343,7 +343,7 @@
     },
     "action": {
       "type": "local",
-      "supportWebp": true
+      "supportWebp": false
     }
   },
   "entities": {
