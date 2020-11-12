@@ -25,6 +25,8 @@ export default ({ config, db }) =>
     imageAction.isImageSourceHostAllowed()
     imageAction.validateMIMEType()
 
+    if (res.headersSent) return
+
     const cache = cacheFactory.getAdapter(config.imageable.caching.type)
 
     if (config.imageable.caching.active && await cache.check()) {
@@ -41,9 +43,7 @@ export default ({ config, db }) =>
       imageBuffer = imageAction.imageBuffer
     }
 
-    if (res.headersSent) {
-      return
-    }
+    if (res.headersSent) return
 
     return res
       .type(imageAction.mimeType)

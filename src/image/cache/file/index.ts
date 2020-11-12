@@ -26,8 +26,9 @@ export default class FileImageCache extends ImageCache {
   }
 
   public createKey (): string {
-    console.log(createHash('md5').update(this.req.url).digest('hex'))
-    return createHash('md5').update(this.req.url).digest('hex')
+    const webpKey = this.config.imageable.action.supportWebp && this.req.headers.accept.includes('image/webp') ? 'webp' : ''
+    console.log(createHash('md5').update(`${this.req.url}${webpKey}`).digest('hex'))
+    return createHash('md5').update(`${this.req.url}${webpKey}`).digest('hex')
   }
 
   public isValidFor (type) {
