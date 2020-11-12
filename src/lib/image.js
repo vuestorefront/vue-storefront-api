@@ -12,12 +12,12 @@ export async function downloadImage (url) {
   return response
 }
 
-export async function identify (buffer, supportWebp) {
+export async function identify (buffer, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
 
     if (supportWebp) {
-      return transformer.toFormat('webp').toBuffer();
+      return transformer.toFormat('webp').metadata();
     }
 
     return transformer.metadata();
@@ -26,7 +26,7 @@ export async function identify (buffer, supportWebp) {
   }
 }
 
-export async function resize (buffer, width, height, supportWebp) {
+export async function resize (buffer, width, height, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
 
@@ -48,7 +48,7 @@ export async function resize (buffer, width, height, supportWebp) {
   }
 }
 
-export async function fit (buffer, width, height, supportWebp) {
+export async function fit (buffer, width, height, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
 

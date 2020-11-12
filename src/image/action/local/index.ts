@@ -98,13 +98,13 @@ export default class LocalImageAction extends ImageAction {
     const { action, width, height } = this.imageOptions
     switch (action) {
       case 'resize':
-        this.imageBuffer = await resize(this.imageBuffer, width, height, supportWebp)
+        this.imageBuffer = await resize(this.imageBuffer, width, height, { supportWebp })
         break
       case 'fit':
-        this.imageBuffer = await fit(this.imageBuffer, width, height, supportWebp)
+        this.imageBuffer = await fit(this.imageBuffer, width, height, { supportWebp })
         break
       case 'identify':
-        this.imageBuffer = await identify(this.imageBuffer, supportWebp)
+        this.imageBuffer = await identify(this.imageBuffer, { supportWebp })
         break
       default:
         throw new Error('Unknown action')
