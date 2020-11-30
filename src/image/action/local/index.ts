@@ -35,6 +35,7 @@ export default class LocalImageAction extends ImageAction {
       height = parseInt(urlParts[2])
       action = urlParts[3]
       imgUrl = `${this.options[this.options.platform].imgUrl}/${urlParts.slice(4).join('/')}` // full original image url
+
       if (urlParts.length < 5) {
         this.res.status(400).send({
           code: 400,
@@ -48,7 +49,8 @@ export default class LocalImageAction extends ImageAction {
       imgUrl,
       width,
       height,
-      action
+      action,
+      supportWebp: this.options.imageable.action.supportWebp && this.req.headers.accept.includes('image/webp')
     }
   }
 
@@ -79,11 +81,11 @@ export default class LocalImageAction extends ImageAction {
       })
     }
 
-    this.mimeType = mimeType
+    this.mimeType = this.imageOptions.supportWebp ? 'image/webp' : mimeType
   }
 
   public async prossesImage () {
-    const { imgUrl } = this.imageOptions
+    const { imgUrl, supportWebp } = this.imageOptions
 
     try {
       this.imageBuffer = await downloadImage(imgUrl)
@@ -96,13 +98,13 @@ export default class LocalImageAction extends ImageAction {
     const { action, width, height } = this.imageOptions
     switch (action) {
       case 'resize':
-        this.imageBuffer = await resize(this.imageBuffer, width, height)
+        this.imageBuffer = await resize(this.imageBuffer, width, height, { supportWebp })
         break
       case 'fit':
-        this.imageBuffer = await fit(this.imageBuffer, width, height)
+        this.imageBuffer = await fit(this.imageBuffer, width, height, { supportWebp })
         break
       case 'identify':
-        this.imageBuffer = await identify(this.imageBuffer)
+        this.imageBuffer = await identify(this.imageBuffer, { supportWebp })
         break
       default:
         throw new Error('Unknown action')

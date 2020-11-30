@@ -12,9 +12,13 @@ export async function downloadImage (url) {
   return response
 }
 
-export async function identify (buffer) {
+export async function identify (buffer, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
+
+    if (supportWebp) {
+      return transformer.toFormat('webp').metadata();
+    }
 
     return transformer.metadata();
   } catch (err) {
@@ -22,7 +26,7 @@ export async function identify (buffer) {
   }
 }
 
-export async function resize (buffer, width, height) {
+export async function resize (buffer, width, height, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
 
@@ -34,18 +38,26 @@ export async function resize (buffer, width, height) {
       transformer.resize(width, height, options)
     }
 
+    if (supportWebp) {
+      return transformer.toFormat('webp').toBuffer();
+    }
+
     return transformer.toBuffer();
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function fit (buffer, width, height) {
+export async function fit (buffer, width, height, { supportWebp } = {}) {
   try {
     const transformer = sharp(buffer);
 
     if (width || height) {
       transformer.resize(width, height, { fit: sharp.fit.cover });
+    }
+
+    if (supportWebp) {
+      return transformer.toFormat('webp').toBuffer();
     }
 
     return transformer.toBuffer();
