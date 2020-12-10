@@ -46,7 +46,7 @@ export default ({ config, db }) => {
           sgnObj = { price: item.price_info.extension_attributes.tax_adjustments.final_price }
         }
 
-        item.sgn = hmac.sign(sgnSrc(sgnObj, item), config.objHashSecret); // for products we sign off only price and id becase only such data is getting back with orders
+        item.sgn = hmac.sign(sgnSrc(sgnObj, item), config.objHashSecret); // for products we sign off only price and id because only such data is getting back with orders
         return item
       })
       apiStatus(res, result, 200);
