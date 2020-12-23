@@ -37,7 +37,7 @@ class ProductProcessor {
       if (configExtensions && (ext in this._config.extensions) && ('resultProcessors' in this._config.extensions[ext]) && ('product' in this._config.extensions[ext].resultProcessors)) {
         const extProcessorPath = '../api/extensions/' + ext + '/processors'
         try {
-          // attempt to instanitate an adapter class, defined in /src/api/extensions/[ext]/processor/[resultProcessors.product].js
+          // attempt to instantiate an adapter class, defined in /src/api/extensions/[ext]/processor/[resultProcessors.product].js
           const extProcessor = factory.getAdapter(extProcessorPath, this._config.extensions[ext].resultProcessors.product, this._indexName)
           // if the adapter instance is successfully created, add it to the processor chain
           processorChain.push(extProcessor.process(items))
