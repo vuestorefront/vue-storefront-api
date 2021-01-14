@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Bump version for `vsf-utilities` - @gibkigonzo (#495)
+- Responsing with error instead of throwing for broken /api/catalog paths - @Fifciu
 
 ## [1.12.2] - 2020.07.20
 
