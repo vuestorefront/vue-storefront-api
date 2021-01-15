@@ -65,8 +65,14 @@ export default ({config, db}) => async function (req, res, body) {
   }
 
   if (req.query.request_format === 'search-query') { // search query and not Elastic DSL - we need to translate it
-    const customFilters = await loadCustomFilters(config)
-    requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody), customFilters })
+    try {
+      const customFilters = await loadCustomFilters(config)
+      requestBody = await elasticsearch.buildQueryBodyFromSearchQuery({ config, queryChain: bodybuilder(), searchQuery: new SearchQuery(requestBody), customFilters })
+    } catch (err) {
+      console.error(err);
+      apiError(res, err);
+      return;
+    }
   }
   if (req.query.response_format) responseFormat = req.query.response_format
 
