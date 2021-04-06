@@ -43,7 +43,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DivanteLtd/vue-storefront-api.git"
+    "url": "git+https://github.com/vuestorefront/vue-storefront-api.git"
   },
   "author": "Piotr Karwatka <pkarwatka@divante.pl>",
   "license": "MIT",
@@ -72,9 +72,9 @@
     "jwt-simple": "^0.5.1",
     "kue": "^0.11.6",
     "lodash": "^4.17.10",
-    "mage2vuestorefront": "git+https://github.com/DivanteLtd/mage2vuestorefront.git",
+    "mage2vuestorefront": "git+https://github.com/vuestorefront/mage2vuestorefront.git",
     "magento1-vsbridge-client": "github:DivanteLtd/magento1-vsbridge-client",
-    "magento2-rest-client": "github:DivanteLtd/magento2-rest-client",
+    "magento2-rest-client": "github:vuestorefront/magento2-rest-client",
     "md5": "^2.2.1",
     "merge-graphql-schemas": "^1.5.2",
     "migrate": "^1.6.2",
@@ -90,7 +90,7 @@
     "resource-router-middleware": "^0.6.0",
     "sharp": "^0.23.4",
     "soap": "^0.25.0",
-    "storefront-query-builder": "https://github.com/DivanteLtd/storefront-query-builder.git",
+    "storefront-query-builder": "https://github.com/vuestorefront/storefront-query-builder",
     "syswide-cas": "latest",
     "tsconfig-paths": "^3.9.0",
     "vsf-utilities": "^1.0.2",
@@ -123,9 +123,9 @@
     "typescript": "3.7.*"
   },
   "bugs": {
-    "url": "https://github.com/DivanteLtd/vue-storefront-api/issues"
+    "url": "https://github.com/vuestorefront/vue-storefront-api/issues"
   },
-  "homepage": "https://github.com/DivanteLtd/vue-storefront-api/",
+  "homepage": "https://github.com/vuestorefront/vue-storefront-api/",
   "keywords": [
     "storefront",
     "rest",
