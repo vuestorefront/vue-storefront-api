@@ -1,8 +1,7 @@
 name: Deploy to Demo and Test
-on:
-  push:
-    branches:
-      - main
+on: [push, pull_request]
+#     branches:
+#       - main
 
 jobs:
   build:
