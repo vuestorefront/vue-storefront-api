@@ -32,7 +32,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: test-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
-          registry: registry.vuestorefront.io
+          registry: registry.storefrontcloud.io
           username: ${{ secrets.CLOUD_USERNAME }}
           password: ${{ secrets.CLOUD_PASSWORD }}
           dockerfile: dev/docker/Dockerfile
