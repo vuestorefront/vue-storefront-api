@@ -69,7 +69,7 @@ jobs:
           fi
 
       - name: Update deployment status (success)
-        if: success()
+        if: success() && github.ref == 'refs/heads/demo' || success() && github.ref == 'refs/heads/test'
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
@@ -78,7 +78,7 @@ jobs:
           description: Congratulations! The deploy is done.
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: Update deployment status (failure)
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/demo' || failure() && github.ref == 'refs/heads/test'
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
