@@ -23,7 +23,7 @@ jobs:
           registry: registry.storefrontcloud.io
           username: ${{ secrets.CLOUD_USERNAME }}
           password: ${{ secrets.CLOUD_PASSWORD }}
-          dockerfile: dev/docker/vue-storefront-api/docker/vue-storefront-api/Dockerfile
+          dockerfile: dev/docker/Dockerfile
           buildoptions: "--compress"
       
       # Build for test
@@ -35,7 +35,7 @@ jobs:
           registry: registry.vuestorefront.io
           username: ${{ secrets.CLOUD_USERNAME }}
           password: ${{ secrets.CLOUD_PASSWORD }}
-          dockerfile: dev/docker/vue-storefront-api/docker/vue-storefront-api/Dockerfile
+          dockerfile: dev/docker/Dockerfile
           buildoptions: "--compress"
 
   deploy:
