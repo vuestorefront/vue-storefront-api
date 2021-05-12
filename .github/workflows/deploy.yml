@@ -1,7 +1,13 @@
 name: Deploy to Demo and Test
-on: [push, pull_request]
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - test
+      - demo
+  pull_request:
+    branches:
+      - test
+      - demo
 
 jobs:
   build:
@@ -16,7 +22,7 @@ jobs:
       
       # Build for demo
       - name: Build and publish demo docker image 
-#         if: github.ref == 'refs/heads/demo'
+        if: github.ref == 'refs/heads/demo'
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: demo-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
@@ -28,7 +34,7 @@ jobs:
       
       # Build for test
       - name: Build and publish test docker image
-#         if: github.ref == 'refs/heads/test'
+        if: github.ref == 'refs/heads/test'
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: test-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
