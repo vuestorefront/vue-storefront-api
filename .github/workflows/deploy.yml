@@ -2,12 +2,8 @@ name: Deploy to Demo and Test
 on:
   push:
     branches:
-      - test
-      - demo
-  pull_request:
-    branches:
-      - test
-      - demo
+      - master
+      - develop
 
 jobs:
   build:
@@ -22,7 +18,7 @@ jobs:
       
       # Build for demo
       - name: Build and publish demo docker image 
-        if: github.ref == 'refs/heads/demo'
+        if: github.ref == 'refs/heads/master'
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: demo-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
@@ -34,7 +30,7 @@ jobs:
       
       # Build for test
       - name: Build and publish test docker image
-        if: github.ref == 'refs/heads/test'
+        if: github.ref == 'refs/heads/develop'
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: test-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
@@ -50,7 +46,7 @@ jobs:
     steps:
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub deployment for ${GITHUB_REF##*/}
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
         id: deployment
         with:
           token: "${{ github.token }}"
@@ -60,7 +56,7 @@ jobs:
 
       # Deploy on test/demo depending on the branch that triggered the workflow
       - name: Deploy on ${GITHUB_REF##*/}.europe-west1.gcp.storefrontcloud.io
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
         run: |
           if curl -s -H 'X-User-Id: ${{ secrets.CLOUD_USERNAME }}'  -H 'X-Api-Key: ${{ secrets.CLOUD_PASSWORD }}' -H 'Content-Type: application/json' -X POST -d '
           {
@@ -75,7 +71,7 @@ jobs:
           fi
 
       - name: Update deployment status (success)
-        if: success() && github.ref == 'refs/heads/demo' || success() && github.ref == 'refs/heads/test'
+        if: success() && github.ref == 'refs/heads/master' || success() && github.ref == 'refs/heads/develop'
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
@@ -84,7 +80,7 @@ jobs:
           description: Congratulations! The deploy is done.
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: Update deployment status (failure)
-        if: failure() && github.ref == 'refs/heads/demo' || failure() && github.ref == 'refs/heads/test'
+        if: failure() && github.ref == 'refs/heads/master' || failure() && github.ref == 'refs/heads/develop'
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
