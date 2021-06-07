@@ -57,7 +57,7 @@ jobs:
       - name: Deploy on demo.europe-west1.gcp.storefrontcloud.io
         if: github.ref == 'refs/heads/master'
         run: |
-          if curl -s -H 'X-User-Id: ${{ secrets.DEPLOYMENT_USER }}' -H 'X-Api-Key: ${{ secrets.DEPLOYMENT_PASSWORD }}' -H 'Content-Type: application/json' -X POST -d '
+          if curl -s -H 'X-User-Id: ${{ secrets.CLOUD_USERNAME }}' -H 'X-Api-Key: ${{ secrets.CLOUD_PASSWORD }}' -H 'Content-Type: application/json' -X POST -d '
           {
               "code":"demo",
               "region":"europe-west1.gcp",
@@ -107,7 +107,7 @@ jobs:
       - name: Deploy on test.europe-west1.gcp.storefrontcloud.io
         if: github.ref == 'refs/heads/develop'
         run: |
-          if curl -s -H 'X-User-Id: ${{ secrets.DEPLOYMENT_USER }}' -H 'X-Api-Key: ${{ secrets.DEPLOYMENT_PASSWORD }}' -H 'Content-Type: application/json' -X POST -d '
+          if curl -s -H 'X-User-Id: ${{ secrets.CLOUD_USERNAME }}' -H 'X-Api-Key: ${{ secrets.CLOUD_PASSWORD }}' -H 'Content-Type: application/json' -X POST -d '
           {
               "code":"test",
               "region":"europe-west1.gcp",
