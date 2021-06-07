@@ -15,9 +15,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "12.x"
-      
+
       # Build for demo
-      - name: Build and publish demo docker image 
+      - name: Build and publish demo docker image
         if: github.ref == 'refs/heads/master'
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.CLOUD_PASSWORD }}
           dockerfile: dev/docker/Dockerfile
           buildoptions: "--compress"
-      
+
       # Build for test
       - name: Build and publish test docker image
         if: github.ref == 'refs/heads/develop'
@@ -51,11 +51,11 @@ jobs:
         with:
           token: "${{ github.token }}"
           target_url: https://demo.europe-west1.gcp.storefrontcloud.io/api/
-          environment: staging
+          environment: production
           initial_status: in_progress
-      # Deploy on demo    
+      # Deploy on demo
       - name: Deploy on demo.europe-west1.gcp.storefrontcloud.io
-        if: github.ref == 'refs/heads/master' 
+        if: github.ref == 'refs/heads/master'
         run: |
           if curl -s -u ${{ secrets.DEPLOYMENT_USER }}:${{ secrets.DEPLOYMENT_PASSWORD }} -H 'Content-Type: application/json' -X POST -d '
           {
@@ -71,7 +71,7 @@ jobs:
 
       # Return status
       - name: Update deployment status (success)
-        if: success() 
+        if: success()
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
@@ -81,7 +81,7 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
-        if: failure()  
+        if: failure()
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
@@ -95,7 +95,7 @@ jobs:
     needs: build
     steps:
       - uses: chrnorm/deployment-action@releases/v1
-        if: github.ref == 'refs/heads/develop' 
+        if: github.ref == 'refs/heads/develop'
         name: Create GitHub deployment for test
         id: deployment
         with:
@@ -103,9 +103,9 @@ jobs:
           target_url: https://test.europe-west1.gcp.storefrontcloud.io/api/
           environment: demo
           initial_status: in_progress
-      # Deploy on demo    
+      # Deploy on demo
       - name: Deploy on test.europe-west1.gcp.storefrontcloud.io
-        if: github.ref == 'refs/heads/develop' 
+        if: github.ref == 'refs/heads/develop'
         run: |
           if curl -s -u ${{ secrets.DEPLOYMENT_USER }}:${{ secrets.DEPLOYMENT_PASSWORD }} -H 'Content-Type: application/json' -X POST -d '
           {
@@ -121,7 +121,7 @@ jobs:
 
       # Return status
       - name: Update deployment status (success)
-        if: success() 
+        if: success()
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
@@ -131,7 +131,7 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
-        if: failure()  
+        if: failure()
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
