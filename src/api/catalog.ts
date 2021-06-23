@@ -52,7 +52,6 @@ export default ({config, db}) => async function (req, res, body) {
 
   let responseFormat = 'standard'
   let requestBody = req.body
-  console.log('indices', [...config.elasticsearch.indices]);
   if (req.method === 'GET') {
     if (req.query.request) { // this is in fact optional
       try {
