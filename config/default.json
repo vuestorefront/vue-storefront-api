@@ -284,7 +284,7 @@
     }
   },
   "magento2": {
-    "imgUrl": "https://magento2.storefrontcloud.io/media/catalog/product",
+    "imgUrl": "https://magento2.storefrontcloud.io/pub/media/catalog/product",
     "assetPath": "/../var/magento2-sample-data/pub/media",
     "api": {
       "url": "https://magento2.storefrontcloud.io/rest",
