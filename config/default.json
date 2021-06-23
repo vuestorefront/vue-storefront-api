@@ -29,6 +29,7 @@
     "requestTimeout": 5000,
     "min_score": 0.01,
     "indices": [
+      "mock-value",
       "vue_storefront_catalog",
       "vue_storefront_catalog_de",
       "vue_storefront_catalog_it"
