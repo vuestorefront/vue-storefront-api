@@ -23,7 +23,7 @@
   },
   "elasticsearch": {
     "host": "localhost",
-    "index": "vue_storefront_catalog",
+    "index": "vue_storefront_catalog_1",
     "port": 9200,
     "protocol": "http",
     "requestTimeout": 5000,
