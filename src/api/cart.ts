@@ -224,5 +224,29 @@ export default ({ config, db }) => {
     })
   })
 
+  /**
+   * POST /payment-information - Set payment information and place order for a specified cart.
+   *   req.query.token | req.headers.authorization - user token
+   *   req.query.cartId - cart ID if user is logged in, cart token if not
+   *   req.body - payment and order information
+   */
+  cartApi.post('/payment-information', (req, res) => {
+    const cartProxy = _getProxy(req)
+    const token = getToken(req)
+    res.setHeader('Cache-Control', 'no-cache, no-store');
+
+    if (!req.body.email) {
+      return apiStatus(res, 'No email provided within the request body', 500)
+    } else if (!req.body.paymentMethod || !req.body.paymentMethod.method) {
+      return apiStatus(res, 'No payment method element provided within the request body', 500)
+    }
+
+    cartProxy.paymentInformationAndOrder(token, req.query.cartId ? req.query.cartId : null, req.body).then((result) => {
+      apiStatus(res, result, 200);
+    }).catch(err => {
+      apiError(res, err);
+    })
+  })
+
   return cartApi
 }

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added webp support for local image action - @gibkigonzo (#409)
+- Added payment-information endpoint to cart api - [@rain2o](https://github.com/rain2o) (#538)
 
 ### Fixed 
  * add try catch to jwt.decode for groupId which is needed when you change the key for the JWT @resubaka (#496)
