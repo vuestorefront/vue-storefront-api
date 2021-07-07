@@ -29,8 +29,9 @@ function isNumeric (val) {
  * @param {json} orderData order data in format as described in '../models/order.md'
  * @param {Object} config global CLI configuration
  * @param {Function} done callback - @example done(new Error()) - to acknowledge problems
+ * @param {string} customerToken Optional consumer token for logged-in customer
  */
-function processSingleOrder (orderData, config, job, done, logger = console) {
+function processSingleOrder (orderData, config, job, done, customerToken = null, logger = console) {
   const TOTAL_STEPS = 4;
   const THREAD_ID = 'ORD:' + (job ? job.id : 1) + ' - '; // job id
   let currentStep = 1;
@@ -69,7 +70,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
     if (job) job.progress(currentStep++, TOTAL_STEPS);
     return;
   }
-  let isThisAuthOrder = parseInt(orderData.user_id) > 0
+  let isAdminRequest = parseInt(orderData.user_id) > 0 && customerToken === null
   const userId = orderData.user_id
 
   let apiConfig = config.magento2.api
@@ -84,13 +85,14 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
   const api = Magento2Client(apiConfig);
 
   logger.info('> Order Id', orderData.order_id)
-  logger.info('> Is order authorized?', isThisAuthOrder)
+  logger.info('> Is order authorized?', isAdminRequest)
   logger.info('> User Id', userId)
 
-  let cartId = orderData.cart_id
-  const cartIdPrepare = isThisAuthOrder ? api.cart.create(null, userId) : (cartId ? new Promise((resolve, reject) => {
+  // temp workaround for bug in magento2-rest-client - https://github.com/DivanteLtd/magento2-rest-client/issues/27
+  let cartId = orderData.cart_id.toString()
+  const cartIdPrepare = isAdminRequest ? api.cart.create(null, userId) : (cartId ? new Promise((resolve, reject) => {
     resolve(cartId)
-  }) : api.cart.create(null))
+  }) : api.cart.create(customerToken))
 
   logger.info(THREAD_ID + '> Cart Id', cartId)
 
@@ -100,7 +102,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
     logger.info(THREAD_ID + '< Cart Id', cartId)
 
     // load current cart from the Magento to synchronize elements
-    api.cart.pull(null, cartId, null, isThisAuthOrder).then((serverItems) => {
+    api.cart.pull(customerToken, cartId, null, isAdminRequest).then((serverItems) => {
       const clientItems = orderData.products
       const syncPromises = []
 
@@ -111,21 +113,21 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
         const serverItem = serverItems.find(itm => productsEquals(itm, clientItem))
         if (!serverItem) {
           logger.info(THREAD_ID + '< No server item for ' + clientItem.sku)
-          syncPromises.push(api.cart.update(null, cartId, { // use magento API
+          syncPromises.push(api.cart.update(customerToken, cartId, { // use magento API
             sku: clientItem.parentSku && config.cart.setConfigurableProductOptions ? clientItem.parentSku : clientItem.sku,
             qty: clientItem.qty,
             product_option: clientItem.product_option,
             quote_id: cartId
-          }, isThisAuthOrder))
+          }, isAdminRequest))
         } else if (serverItem.qty !== clientItem.qty) {
           logger.info(THREAD_ID + '< Wrong qty for ' + clientItem.sku, clientItem.qty, serverItem.qty)
-          syncPromises.push(api.cart.update(null, cartId, { // use magento API
+          syncPromises.push(api.cart.update(customerToken, cartId, { // use magento API
             sku: clientItem.parentSku && config.cart.setConfigurableProductOptions ? clientItem.parentSku : clientItem.sku,
             qty: clientItem.qty,
             product_option: clientItem.product_option,
             item_id: serverItem.item_id,
             quote_id: cartId
-          }, isThisAuthOrder))
+          }, isAdminRequest))
         } else {
           logger.info(THREAD_ID + '< Server and client items synced for ' + clientItem.sku) // here we need just update local item_id
         }
@@ -136,10 +138,10 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
           const clientItem = clientItems.find(itm => productsEquals(itm, serverItem))
           if (!clientItem) {
             logger.info(THREAD_ID + '< No client item for ' + serverItem.sku + ', removing from server cart') // use magento API
-            syncPromises.push(api.cart.delete(null, cartId, { // delete server side item if not present if client's cart
+            syncPromises.push(api.cart.delete(customerToken, cartId, { // delete server side item if not present if client's cart
               sku: serverItem.sku,
               item_id: serverItem.item_id
-            }, isThisAuthOrder))
+            }, isAdminRequest))
           }
         }
       }
@@ -232,20 +234,20 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
           }
 
           logger.info(THREAD_ID + '< Billing info', billingAddressInfo)
-          api.cart.billingAddress(null, cartId, billingAddressInfo, isThisAuthOrder).then((result) => {
+          api.cart.billingAddress(customerToken, cartId, billingAddressInfo, isAdminRequest).then((result) => {
             logger.info(THREAD_ID + '< Billing address assigned', result)
             logger.info(THREAD_ID + '< Shipping info', shippingAddressInfo)
-            api.cart.shippingInformation(null, cartId, shippingAddressInfo, isThisAuthOrder).then((result) => {
+            api.cart.shippingInformation(customerToken, cartId, shippingAddressInfo, isAdminRequest).then((result) => {
               logger.info(THREAD_ID + '< Shipping address assigned', result)
 
               if (job) job.progress(currentStep++, TOTAL_STEPS);
 
-              api.cart.order(null, cartId, {
+              api.cart.order(customerToken, cartId, {
                 'paymentMethod': {
                   'method': orderData.addressInformation.payment_method_code,
                   'additional_data': orderData.addressInformation.payment_method_additional
                 }
-              }, isThisAuthOrder).then(result => {
+              }, isAdminRequest).then(result => {
                 logger.info(THREAD_ID, result)
                 if (job) job.progress(currentStep++, TOTAL_STEPS);
 
@@ -301,7 +303,7 @@ function processSingleOrder (orderData, config, job, done, logger = console) {
   cartIdPrepare.then(processCart).catch((error) => { // cannot create a quote for specific user, so bypass by placing anonymous order
     logger.error(THREAD_ID, error)
     logger.info('< Bypassing to anonymous order')
-    isThisAuthOrder = false
+    isAdminRequest = false
 
     if (isNumeric(cartId)) { // we have numeric id - assigned to the user provided
       api.cart.create(null, null).then((result) => {

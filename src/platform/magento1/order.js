@@ -8,7 +8,7 @@ class OrderProxy extends AbstractOrderProxy {
     this.api = Magento1Client(multiStoreConfig(config.magento1.api, req));
   }
 
-  create (orderData) {
+  create (orderData, customerToken = null) {
     return this.api.order.create(orderData);
   }
 }
