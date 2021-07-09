@@ -3,6 +3,7 @@
  * @type {number}
  */
 const NotLoggedUserGroupId = 0;
+const AllUserGroupId = 32000;
 
 /**
  * Update product final price
@@ -17,7 +18,7 @@ function updatePrices (productData, groupId) {
       const tier = productData.tier_prices[i];
       // Check group
 
-      if (tier.customer_group_id === groupId) {
+      if (tier.customer_group_id === groupId || tier.customer_group_id === AllUserGroupId) {
         if (tier.qty === 1) {
           productData.specialPriceInclTax = 0;
 
