@@ -1,0 +1,41 @@
+version: '3.0'
+services:
+  api-alt:
+    build:
+      context: .
+      dockerfile: docker/vue-storefront-api-alt/Dockerfile
+    depends_on:
+      - es1
+      - redis
+    env_file: docker/vue-storefront-api-alt/default.env
+    environment:
+      API_MODE: api
+    volumes:
+      - './config:/var/www/config'
+      - vue-storefront-api:/tmp/vue-storefront-api
+  worker:
+    build:
+      context: .
+      dockerfile: docker/vue-storefront-api-alt/Dockerfile
+    depends_on:
+      - redis
+    env_file: docker/vue-storefront-api-alt/default.env
+    environment:
+      API_MODE: o2m
+    volumes:
+      - './config:/var/www/config'
+    healthcheck:
+      test: exit 0 # disable healthcheck for worker
+
+  ## proxy the api-alt here or somewhere else
+  proxy:
+    image: nginx
+    volumes:
+      - ./docker/vue-storefront-api-alt/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - api-alt
+
+volumes:
+  vue-storefront-api:
