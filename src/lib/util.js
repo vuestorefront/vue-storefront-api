@@ -116,7 +116,6 @@ export function encryptToken (textToken, secret) {
 }
 
 export function decryptToken (textToken, secret) {
-  let iv = crypto.randomBytes(IV_LENGTH);
   const decipher = crypto.createDecipheriv(algorithm, createCypher(secret), IV)
   let dec = decipher.update(textToken, 'hex', 'utf8')
   dec += decipher.final('utf8');
