@@ -35,7 +35,7 @@ export default ({ config, db }) =>
     } else {
       await imageAction.prossesImage()
 
-      if (config.imageable.caching.active) {
+      if (config.imageable.caching.active && !imageAction.error) {
         cache.image = imageAction.imageBuffer
         await cache.save()
       }

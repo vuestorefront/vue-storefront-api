@@ -6,6 +6,7 @@ export default class LocalImageAction extends ImageAction {
   public imageOptions
   public SUPPORTED_MIMETYPES = ['image/gif', 'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
   public imageBuffer: Buffer
+  public error = false
 
   public get whitelistDomain (): string[] {
     return this.options.imageable.whitelist
@@ -90,10 +91,18 @@ export default class LocalImageAction extends ImageAction {
     try {
       this.imageBuffer = await downloadImage(imgUrl)
     } catch (err) {
-      return this.res.status(400).send({
-        code: 400,
-        result: `Unable to download the requested image ${imgUrl}`
-      })
+      this.error = true
+      if (err.statusCode === 404) {
+        return this.res.status(404).send({
+          code: 404,
+          result: 'Not found'
+        })
+      } else {
+        return this.res.status(500).send({
+          code: 500,
+          result: `Unable to download the requested image ${imgUrl}`
+        })
+      }
     }
     const { action, width, height } = this.imageOptions
     switch (action) {
