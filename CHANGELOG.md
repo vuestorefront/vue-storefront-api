@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added webp support for local image action - @gibkigonzo (#409)
 
-### Fixed 
+### Fixed
  * add try catch to jwt.decode for groupId which is needed when you change the key for the JWT @resubaka (#496)
  * Explicit check if the msi stock id is set for the given storeview  - [@philippsander](https://github.com/philippsander) (#483)
- 
+ * Fix caching of attributes. They were missing cache tag, preventing them from being purged correctly and also not separated cache key between multi stores (#582)
+
 ## [1.12.3] - 2020.07.23
 
 ### Fixed
