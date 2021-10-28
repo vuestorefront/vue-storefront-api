@@ -62,7 +62,8 @@ async function setAttributeInCache (attributeList, config) {
       await Promise.all(
         attributeList.map(attribute => (cache as TagCache).set(
           'api:attribute-list' + attribute.attribute_code,
-          attribute
+          attribute,
+          ['attribute']
         ))
       )
     } catch (err) {
