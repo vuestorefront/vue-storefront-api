@@ -1,6 +1,5 @@
 REST API backend for vue-storefront
 ===================================
-  ---------
 
 ### Stay connected
 
