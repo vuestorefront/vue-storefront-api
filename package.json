@@ -50,7 +50,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^7.3.0",
     "@google-cloud/storage": "^3.0.3",
-    "ajv": "^6.4.0",
+    "ajv": "^6.12.3",
     "ajv-keywords": "^3.4.0",
     "body-parser": "^1.18.2",
     "bodybuilder": "2.2.21",
