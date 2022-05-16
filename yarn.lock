@@ -4902,9 +4902,10 @@ node-sync@^0.2.1:
   resolved "https://registry.yarnpkg.com/node-sync/-/node-sync-0.2.1.tgz#06cda351516cbfc4520028ae314820fb95ec0068"
   integrity sha1-Bs2jUVFsv8RSACiuMUgg+5XsAGg=
 
-nodemailer@^4.6.8:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-4.7.0.tgz#4420e06abfffd77d0618f184ea49047db84f4ad8"
+nodemailer@^6.6.1:
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.6.1.tgz#2a05fbf205b897d71bf43884167b5d4d3bd01b99"
+  integrity sha512-1xzFN3gqv+/qJ6YRyxBxfTYstLNt0FCtZaFRvf4Sg9wxNGWbwFmGXVpfSi6ThGK6aRxAo+KjHtYSW8NvCsNSAg==
 
 nodemon@^1.18.7:
   version "1.19.1"
