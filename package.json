@@ -61,7 +61,7 @@
     "cross-env": "^7.0.2",
     "elasticdump": "^6.9.1",
     "email-check": "^1.1.0",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "fs-extra": "^8.1.0",
     "graphql": "^0.13.1",
     "graphql-tools": "^1.2.1",
