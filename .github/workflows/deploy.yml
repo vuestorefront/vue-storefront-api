@@ -19,7 +19,7 @@ jobs:
       # Build for demo
       - name: Build and publish demo docker image
         if: github.ref == 'refs/heads/master'
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: demo-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
           registry: registry.storefrontcloud.io
@@ -31,7 +31,7 @@ jobs:
       # Build for test
       - name: Build and publish test docker image
         if: github.ref == 'refs/heads/develop'
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: test-storefrontcloud-io/vue-storefront-api:${{ github.sha }}
           registry: registry.storefrontcloud.io
